@@ -529,11 +529,11 @@
                         <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <ListView fx:id="lv_sideBar" disable="true" />
+                        <ListView fx:id="lv_sideBar" />
                         <SplitPane dividerPositions="0.33" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1">
                            <items>
-                              <ListView fx:id="lv_machineCode" disable="true" prefHeight="200.0" prefWidth="172.0" />
-                              <ListView fx:id="lv_assemblerCode" disable="true" />
+                              <ListView fx:id="lv_machineCode" prefHeight="200.0" prefWidth="172.0" />
+                              <ListView fx:id="lv_assemblerCode" />
                            </items>
                         </SplitPane>
                      </children>

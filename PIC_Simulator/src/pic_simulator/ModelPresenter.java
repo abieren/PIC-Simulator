@@ -13,6 +13,7 @@ public interface ModelPresenter {
     
     public void initializeView();
     
+    public void addCodeLine(String address, String instruction, String sourceCode);
     public void displayAutomaticSteppingMode(boolean b);
     public void displayAutomaticSteppingIntervall(int ms);
     public void displayRunningTime(int microSeconds);

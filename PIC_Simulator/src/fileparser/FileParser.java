@@ -44,7 +44,6 @@ public class FileParser {
                     parseResult.instruction.add(null);
                     parseResult.sourceCode.add(currentLine.substring(27));
                 }
-                System.out.println(lineNumber);
                 lineNumber = lineNumber +1 ;
             }
             scanner.close();

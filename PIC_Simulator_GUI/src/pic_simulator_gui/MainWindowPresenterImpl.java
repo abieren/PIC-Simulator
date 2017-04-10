@@ -164,5 +164,10 @@ public class MainWindowPresenterImpl
     public void displayBreakOnInterrupt(boolean b) {
         _view.setBreakOnInterrupt(b);
     }
+
+    @Override
+    public void addCodeLine(String address, String instruction, String sourceCode) {
+        _view.addCodeLine(instruction, sourceCode);
+    }
     
 }

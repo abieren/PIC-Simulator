@@ -43,6 +43,9 @@ public class PICSimulator {
         _wRegister = 0;
     }
     
+//    public int shrinkInt(int value, int bit) {
+//    }
+    
     public int getPCRegister() {
         return _pcRegister;
     };
@@ -221,6 +224,7 @@ public class PICSimulator {
     }
     
     public void ANDWF(int f, boolean d) {
+        setWRegister(getWRegister()+getRegister(f));
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
