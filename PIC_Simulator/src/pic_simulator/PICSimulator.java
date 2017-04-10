@@ -102,6 +102,10 @@ public class PICSimulator {
         return value;
     }
     
+    public void setInstructionToProgramMemory(int address, int instruction) {
+        _programMemory.put(address, instruction);
+    }
+    
     public int popStack() {
         int value = _stack.pop();
         _notifier.popStack(value);

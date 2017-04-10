@@ -99,10 +99,15 @@ public class Simulator implements Model {
 
     @Override
     public void setLSTFile(String filePath) {
+        //reset the simulator before loading new file
+        initialize();
         _lstFilePath = filePath;
         ParseResult pr = FileParser.parse(filePath);
         for (int i = 0; i < pr.fileLines.size(); i++) {
             _presenter.addCodeLine(pr.address.get(i), pr.instruction.get(i), pr.sourceCode.get(i));
+            if (pr.address.get(i) != null) {
+                _pic.setInstructionToProgramMemory(pr.address.get(i), pr.instruction.get(i));
+            }
         }
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }

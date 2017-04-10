@@ -3,12 +3,15 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Alex/Documents/NetBeansProjects/PIC_Simulator/src/pic_simulator/PICSimulator.java</file>
-            <file>file:/C:/Users/Alex/Documents/NetBeansProjects/PIC_Simulator/src/pic_simulator/Simulator.java</file>
-            <file>file:/C:/Users/Alex/Documents/NetBeansProjects/PIC_Simulator/src/pic_simulator/NotifierImpl.java</file>
-            <file>file:/C:/Users/Alex/Documents/NetBeansProjects/PIC_Simulator/src/pic_simulator/ModelPresenter.java</file>
-            <file>file:/C:/Users/Alex/Documents/NetBeansProjects/PIC_Simulator/src/pic_simulator/Model.java</file>
-            <file>file:/C:/Users/Alex/Documents/NetBeansProjects/PIC_Simulator/src/pic_simulator/Notifier.java</file>
+            <file>file:/C:/Users/Alex/Documents/Git%20Repos/PIC-Simulator/PIC_Simulator/src/pic_simulator/Model.java</file>
+            <file>file:/C:/Users/Alex/Documents/Git%20Repos/PIC-Simulator/PIC_Simulator/src/pic_simulator/Notifier.java</file>
+            <file>file:/C:/Users/Alex/Documents/Git%20Repos/PIC-Simulator/PIC_Simulator/src/pic_simulator/Simulator.java</file>
+            <file>file:/C:/Users/Alex/Documents/Git%20Repos/PIC-Simulator/PIC_Simulator/src/pic_simulator/InstructionDecoder.java</file>
+            <file>file:/C:/Users/Alex/Documents/Git%20Repos/PIC-Simulator/PIC_Simulator/src/pic_simulator/Instruction.java</file>
+            <file>file:/C:/Users/Alex/Documents/Git%20Repos/PIC-Simulator/PIC_Simulator/src/fileparser/ParseResult.java</file>
+            <file>file:/C:/Users/Alex/Documents/Git%20Repos/PIC-Simulator/PIC_Simulator/src/pic_simulator/ModelPresenter.java</file>
+            <file>file:/C:/Users/Alex/Documents/Git%20Repos/PIC-Simulator/PIC_Simulator/src/fileparser/FileParser.java</file>
+            <file>file:/C:/Users/Alex/Documents/Git%20Repos/PIC-Simulator/PIC_Simulator/src/pic_simulator/PICSimulator.java</file>
         </group>
     </open-files>
 </project-private>
