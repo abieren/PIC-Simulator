@@ -32,6 +32,12 @@
                         <MenuItem mnemonicParsing="false" onAction="#menu_openProgram_onClicked" text="Open Program" />
                      </items>
                   </Menu>
+                  <Menu mnemonicParsing="false" text="Help">
+                    <items>
+                      <MenuItem mnemonicParsing="false" text="PIC Simulator Help" />
+                        <MenuItem mnemonicParsing="false" text="About PIC Simulator" />
+                    </items>
+                  </Menu>
                </menus>
             </MenuBar>
          </top>
@@ -536,7 +542,7 @@
                   <GridPane>
                      <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="212.0" minWidth="212.0" prefWidth="212.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="343.0" minWidth="342.0" prefWidth="342.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="342.0" minWidth="342.0" prefWidth="342.0" />
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" />
                      </columnConstraints>
                      <rowConstraints>
