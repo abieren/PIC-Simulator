@@ -118,18 +118,18 @@ public class PICSimulator {
     }
     
     public void makeStep() {
-        int value = getPCRegister();
-        value = getInstructionFromProgramMemory(value);
-        setInstructionRegsiter(value);
-        decodeInstruction(getInstructionRegsiter());
+        fetchNextInstruction();
+        execute(getInstructionRegsiter());
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     public void fetchNextInstruction() {
-        
+        int value = getPCRegister();
+        value = getInstructionFromProgramMemory(value);
+        setInstructionRegsiter(value);
     }
     
-    public void decodeInstruction(int instruction) {
+    public void execute(int instruction) {
         
     }
     

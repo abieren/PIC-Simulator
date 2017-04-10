@@ -10,33 +10,44 @@ package pic_simulator_gui;
  * @author Alex
  */
 public interface MainWindowView {
-    
-    public void initializeView();
-    public void showStatusMessage(MessageType level, String message);
 
-    public void addCodeLine(Integer address, Integer instruction, String sourceCode);
-    public void setCurrentCodeLine(int line);
-    //public void setRegisterMap(Map<Integer, Integer> registers);
-    //public void setRegister(int register, int value);
-    public void setRunningTime(int microSeconds);
-    public void setWRegister(int value);
-    public void setFSRRegister(int value);
-    public void setPCRegsiter(int value);
-    public void setPCLRegister(int value);
-    public void setPCLATHRegsiter(int value);
-    public void setSTATUSRegister(int value);
-    public void setOPTIONRegister(int value);
-    public void setINTCONRegister(int value);
     //public void setPortTrisBit(int port, int bit, boolean value);
     //public void setPortValueBit(int port, int bit, boolean value);
+    
+    public void initializeView();
 
-    public void setAutomaticSteppingMode(boolean b);
+    public void displayStatusMessage(MessageType level, String message);
 
-    public void setAutomaticSteppingIntervall(int ms);
+    public void addCodeLine(Integer address, Integer instruction, String sourceCode);
 
-    public void setOscillatorFrequency(double megaHz);
+    public void displayCurrentCodeLine(int line);
 
-    public void setBreakOnWatchdogTrigger(boolean b);
+    public void displayRunningTime(int microSeconds);
 
-    public void setBreakOnInterrupt(boolean b);
+    public void displayWRegister(int value);
+
+    public void displayFSRRegister(int value);
+
+    public void displayPCRegsiter(int value);
+
+    public void displayPCLRegister(int value);
+
+    public void displayPCLATHRegsiter(int value);
+
+    public void displaySTATUSRegister(int value);
+
+    public void displayOPTIONRegister(int value);
+
+    public void displayINTCONRegister(int value);
+
+    public void displayAutomaticSteppingMode(boolean b);
+
+    public void displayAutomaticSteppingIntervall(int ms);
+
+    public void displayOscillatorFrequency(double megaHz);
+
+    public void displayBreakOnWatchdogTrigger(boolean b);
+
+    public void displayBreakOnInterrupt(boolean b);
+    
 }

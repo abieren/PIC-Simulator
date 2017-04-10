@@ -29,8 +29,8 @@ import javafx.stage.Stage;
  *
  * @author Alex
  */
-public class MainWindowController implements Initializable,
-        MainWindowView {
+public class MainWindowController 
+        implements Initializable, MainWindowView {
 
     @FXML
     private ToggleButton bt_automaticSteppingMode;
@@ -149,7 +149,7 @@ public class MainWindowController implements Initializable,
     public void initializeData(Stage primaryStage, MainWindowPresenter presenter) {
         _primaryStage = primaryStage;
         _presenter = presenter;
-        showStatusMessage(MessageType.CONFIRMATION, "PIC simulator successfully started");
+        displayStatusMessage(MessageType.CONFIRMATION, "PIC simulator successfully started");
     }
 
     private void registerListeners() {
@@ -337,7 +337,7 @@ public class MainWindowController implements Initializable,
         } catch (NumberFormatException e) {
             //don't respect the value in simulation if it is invalid and just
             //ignore it
-            showStatusMessage(MessageType.ERROR, "\"" + newValue + "\" is not a valid number");
+            displayStatusMessage(MessageType.ERROR, "\"" + newValue + "\" is not a valid number");
             return;
         }
         _presenter.setAutomaticSteppingInterval(value);
@@ -351,7 +351,7 @@ public class MainWindowController implements Initializable,
         } catch (NumberFormatException e) {
             //don't respect the value in simulation if it is invalid and just
             //ignore it
-            showStatusMessage(MessageType.ERROR, "\"" + newValue + "\" is not a valid number");
+            displayStatusMessage(MessageType.ERROR, "\"" + newValue + "\" is not a valid number");
             return;
         }
         _presenter.setOscillatorFrequency(value);
@@ -366,7 +366,7 @@ public class MainWindowController implements Initializable,
     }
     
     @Override
-    public void showStatusMessage(MessageType level, String message) {
+    public void displayStatusMessage(MessageType level, String message) {
         lb_statusBar.setText(message);
         String bgColor;
         switch (level) {
@@ -391,7 +391,7 @@ public class MainWindowController implements Initializable,
     }
 
     @Override
-    public void setSTATUSRegister(int value) {
+    public void displaySTATUSRegister(int value) {
         lb_statusRegHexValue.setText(Integer.toHexString(value));
         lb_statusRegDecValue.setText(Integer.toString(value));
         Integer b0 = (value & 1);
@@ -413,37 +413,37 @@ public class MainWindowController implements Initializable,
     }
 
     @Override
-    public void setRunningTime(int microSeconds) {
+    public void displayRunningTime(int microSeconds) {
         lb_runningTime.setText(Integer.toString(microSeconds));
     }
 
     @Override
-    public void setWRegister(int value) {
+    public void displayWRegister(int value) {
         lb_wRegHexValue.setText(Integer.toHexString(value));
     }
 
     @Override
-    public void setFSRRegister(int value) {
+    public void displayFSRRegister(int value) {
         lb_fsrRegHexValue.setText(Integer.toHexString(value));
     }
 
     @Override
-    public void setPCRegsiter(int value) {
+    public void displayPCRegsiter(int value) {
         lb_pcRegHexValue.setText(Integer.toHexString(value));
     }
 
     @Override
-    public void setPCLRegister(int value) {
+    public void displayPCLRegister(int value) {
         lb_pclRegHexValue.setText(Integer.toHexString(value));
     }
 
     @Override
-    public void setPCLATHRegsiter(int value) {
+    public void displayPCLATHRegsiter(int value) {
         lb_pclathRegHexValue.setText(Integer.toHexString(value));
     }
 
     @Override
-    public void setOPTIONRegister(int value) {
+    public void displayOPTIONRegister(int value) {
         lb_optionRegHexValue.setText(Integer.toHexString(value));
         lb_optionRegDecValue.setText(Integer.toString(value));
         Integer b0 = (value & 1);
@@ -465,7 +465,7 @@ public class MainWindowController implements Initializable,
     }
 
     @Override
-    public void setINTCONRegister(int value) {
+    public void displayINTCONRegister(int value) {
         lb_intconRegHexValue.setText(Integer.toHexString(value));
         lb_intconRegDecValue.setText(Integer.toString(value));
         Integer b0 = (value & 1);
@@ -505,7 +505,7 @@ public class MainWindowController implements Initializable,
     }
 
     @Override
-    public void setCurrentCodeLine(int line) {
+    public void displayCurrentCodeLine(int line) {
         lv_sideBar.getSelectionModel().select(line);
         lv_sourceCode.getSelectionModel().select(line);
     }
@@ -519,27 +519,27 @@ public class MainWindowController implements Initializable,
     }
 
     @Override
-    public void setAutomaticSteppingMode(boolean b) {
+    public void displayAutomaticSteppingMode(boolean b) {
         bt_automaticSteppingMode.selectedProperty().set(b);
     }
 
     @Override
-    public void setAutomaticSteppingIntervall(int ms) {
+    public void displayAutomaticSteppingIntervall(int ms) {
         tf_automaticSteppingIntervall.setText(Integer.toString(ms));
     }
 
     @Override
-    public void setOscillatorFrequency(double megaHz) {
+    public void displayOscillatorFrequency(double megaHz) {
         tf_oscillatorFrequency.setText(Double.toString(megaHz));
     }
 
     @Override
-    public void setBreakOnWatchdogTrigger(boolean b) {
+    public void displayBreakOnWatchdogTrigger(boolean b) {
         cb_breakOnWatchdogTrigger.selectedProperty().set(b);
     }
 
     @Override
-    public void setBreakOnInterrupt(boolean b) {
+    public void displayBreakOnInterrupt(boolean b) {
         cb_breakOnInterrupt.selectedProperty().set(b);
     }
 

@@ -97,72 +97,72 @@ public class MainWindowPresenterImpl
 
     @Override
     public void displayRunningTime(int microSeconds) {
-        _view.setRunningTime(microSeconds);
+        _view.displayRunningTime(microSeconds);
     }
 
     @Override
     public void displayWRegister(int value) {
-        _view.setWRegister(value);
+        _view.displayWRegister(value);
     }
 
     @Override
     public void displayFSRRegister(int value) {
-        _view.setFSRRegister(value);
+        _view.displayFSRRegister(value);
     }
 
     @Override
     public void displayPCRegsiter(int value) {
-        _view.setPCRegsiter(value);
+        _view.displayPCRegsiter(value);
     }
 
     @Override
     public void displayPCLRegister(int value) {
-        _view.setPCLRegister(value);
+        _view.displayPCLRegister(value);
     }
 
     @Override
     public void displayPCLATHRegsiter(int value) {
-        _view.setPCLATHRegsiter(value);
+        _view.displayPCLATHRegsiter(value);
     }
 
     @Override
     public void displaySTATUSRegister(int value) {
-        _view.setSTATUSRegister(value);
+        _view.displaySTATUSRegister(value);
     }
 
     @Override
     public void displayOPTIONRegister(int value) {
-        _view.setOPTIONRegister(value);
+        _view.displayOPTIONRegister(value);
     }
 
     @Override
     public void displayINTCONRegister(int value) {
-        _view.setINTCONRegister(value);
+        _view.displayINTCONRegister(value);
     }
 
     @Override
     public void displayAutomaticSteppingMode(boolean b) {
-        _view.setAutomaticSteppingMode(b);
+        _view.displayAutomaticSteppingMode(b);
     }
 
     @Override
     public void displayAutomaticSteppingIntervall(int ms) {
-        _view.setAutomaticSteppingIntervall(ms);
+        _view.displayAutomaticSteppingIntervall(ms);
     }
 
     @Override
     public void displayOscillatorFrequency(double megaHz) {
-        _view.setOscillatorFrequency(megaHz);
+        _view.displayOscillatorFrequency(megaHz);
     }
 
     @Override
     public void displayBreakOnWatchdogTrigger(boolean b) {
-        _view.setBreakOnWatchdogTrigger(b);
+        _view.displayBreakOnWatchdogTrigger(b);
     }
 
     @Override
     public void displayBreakOnInterrupt(boolean b) {
-        _view.setBreakOnInterrupt(b);
+        _view.displayBreakOnInterrupt(b);
     }
 
     @Override

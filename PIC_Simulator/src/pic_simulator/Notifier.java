@@ -12,13 +12,17 @@ package pic_simulator;
 public interface Notifier {
     
     void changedWRegister(int oldValue, int newValue);
+
     void changedPCRegister(int oldValue, int newValue);
+
     void changedInstructionRegister(int oldValue, int newValue);
+
     void changedRegister(int register, int oldValue, int newValue);
+
     void nextCycle();
 
-    public void popStack(int value);
+    public void popStack(int popedValue);
 
-    public void pushStack(int value);
+    public void pushStack(int pushedValue);
     
 }
