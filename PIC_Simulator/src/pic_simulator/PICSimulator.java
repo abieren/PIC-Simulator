@@ -17,8 +17,8 @@ public class PICSimulator {
     
     public final Notifier _notifier;
     
-    public Map<Integer, Integer> _registers;
     public Map<Integer, Integer> _programMemory;
+    public Map<Integer, Integer> _registers;
     public Stack<Integer> _stack;
     public int _pcRegister;
     public int _instructionRegsiter;
@@ -119,7 +119,7 @@ public class PICSimulator {
     
     public void makeStep() {
         fetchNextInstruction();
-        execute(getInstructionRegsiter());
+        decodeAndExecuteInstruction(getInstructionRegsiter());
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
@@ -129,8 +129,128 @@ public class PICSimulator {
         setInstructionRegsiter(value);
     }
     
-    public void execute(int instruction) {
-        
+    public void decodeAndExecuteInstruction(int instruction) {
+        switch (InstructionDecoder.decode(instruction)) {
+            //BYTE-ORIENTED FILE REGISTER OPERATIONS
+            case ADDWF:
+                ADDWF(instruction);
+                break;
+            case ANDWF:
+                ANDWF(instruction);
+                break;
+            case CLRF:
+                CLRF(instruction);
+                break;
+            case CLRW:
+                CLRW();
+                break;
+            case COMF:
+                COMF(instruction);
+                break;
+            case DECF:
+                DECF(instruction);
+                break;
+            case DECFSZ:
+                DECFSZ(instruction);
+                break;
+            case INCF:
+                INCF(instruction);
+                break;
+            case INCFSZ:
+                INCFSZ(instruction);
+                break;
+            case IORWF:
+                IORWF(instruction);
+                break;
+            case MOVF:
+                MOVF(instruction);
+                break;
+            case MOVWF:
+                MOVWF(instruction);
+                break;
+            case NOP:
+                NOP();
+                break;
+            case RLF:
+                RLF(instruction);
+                break;
+            case RRF:
+                RRF(instruction);
+                break;
+            case SUBWF:
+                SUBWF(instruction);
+                break;
+            case SWAPF:
+                SWAPF(instruction);
+                break;
+            case XORWF:
+                XORWF(instruction);
+                break;
+            //BIT-ORIENTED FILE REGISTER OPERATIONS
+            case BCF:
+                BCF(instruction);
+                break;
+            case BSF:
+                BSF(instruction);
+                break;
+            case BTFSC:
+                BTFSC(instruction);
+                break;
+            case BTFSS:
+                BTFSS(instruction);
+            //LITERAL AND CONTROL OPERATIONS
+            case ADDLW:
+                ADDLW(instruction);
+                break;
+            case ANDLW:
+                ANDLW(instruction);
+                break;
+            case CALL:
+                CALL(instruction);
+                break;
+            case CLRWDT:
+                CLRWDT();
+                break;
+            case GOTO:
+                GOTO(instruction);
+                break;
+            case IORLW:
+                IORLW(instruction);
+                break;
+            case MOVLW:
+                MOVLW(instruction);
+                break;
+            case RETFIE:
+                RETFIE();
+                break;
+            case RETLW:
+                RETLW(instruction);
+                break;
+            case RETURN:
+                RETURN();
+                break;
+            case SLEEP:
+                SLEEP();
+                break;
+            case SUBLW:
+                SUBLW(instruction);
+                break;
+            case XORLW:
+                XORLW(instruction);
+                break;
+            default:
+                throw new AssertionError();
+        }
+    }
+    
+    public int extractBits(int value, int from, int to) {
+        int result = 0;
+        int diff = to-from;
+        for (int i = 0; i <= diff; i++) {
+            int bit = value & (1 << (from + i) );
+            if (bit != 0) result = result | (1 << i);
+        }
+        return result;
     }
     
     public void nextCycle() {
@@ -223,16 +343,15 @@ public class PICSimulator {
     
     
     /*BYTE-ORIENTED FILE REGISTER OPERATIONS*/
-    public void ADDWF(int f, boolean d) {
+    public void ADDWF(int instruction) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
-    public void ANDWF(int f, boolean d) {
-        setWRegister(getWRegister()+getRegister(f));
+    public void ANDWF(int instruction) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
-    public void CLRF(int f) {
+    public void CLRF(int instruction) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
@@ -240,35 +359,35 @@ public class PICSimulator {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
-    public void COMF(int f, boolean d) {
+    public void COMF(int instruction) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
-    public void DECF(int f, boolean d) {
+    public void DECF(int instruction) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
-    public void DECFSZ(int f, boolean d) {
+    public void DECFSZ(int instruction) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
-    public void INCF(int f, boolean d) {
+    public void INCF(int instruction) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
-    public void INCFSZ(int f, boolean d) {
+    public void INCFSZ(int instruction) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
-    public void IORWF(int f, boolean d) {
+    public void IORWF(int instruction) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
-    public void MOVF(int f, boolean d) {
+    public void MOVF(int instruction) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
-    public void MOVWF(int f) {
+    public void MOVWF(int instruction) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
@@ -276,53 +395,53 @@ public class PICSimulator {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
-    public void RLF(int f, boolean d) {
+    public void RLF(int instruction) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
-    public void RRF(int f, boolean d) {
+    public void RRF(int instruction) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
-    public void SUBWF(int f, boolean d) {
+    public void SUBWF(int instruction) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
-    public void SWAPF(int f, boolean d) {
+    public void SWAPF(int instruction) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
-    public void XORWF(int f, boolean d) {
+    public void XORWF(int instruction) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     /*BIT-ORIENTED FILE REGISTER OPERATIONS*/
-    public void BCF(int f, int b) {
+    public void BCF(int instruction) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
-    public void BSF(int f, int b) {
+    public void BSF(int instruction) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
-    public void BTFSC(int f, int b) {
+    public void BTFSC(int instruction) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
-    public void BTFSS(int f, int b) {
+    public void BTFSS(int instruction) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     /*LITERAL AND CONTROL OPERATIONS*/
-    public void ADDLW(int k) {
+    public void ADDLW(int instruction) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
-    public void ANDLW(int k) {
+    public void ANDLW(int instruction) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
-    public void CALL(int k) {
+    public void CALL(int instruction) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
@@ -330,15 +449,15 @@ public class PICSimulator {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
-    public void GOTO(int k) {
+    public void GOTO(int instruction) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
-    public void IORLW(int k) {
+    public void IORLW(int instruction) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
-    public void MOVLW(int k) {
+    public void MOVLW(int instruction) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
@@ -346,7 +465,7 @@ public class PICSimulator {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
-    public void RETLW(int k) {
+    public void RETLW(int instruction) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
@@ -354,11 +473,15 @@ public class PICSimulator {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
-    public void SUBLW(int k) {
+    public void SLEEP() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
-    public void XORLW(int k) {
+    public void SUBLW(int instruction) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    public void XORLW(int instruction) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
