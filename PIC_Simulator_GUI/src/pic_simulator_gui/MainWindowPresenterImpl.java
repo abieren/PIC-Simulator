@@ -166,8 +166,8 @@ public class MainWindowPresenterImpl
     }
 
     @Override
-    public void addCodeLine(String address, String instruction, String sourceCode) {
-        _view.addCodeLine(instruction, sourceCode);
+    public void addCodeLine(Integer address, Integer instruction, String sourceCode) {
+        _view.addCodeLine(address, instruction, sourceCode);
     }
     
 }

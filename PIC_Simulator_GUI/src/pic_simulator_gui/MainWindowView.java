@@ -14,7 +14,7 @@ public interface MainWindowView {
     public void initializeView();
     public void showStatusMessage(MessageType level, String message);
 
-    public void addCodeLine(String machineCode, String assemblerCode);
+    public void addCodeLine(Integer address, Integer instruction, String sourceCode);
     public void setCurrentCodeLine(int line);
     //public void setRegisterMap(Map<Integer, Integer> registers);
     //public void setRegister(int register, int value);

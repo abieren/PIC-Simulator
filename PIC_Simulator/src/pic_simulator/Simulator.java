@@ -102,24 +102,7 @@ public class Simulator implements Model {
         _lstFilePath = filePath;
         ParseResult pr = FileParser.parse(filePath);
         for (int i = 0; i < pr.fileLines.size(); i++) {
-            Integer address = pr.address.get(i);
-            Integer instruction = pr.instruction.get(i);
-            String sourceCodeStr = pr.sourceCode.get(i);
-            String addressStr;
-            String instructionStr;
-            if (address == null) {
-                addressStr = "";
-            }
-            else {
-                addressStr = Integer.toHexString(address);
-            }
-            if (instruction == null) {
-                instructionStr = "";
-            }
-            else {
-                instructionStr = Integer.toHexString(instruction);
-            }
-            _presenter.addCodeLine(addressStr, instructionStr, sourceCodeStr);
+            _presenter.addCodeLine(pr.address.get(i), pr.instruction.get(i), pr.sourceCode.get(i));
         }
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }

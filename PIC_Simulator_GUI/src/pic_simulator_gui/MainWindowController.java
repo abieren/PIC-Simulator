@@ -119,9 +119,7 @@ public class MainWindowController implements Initializable,
     @FXML
     private ListView lv_sideBar;
     @FXML
-    private ListView lv_machineCode;
-    @FXML
-    private ListView lv_assemblerCode;
+    private ListView lv_sourceCode;
     @FXML
     private TableView tv_portMap;
     @FXML
@@ -133,8 +131,7 @@ public class MainWindowController implements Initializable,
     private MainWindowPresenter _presenter;
     //lists to add the code lines and breakpoints for the list views
     ObservableList<String> _sideBarAnnotations;
-    ObservableList<String> _assemblerCode = FXCollections.observableArrayList();
-    ObservableList<String> _machineCode = FXCollections.observableArrayList();
+    ObservableList<String> _sourceCode = FXCollections.observableArrayList();
     //table columns of the port map
     List<TableColumn> _portMapColumns;
     //records of the port map
@@ -173,11 +170,9 @@ public class MainWindowController implements Initializable,
 
     private void initializeCodeView() {
         _sideBarAnnotations = FXCollections.observableArrayList();
-        _machineCode =  FXCollections.observableArrayList();
-        _assemblerCode = FXCollections.observableArrayList();
+        _sourceCode = FXCollections.observableArrayList();
         lv_sideBar.setItems(_sideBarAnnotations);
-        lv_machineCode.setItems(_machineCode);
-        lv_assemblerCode.setItems(_assemblerCode);
+        lv_sourceCode.setItems(_sourceCode);
     }
     
     private void initializePortMapView() {
@@ -490,19 +485,29 @@ public class MainWindowController implements Initializable,
         lb_intconRegBit6.setText(b6.toString());
         lb_intconRegBit7.setText(b7.toString());
     }
-
+    
     @Override
-    public void addCodeLine(String machineCode, String assemblerCode) {
+    public void addCodeLine(Integer address, Integer instruction, String sourceCode) {
+        String addressStr;
+        String instructionStr;
+        if (address == null) {
+            addressStr = "    ";
+        } else {
+            addressStr = String.format("%04X", address);
+        }
+        if (instruction == null) {
+            instructionStr = "    ";
+        } else {
+            instructionStr = String.format("%04X", instruction);
+        }
         _sideBarAnnotations.add("");
-        _machineCode.add(machineCode);
-        _assemblerCode.add(assemblerCode);
+        _sourceCode.add(addressStr + "  " + instructionStr + "    " + sourceCode);
     }
 
     @Override
     public void setCurrentCodeLine(int line) {
         lv_sideBar.getSelectionModel().select(line);
-        lv_machineCode.getSelectionModel().select(line);
-        lv_assemblerCode.getSelectionModel().select(line);
+        lv_sourceCode.getSelectionModel().select(line);
     }
 
     @Override
