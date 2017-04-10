@@ -1,0 +1,541 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package pic_simulator_gui;
+
+import java.io.File;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+
+/**
+ *
+ * @author Alex
+ */
+public class MainWindowController implements Initializable,
+        MainWindowView {
+
+    @FXML
+    private ToggleButton bt_automaticSteppingMode;
+    @FXML
+    private TextField tf_automaticSteppingIntervall;
+    @FXML
+    private TextField tf_oscillatorFrequency;
+    @FXML
+    private CheckBox cb_breakOnWatchdogTrigger;
+    @FXML
+    private CheckBox cb_breakOnInterrupt;
+    @FXML
+    private Label lb_runningTime;
+    @FXML
+    private Label lb_wRegHexValue;
+    @FXML
+    private Label lb_fsrRegHexValue;
+    @FXML
+    private Label lb_pcRegHexValue;
+    @FXML
+    private Label lb_pclRegHexValue;
+    @FXML
+    private Label lb_pclathRegHexValue;
+    @FXML
+    private Label lb_statusRegHexValue;
+    @FXML
+    private Label lb_statusRegDecValue;
+    @FXML
+    private Label lb_statusRegBit0;
+    @FXML
+    private Label lb_statusRegBit1;
+    @FXML
+    private Label lb_statusRegBit2;
+    @FXML
+    private Label lb_statusRegBit3;
+    @FXML
+    private Label lb_statusRegBit4;
+    @FXML
+    private Label lb_statusRegBit5;
+    @FXML
+    private Label lb_statusRegBit6;
+    @FXML
+    private Label lb_statusRegBit7;
+    @FXML
+    private Label lb_optionRegHexValue;
+    @FXML
+    private Label lb_optionRegDecValue;
+    @FXML
+    private Label lb_optionRegBit0;
+    @FXML
+    private Label lb_optionRegBit1;
+    @FXML
+    private Label lb_optionRegBit2;
+    @FXML
+    private Label lb_optionRegBit3;
+    @FXML
+    private Label lb_optionRegBit4;
+    @FXML
+    private Label lb_optionRegBit5;
+    @FXML
+    private Label lb_optionRegBit6;
+    @FXML
+    private Label lb_optionRegBit7;
+    @FXML
+    private Label lb_intconRegHexValue;
+    @FXML
+    private Label lb_intconRegDecValue;
+    @FXML
+    private Label lb_intconRegBit0;
+    @FXML
+    private Label lb_intconRegBit1;
+    @FXML
+    private Label lb_intconRegBit2;
+    @FXML
+    private Label lb_intconRegBit3;
+    @FXML
+    private Label lb_intconRegBit4;
+    @FXML
+    private Label lb_intconRegBit5;
+    @FXML
+    private Label lb_intconRegBit6;
+    @FXML
+    private Label lb_intconRegBit7;
+    @FXML
+    private Label lb_statusBar;
+    @FXML
+    private ListView lv_sideBar;
+    @FXML
+    private ListView lv_machineCode;
+    @FXML
+    private ListView lv_assemblerCode;
+    @FXML
+    private TableView tv_portMap;
+    @FXML
+    private TableView tv_registerMap;
+
+    //Stage that is used by the view of this controller
+    private Stage _primaryStage;
+    //presenter of the view managed by this controller
+    private MainWindowPresenter _presenter;
+    //lists to add the code lines and breakpoints for the list views
+    ObservableList<String> _sideBarAnnotations;
+    ObservableList<String> _assemblerCode = FXCollections.observableArrayList();
+    ObservableList<String> _machineCode = FXCollections.observableArrayList();
+    //table columns of the port map
+    List<TableColumn> _portMapColumns;
+    //records of the port map
+    ObservableList<PortMapRecord> _portMapRecords;
+    //table columns of the register map
+    List<TableColumn> _registerMapColumns;
+    //records of the register map
+    ObservableList<RegisterMapRecord> _registerMapRecords = FXCollections.observableArrayList();
+    
+    @Override
+    public void initialize(URL url, ResourceBundle rb) {
+        registerListeners();
+    }
+
+    public void initializeData(Stage primaryStage, MainWindowPresenter presenter) {
+        _primaryStage = primaryStage;
+        _presenter = presenter;
+        showStatusMessage(MessageType.CONFIRMATION, "PIC simulator successfully started");
+    }
+
+    private void registerListeners() {
+        tf_automaticSteppingIntervall.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == false) {
+                //textbox has lost focus, apply changes now
+                tf_automaticSteppingIntervall_onChanged();
+            }
+        });
+
+        tf_oscillatorFrequency.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == false) {
+                //textbox has lost focus, apply changes now
+                tf_oscillatorFrequency_onChanged();
+            }
+        });
+    }
+
+    private void initializeCodeView() {
+        _sideBarAnnotations = FXCollections.observableArrayList();
+        _machineCode =  FXCollections.observableArrayList();
+        _assemblerCode = FXCollections.observableArrayList();
+        lv_sideBar.setItems(_sideBarAnnotations);
+        lv_machineCode.setItems(_machineCode);
+        lv_assemblerCode.setItems(_assemblerCode);
+    }
+    
+    private void initializePortMapView() {
+        //initialize port map table vire
+        _portMapColumns = new ArrayList<>(); //init,reset
+        _portMapColumns.add(new TableColumn<>());
+        _portMapColumns.add(new TableColumn<>("7"));
+        _portMapColumns.add(new TableColumn<>("6"));
+        _portMapColumns.add(new TableColumn<>("5"));
+        _portMapColumns.add(new TableColumn<>("4"));
+        _portMapColumns.add(new TableColumn<>("3"));
+        _portMapColumns.add(new TableColumn<>("2"));
+        _portMapColumns.add(new TableColumn<>("1"));
+        _portMapColumns.add(new TableColumn<>("0"));
+        _portMapColumns.get(0).setCellValueFactory(new PropertyValueFactory<>("description"));
+        _portMapColumns.get(1).setCellValueFactory(new PropertyValueFactory<>("bit7"));
+        _portMapColumns.get(2).setCellValueFactory(new PropertyValueFactory<>("bit6"));
+        _portMapColumns.get(3).setCellValueFactory(new PropertyValueFactory<>("bit5"));
+        _portMapColumns.get(4).setCellValueFactory(new PropertyValueFactory<>("bit4"));
+        _portMapColumns.get(5).setCellValueFactory(new PropertyValueFactory<>("bit3"));
+        _portMapColumns.get(6).setCellValueFactory(new PropertyValueFactory<>("bit2"));
+        _portMapColumns.get(7).setCellValueFactory(new PropertyValueFactory<>("bit1"));
+        _portMapColumns.get(8).setCellValueFactory(new PropertyValueFactory<>("bit0"));
+        tv_portMap.getColumns().clear(); //init,reset
+        tv_portMap.getColumns().addAll(_portMapColumns);
+        _portMapRecords = FXCollections.observableArrayList(); //init,reset
+        tv_portMap.setItems(_portMapRecords);
+        //set style
+        for (TableColumn column : _portMapColumns) {
+            column.setMinWidth(20);
+            column.setMaxWidth(20);
+        }
+        _portMapColumns.get(0).setMinWidth(50);
+        _portMapColumns.get(0).setMaxWidth(50);
+        _portMapRecords.add(new PortMapRecord("RA Tris", "0", "0", "0", "0", "1", "1", "1", "1"));
+    }
+    
+    private void initializeRegisterMapView() {
+        //initialize register map table view
+        _registerMapColumns = new ArrayList<>(); //init,reset
+        _registerMapColumns.add(new TableColumn<>());
+        _registerMapColumns.add(new TableColumn<>("F"));
+        _registerMapColumns.add(new TableColumn<>("E"));
+        _registerMapColumns.add(new TableColumn<>("D"));
+        _registerMapColumns.add(new TableColumn<>("C"));
+        _registerMapColumns.add(new TableColumn<>("B"));
+        _registerMapColumns.add(new TableColumn<>("A"));
+        _registerMapColumns.add(new TableColumn<>("9"));
+        _registerMapColumns.add(new TableColumn<>("8"));
+        _registerMapColumns.add(new TableColumn<>("7"));
+        _registerMapColumns.add(new TableColumn<>("6"));
+        _registerMapColumns.add(new TableColumn<>("5"));
+        _registerMapColumns.add(new TableColumn<>("4"));
+        _registerMapColumns.add(new TableColumn<>("3"));
+        _registerMapColumns.add(new TableColumn<>("2"));
+        _registerMapColumns.add(new TableColumn<>("1"));
+        _registerMapColumns.add(new TableColumn<>("0"));
+        _registerMapColumns.get(0).setCellValueFactory(new PropertyValueFactory<>("baseAddress"));
+        _registerMapColumns.get(1).setCellValueFactory(new PropertyValueFactory<>("byte15"));
+        _registerMapColumns.get(2).setCellValueFactory(new PropertyValueFactory<>("byte14"));
+        _registerMapColumns.get(3).setCellValueFactory(new PropertyValueFactory<>("byte13"));
+        _registerMapColumns.get(4).setCellValueFactory(new PropertyValueFactory<>("byte12"));
+        _registerMapColumns.get(5).setCellValueFactory(new PropertyValueFactory<>("byte11"));
+        _registerMapColumns.get(6).setCellValueFactory(new PropertyValueFactory<>("byte10"));
+        _registerMapColumns.get(7).setCellValueFactory(new PropertyValueFactory<>("byte9"));
+        _registerMapColumns.get(8).setCellValueFactory(new PropertyValueFactory<>("byte8"));
+        _registerMapColumns.get(9).setCellValueFactory(new PropertyValueFactory<>("byte7"));
+        _registerMapColumns.get(10).setCellValueFactory(new PropertyValueFactory<>("byte6"));
+        _registerMapColumns.get(11).setCellValueFactory(new PropertyValueFactory<>("byte5"));
+        _registerMapColumns.get(12).setCellValueFactory(new PropertyValueFactory<>("byte4"));
+        _registerMapColumns.get(13).setCellValueFactory(new PropertyValueFactory<>("byte3"));
+        _registerMapColumns.get(14).setCellValueFactory(new PropertyValueFactory<>("byte2"));
+        _registerMapColumns.get(15).setCellValueFactory(new PropertyValueFactory<>("byte1"));
+        _registerMapColumns.get(16).setCellValueFactory(new PropertyValueFactory<>("byte0"));
+        tv_registerMap.getColumns().clear(); //init,reset
+        tv_registerMap.getColumns().addAll(_registerMapColumns);
+        _registerMapRecords = FXCollections.observableArrayList(); //init,reset
+        tv_registerMap.setItems(_registerMapRecords);
+        //set style
+        for (TableColumn column : _registerMapColumns) {
+            column.setMinWidth(20);
+            column.setMaxWidth(20);
+        }
+        _registerMapRecords.add(new RegisterMapRecord("00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00"));
+    }
+
+    @FXML
+    private void bt_resetPIC_onClicked() {
+        _presenter.resetPIC();
+    }
+
+    @FXML
+    private void bt_powerResetPIC_onClicked() {
+        _presenter.powerResetPIC();
+    }
+
+    @FXML
+    private void bt_stepOver_onClicked() {;
+        _presenter.stepOver();
+    }
+
+    @FXML
+    private void bt_ignoreStep_onClicked() {
+        _presenter.ignoreStep();
+    }
+
+    @FXML
+    private void bt_stepIn_onClicked() {
+        _presenter.stepIn();
+    }
+
+    @FXML
+    private void bt_stepOut_onClicked() {
+        _presenter.stepOut();
+    }
+
+    @FXML
+    private void bt_automaticSteppingMode_onClicked() {
+        boolean value = bt_automaticSteppingMode.isSelected();
+        _presenter.setAutomaticSteppingMode(value);
+    }
+
+    @FXML
+    private void bt_resetRunningTimeStopWatch() {
+        _presenter.resetRunningTimeStopWatch();
+    }
+
+    @FXML
+    private void cb_breakOnWatchdogTrigger_onClicked() {
+        boolean value = cb_breakOnWatchdogTrigger.isSelected();
+        _presenter.setBreakOnWatchdogTriggered(value);
+    }
+    
+    @FXML
+    private void cb_breakOnInterrupt_onClicked() {
+        boolean value = cb_breakOnInterrupt.isSelected();
+        _presenter.setBreakOnInterrupt(value);
+    }
+
+    @FXML
+    private void menu_openProgram_onClicked() {
+        choseLSTFile();
+    }
+
+    private void choseLSTFile() {
+        FileChooser fc = new FileChooser();
+        fc.setTitle("Open LST File");
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("LST file (*.lst)", "*.LST", "*.lst");
+        fc.getExtensionFilters().add(extFilter);
+        File file = fc.showOpenDialog(_primaryStage);
+        if (file != null) {
+            String filePath = file.getAbsolutePath();
+            _presenter.setLSTFile(filePath);
+        }
+    }
+
+    private void tf_automaticSteppingIntervall_onChanged() {
+        String newValue = tf_automaticSteppingIntervall.getText();
+        int value;
+        try {
+            value = Integer.parseInt(newValue);
+        } catch (NumberFormatException e) {
+            //don't respect the value in simulation if it is invalid and just
+            //ignore it
+            showStatusMessage(MessageType.ERROR, "\"" + newValue + "\" is not a valid number");
+            return;
+        }
+        _presenter.setAutomaticSteppingInterval(value);
+    }
+
+    private void tf_oscillatorFrequency_onChanged() {
+        String newValue = tf_oscillatorFrequency.getText();
+        double value;
+        try {
+            value = Double.parseDouble(newValue);
+        } catch (NumberFormatException e) {
+            //don't respect the value in simulation if it is invalid and just
+            //ignore it
+            showStatusMessage(MessageType.ERROR, "\"" + newValue + "\" is not a valid number");
+            return;
+        }
+        _presenter.setOscillatorFrequency(value);
+    }
+
+    public void placeBreakPointMarker(int line) {
+        _sideBarAnnotations.set(line, "X");
+    }
+
+    public void removeBreakPointMarker(int line) {
+        _sideBarAnnotations.set(line, "");
+    }
+    
+    @Override
+    public void showStatusMessage(MessageType level, String message) {
+        lb_statusBar.setText(message);
+        String bgColor;
+        switch (level) {
+            case CONFIRMATION:
+                bgColor = GlobalVars.COLOR_CONFIRMATION;
+                break;
+            case ERROR:
+                bgColor = GlobalVars.COLOR_ERROR;
+                break;
+            case WARNING:
+                bgColor = GlobalVars.COLOR_WARNING;
+                break;
+            case NOTIFICATION:
+                bgColor = GlobalVars.COLOR_NOTIFICATION;
+                break;
+            case INFO:
+            default:
+                bgColor = GlobalVars.COLOR_INFO;
+                break;
+        }
+        lb_statusBar.setStyle("-fx-background-color: " + bgColor);
+    }
+
+    @Override
+    public void setSTATUSRegister(int value) {
+        lb_statusRegHexValue.setText(Integer.toHexString(value));
+        lb_statusRegDecValue.setText(Integer.toString(value));
+        Integer b0 = (value & 1);
+        Integer b1 = (value & 2) >> 1;
+        Integer b2 = (value & 4) >> 2;
+        Integer b3 = (value & 8) >> 3;
+        Integer b4 = (value & 16) >> 4;
+        Integer b5 = (value & 32) >> 5;
+        Integer b6 = (value & 64) >> 6;
+        Integer b7 = (value & 128) >> 7;
+        lb_statusRegBit0.setText(b0.toString());
+        lb_statusRegBit1.setText(b1.toString());
+        lb_statusRegBit2.setText(b2.toString());
+        lb_statusRegBit3.setText(b3.toString());
+        lb_statusRegBit4.setText(b4.toString());
+        lb_statusRegBit5.setText(b5.toString());
+        lb_statusRegBit6.setText(b6.toString());
+        lb_statusRegBit7.setText(b7.toString());
+    }
+
+    @Override
+    public void setRunningTime(int microSeconds) {
+        lb_runningTime.setText(Integer.toString(microSeconds));
+    }
+
+    @Override
+    public void setWRegister(int value) {
+        lb_wRegHexValue.setText(Integer.toHexString(value));
+    }
+
+    @Override
+    public void setFSRRegister(int value) {
+        lb_fsrRegHexValue.setText(Integer.toHexString(value));
+    }
+
+    @Override
+    public void setPCRegsiter(int value) {
+        lb_pcRegHexValue.setText(Integer.toHexString(value));
+    }
+
+    @Override
+    public void setPCLRegister(int value) {
+        lb_pclRegHexValue.setText(Integer.toHexString(value));
+    }
+
+    @Override
+    public void setPCLATHRegsiter(int value) {
+        lb_pclathRegHexValue.setText(Integer.toHexString(value));
+    }
+
+    @Override
+    public void setOPTIONRegister(int value) {
+        lb_optionRegHexValue.setText(Integer.toHexString(value));
+        lb_optionRegDecValue.setText(Integer.toString(value));
+        Integer b0 = (value & 1);
+        Integer b1 = (value & 2) >> 1;
+        Integer b2 = (value & 4) >> 2;
+        Integer b3 = (value & 8) >> 3;
+        Integer b4 = (value & 16) >> 4;
+        Integer b5 = (value & 32) >> 5;
+        Integer b6 = (value & 64) >> 6;
+        Integer b7 = (value & 128) >> 7;
+        lb_optionRegBit0.setText(b0.toString());
+        lb_optionRegBit1.setText(b1.toString());
+        lb_optionRegBit2.setText(b2.toString());
+        lb_optionRegBit3.setText(b3.toString());
+        lb_optionRegBit4.setText(b4.toString());
+        lb_optionRegBit5.setText(b5.toString());
+        lb_optionRegBit6.setText(b6.toString());
+        lb_optionRegBit7.setText(b7.toString());
+    }
+
+    @Override
+    public void setINTCONRegister(int value) {
+        lb_intconRegHexValue.setText(Integer.toHexString(value));
+        lb_intconRegDecValue.setText(Integer.toString(value));
+        Integer b0 = (value & 1);
+        Integer b1 = (value & 2) >> 1;
+        Integer b2 = (value & 4) >> 2;
+        Integer b3 = (value & 8) >> 3;
+        Integer b4 = (value & 16) >> 4;
+        Integer b5 = (value & 32) >> 5;
+        Integer b6 = (value & 64) >> 6;
+        Integer b7 = (value & 128) >> 7;
+        lb_intconRegBit0.setText(b0.toString());
+        lb_intconRegBit1.setText(b1.toString());
+        lb_intconRegBit2.setText(b2.toString());
+        lb_intconRegBit3.setText(b3.toString());
+        lb_intconRegBit4.setText(b4.toString());
+        lb_intconRegBit5.setText(b5.toString());
+        lb_intconRegBit6.setText(b6.toString());
+        lb_intconRegBit7.setText(b7.toString());
+    }
+
+    @Override
+    public void addCodeLine(String machineCode, String assemblerCode) {
+        _sideBarAnnotations.add("");
+        _machineCode.add(machineCode);
+        _assemblerCode.add(assemblerCode);
+    }
+
+    @Override
+    public void setCurrentCodeLine(int line) {
+        lv_sideBar.getSelectionModel().select(line);
+        lv_machineCode.getSelectionModel().select(line);
+        lv_assemblerCode.getSelectionModel().select(line);
+    }
+
+    @Override
+    public void initializeView() {
+        //initialize lists and tables views
+        initializeCodeView();
+        initializePortMapView();
+        initializeRegisterMapView();
+    }
+
+    @Override
+    public void setAutomaticSteppingMode(boolean b) {
+        bt_automaticSteppingMode.selectedProperty().set(b);
+    }
+
+    @Override
+    public void setAutomaticSteppingIntervall(int ms) {
+        tf_automaticSteppingIntervall.setText(Integer.toString(ms));
+    }
+
+    @Override
+    public void setOscillatorFrequency(double megaHz) {
+        tf_oscillatorFrequency.setText(Double.toString(megaHz));
+    }
+
+    @Override
+    public void setBreakOnWatchdogTrigger(boolean b) {
+        cb_breakOnWatchdogTrigger.selectedProperty().set(b);
+    }
+
+    @Override
+    public void setBreakOnInterrupt(boolean b) {
+        cb_breakOnInterrupt.selectedProperty().set(b);
+    }
+
+}

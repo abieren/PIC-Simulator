@@ -1,0 +1,584 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="858.0" prefWidth="1105.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pic_simulator_gui.MainWindowController">
+   <children>
+      <BorderPane layoutX="10.0" layoutY="10.0" prefHeight="215.0" prefWidth="326.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <top>
+            <MenuBar BorderPane.alignment="CENTER">
+               <menus>
+                  <Menu mnemonicParsing="false" text="File">
+                     <items>
+                        <MenuItem mnemonicParsing="false" onAction="#menu_openProgram_onClicked" text="Open Program" />
+                     </items>
+                  </Menu>
+               </menus>
+            </MenuBar>
+         </top>
+         <left>
+            <AnchorPane prefWidth="350.0" style="-fx-background-color: rgb(255,255,255);" BorderPane.alignment="CENTER">
+               <children>
+                  <VBox layoutY="20.0" spacing="5.0" style="-fx-background-color: rgb(230,230,230); -fx-border-color: rgb(180,180,180);" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <children>
+                        <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="Control Board">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <GridPane hgap="10.0">
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" prefWidth="100.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                           <children>
+                              <Button alignment="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#bt_resetPIC_onClicked" prefHeight="25.0" prefWidth="11.0" text="Reset" />
+                              <Button alignment="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#bt_powerResetPIC_onClicked" prefHeight="25.0" prefWidth="11.0" text="Power Reset" GridPane.columnIndex="1" />
+                           </children>
+                        </GridPane>
+                        <GridPane hgap="10.0">
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" percentWidth="50.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" percentWidth="50.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                           <children>
+                              <Button alignment="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#bt_ignoreStep_onClicked" text="Ignore" GridPane.columnIndex="1" />
+                              <Button alignment="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#bt_stepOver_onClicked" text="Step Over" />
+                           </children>
+                        </GridPane>
+                        <GridPane hgap="10.0" prefHeight="25.0" prefWidth="213.0">
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" percentWidth="50.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" percentWidth="50.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                           <children>
+                              <Button alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#bt_stepIn_onClicked" text="Step in" />
+                              <Button alignment="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#bt_stepOut_onClicked" prefHeight="25.0" prefWidth="74.0" text="Step out" GridPane.columnIndex="1" />
+                           </children>
+                        </GridPane>
+                        <ToggleButton fx:id="bt_automaticSteppingMode" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#bt_automaticSteppingMode_onClicked" prefHeight="25.0" prefWidth="162.0" text="Automatic Stepping Mode" />
+                        <GridPane hgap="10.0">
+                           <columnConstraints>
+                              <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                           <children>
+                              <Label text="step every (ms)" />
+                              <TextField fx:id="tf_automaticSteppingIntervall" text="1500" GridPane.columnIndex="1" />
+                           </children>
+                        </GridPane>
+                     </children>
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </VBox>
+                  <VBox layoutX="10.0" layoutY="192.0" spacing="5.0" style="-fx-background-color: rgb(230,230,230); -fx-border-color: rgb(180,180,180);" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="192.0">
+                     <children>
+                        <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="Crystal Oscillator Frequenzy">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <GridPane hgap="10.0">
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                           <children>
+                              <TextField fx:id="tf_oscillatorFrequency" text="3.600" />
+                              <Label text="MHz" GridPane.columnIndex="1" />
+                           </children>
+                        </GridPane>
+                     </children>
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </VBox>
+                  <VBox layoutX="14.0" layoutY="264.0" spacing="5.0" style="-fx-background-color: rgb(230,230,230); -fx-border-color: rgb(180,180,180);" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="264.0">
+                     <children>
+                        <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="Running Time Stop Watch">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <GridPane hgap="10.0">
+                           <columnConstraints>
+                              <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="80.0" minWidth="10.0" percentWidth="50.0" prefWidth="80.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                           <children>
+                              <Button alignment="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#bt_resetRunningTimeStopWatch" text="Reset" GridPane.columnIndex="1" />
+                              <GridPane>
+                                 <columnConstraints>
+                                    <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="20.0" minWidth="20.0" prefWidth="20.0" />
+                                 </columnConstraints>
+                                 <rowConstraints>
+                                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                 </rowConstraints>
+                                 <children>
+                                    <Label fx:id="lb_runningTime" alignment="CENTER_RIGHT" text="5200" />
+                                    <Label alignment="CENTER_RIGHT" text=" µs" GridPane.columnIndex="1" />
+                                 </children>
+                              </GridPane>
+                           </children>
+                        </GridPane>
+                     </children>
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </VBox>
+                  <VBox layoutX="10.0" layoutY="336.0" spacing="5.0" style="-fx-background-color: rgb(230,230,230); -fx-border-color: rgb(180,180,180);" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="336.0">
+                     <children>
+                        <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="Special Breakpoints">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <CheckBox fx:id="cb_breakOnWatchdogTrigger" mnemonicParsing="false" onMouseClicked="#cb_breakOnWatchdogTrigger_onClicked" text="break on watchdog trigger" />
+                        <CheckBox fx:id="cb_breakOnInterrupt" mnemonicParsing="false" onMouseClicked="#cb_breakOnInterrupt_onClicked" text="break on interrupt" />
+                     </children>
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </VBox>
+                  <VBox layoutX="10.0" layoutY="422.0" spacing="5.0" style="-fx-background-color: rgb(230,230,230); -fx-border-color: rgb(180,180,180);" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="422.0">
+                     <children>
+                        <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="Special Function Registers">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <GridPane hgap="10.0">
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                           <children>
+                              <Label text="W register" />
+                              <Label fx:id="lb_wRegHexValue" text="00" GridPane.columnIndex="1" />
+                           </children>
+                        </GridPane>
+                        <GridPane hgap="10.0">
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                           <children>
+                              <Label text="FSR" />
+                              <Label fx:id="lb_fsrRegHexValue" text="00" GridPane.columnIndex="1" />
+                           </children>
+                        </GridPane>
+                        <GridPane hgap="10.0">
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                           <children>
+                              <Label text="PC" />
+                              <Label fx:id="lb_pcRegHexValue" text="0000" GridPane.columnIndex="1" />
+                           </children>
+                        </GridPane>
+                        <GridPane hgap="10.0">
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                           <children>
+                              <Label text="PCL" />
+                              <Label fx:id="lb_pclRegHexValue" text="00" GridPane.columnIndex="1" />
+                           </children>
+                        </GridPane>
+                        <GridPane hgap="10.0">
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                           <children>
+                              <Label text="PCLATH" />
+                              <Label fx:id="lb_pclathRegHexValue" text="00" GridPane.columnIndex="1" />
+                           </children>
+                        </GridPane>
+                        <Separator prefWidth="200.0" />
+                        <GridPane hgap="10.0">
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="80.0" minWidth="80.0" percentWidth="50.0" prefWidth="80.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" percentWidth="50.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                           <children>
+                              <Label text="STATUS" />
+                              <GridPane GridPane.columnIndex="1">
+                                 <columnConstraints>
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" prefWidth="100.0" />
+                                 </columnConstraints>
+                                 <rowConstraints>
+                                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                 </rowConstraints>
+                                 <children>
+                                    <GridPane>
+                                       <columnConstraints>
+                                          <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" />
+                                       </columnConstraints>
+                                       <rowConstraints>
+                                          <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                       </rowConstraints>
+                                       <children>
+                                          <Label fx:id="lb_statusRegHexValue" text="66" />
+                                          <Label text="(hex)" GridPane.columnIndex="1" />
+                                       </children>
+                                    </GridPane>
+                                    <GridPane GridPane.columnIndex="1">
+                                       <columnConstraints>
+                                          <ColumnConstraints />
+                                          <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" />
+                                       </columnConstraints>
+                                       <rowConstraints>
+                                          <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                       </rowConstraints>
+                                       <children>
+                                          <Label fx:id="lb_statusRegDecValue" text="66" GridPane.columnIndex="1" />
+                                          <Label text="(dec)" GridPane.columnIndex="2" />
+                                       </children>
+                                    </GridPane>
+                                 </children>
+                              </GridPane>
+                           </children>
+                        </GridPane>
+                        <GridPane prefHeight="39.0" prefWidth="201.0">
+                          <columnConstraints>
+                            <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                            <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                           <children>
+                              <Label text="IRP" />
+                              <Label text="RP1" GridPane.columnIndex="1" />
+                              <Label text="RP0" GridPane.columnIndex="2" />
+                              <Label text="TO" GridPane.columnIndex="3" />
+                              <Label text="PD" GridPane.columnIndex="4" />
+                              <Label text="Z" GridPane.columnIndex="5" />
+                              <Label text="DC" GridPane.columnIndex="6" />
+                              <Label text="C" GridPane.columnIndex="7" />
+                              <Label fx:id="lb_statusRegBit7" text="0" GridPane.rowIndex="1" />
+                              <Label fx:id="lb_statusRegBit6" text="0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <Label fx:id="lb_statusRegBit5" text="0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                              <Label fx:id="lb_statusRegBit4" text="0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                              <Label fx:id="lb_statusRegBit3" text="0" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+                              <Label fx:id="lb_statusRegBit2" text="0" GridPane.columnIndex="5" GridPane.rowIndex="1" />
+                              <Label fx:id="lb_statusRegBit1" text="0" GridPane.columnIndex="6" GridPane.rowIndex="1" />
+                              <Label fx:id="lb_statusRegBit0" text="0" GridPane.columnIndex="7" GridPane.rowIndex="1" />
+                           </children>
+                        </GridPane>
+                        <Separator prefWidth="200.0" />
+                        <GridPane hgap="10.0">
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="80.0" minWidth="80.0" percentWidth="50.0" prefWidth="80.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" percentWidth="50.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                           <children>
+                              <Label text="OPTION" />
+                              <GridPane GridPane.columnIndex="1">
+                                 <columnConstraints>
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" prefWidth="100.0" />
+                                 </columnConstraints>
+                                 <rowConstraints>
+                                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                 </rowConstraints>
+                                 <children>
+                                    <GridPane>
+                                       <columnConstraints>
+                                          <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" />
+                                       </columnConstraints>
+                                       <rowConstraints>
+                                          <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                       </rowConstraints>
+                                       <children>
+                                          <Label fx:id="lb_optionRegHexValue" text="66" />
+                                          <Label text="(hex)" GridPane.columnIndex="1" />
+                                       </children>
+                                    </GridPane>
+                                    <GridPane GridPane.columnIndex="1">
+                                       <columnConstraints>
+                                          <ColumnConstraints />
+                                          <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" />
+                                       </columnConstraints>
+                                       <rowConstraints>
+                                          <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                       </rowConstraints>
+                                       <children>
+                                          <Label fx:id="lb_optionRegDecValue" text="66" GridPane.columnIndex="1" />
+                                          <Label text="(dec)" GridPane.columnIndex="2" />
+                                       </children>
+                                    </GridPane>
+                                 </children>
+                              </GridPane>
+                           </children>
+                        </GridPane>
+                        <GridPane prefHeight="39.0" prefWidth="201.0">
+                           <columnConstraints>
+                              <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                           <children>
+                              <Label text="IRP" />
+                              <Label text="RP1" GridPane.columnIndex="1" />
+                              <Label text="T0CS" GridPane.columnIndex="2" />
+                              <Label text="T0SE" GridPane.columnIndex="3" />
+                              <Label text="PSA" GridPane.columnIndex="4" />
+                              <Label text="PS2" GridPane.columnIndex="5" />
+                              <Label text="PS1" GridPane.columnIndex="6" />
+                              <Label text="PS0" GridPane.columnIndex="7" />
+                              <Label fx:id="lb_optionRegBit7" text="0" GridPane.rowIndex="1" />
+                              <Label fx:id="lb_optionRegBit6" text="0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <Label fx:id="lb_optionRegBit5" text="0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                              <Label fx:id="lb_optionRegBit4" text="0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                              <Label fx:id="lb_optionRegBit3" text="0" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+                              <Label fx:id="lb_optionRegBit2" text="0" GridPane.columnIndex="5" GridPane.rowIndex="1" />
+                              <Label fx:id="lb_optionRegBit1" text="0" GridPane.columnIndex="6" GridPane.rowIndex="1" />
+                              <Label fx:id="lb_optionRegBit0" text="0" GridPane.columnIndex="7" GridPane.rowIndex="1" />
+                           </children>
+                        </GridPane>
+                        <Separator prefWidth="200.0" />
+                        <GridPane hgap="10.0">
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="80.0" minWidth="80.0" percentWidth="50.0" prefWidth="80.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" percentWidth="50.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                           <children>
+                              <Label text="INTCON" />
+                              <GridPane GridPane.columnIndex="1">
+                                 <columnConstraints>
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" prefWidth="100.0" />
+                                 </columnConstraints>
+                                 <rowConstraints>
+                                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                 </rowConstraints>
+                                 <children>
+                                    <GridPane>
+                                       <columnConstraints>
+                                          <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" />
+                                       </columnConstraints>
+                                       <rowConstraints>
+                                          <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                       </rowConstraints>
+                                       <children>
+                                          <Label fx:id="lb_intconRegHexValue" text="66" />
+                                          <Label text="(hex)" GridPane.columnIndex="1" />
+                                       </children>
+                                    </GridPane>
+                                    <GridPane GridPane.columnIndex="1">
+                                       <columnConstraints>
+                                          <ColumnConstraints />
+                                          <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" />
+                                       </columnConstraints>
+                                       <rowConstraints>
+                                          <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                       </rowConstraints>
+                                       <children>
+                                          <Label fx:id="lb_intconRegDecValue" text="66" GridPane.columnIndex="1" />
+                                          <Label text="(dec)" GridPane.columnIndex="2" />
+                                       </children>
+                                    </GridPane>
+                                 </children>
+                              </GridPane>
+                           </children>
+                        </GridPane>
+                        <GridPane prefHeight="39.0" prefWidth="201.0">
+                           <columnConstraints>
+                              <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                           <children>
+                              <Label text="RBPU" />
+                              <Label text="IntEdg" GridPane.columnIndex="1" />
+                              <Label text="RP0" GridPane.columnIndex="2" />
+                              <Label text="TO" GridPane.columnIndex="3" />
+                              <Label text="PD" GridPane.columnIndex="4" />
+                              <Label text="Z" GridPane.columnIndex="5" />
+                              <Label text="DC" GridPane.columnIndex="6" />
+                              <Label text="C" GridPane.columnIndex="7" />
+                              <Label fx:id="lb_intconRegBit7" text="0" GridPane.rowIndex="1" />
+                              <Label fx:id="lb_intconRegBit6" text="0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <Label fx:id="lb_intconRegBit5" text="0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                              <Label fx:id="lb_intconRegBit4" text="0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                              <Label fx:id="lb_intconRegBit3" text="0" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+                              <Label fx:id="lb_intconRegBit2" text="0" GridPane.columnIndex="5" GridPane.rowIndex="1" />
+                              <Label fx:id="lb_intconRegBit1" text="0" GridPane.columnIndex="6" GridPane.rowIndex="1" />
+                              <Label fx:id="lb_intconRegBit0" text="0" GridPane.columnIndex="7" GridPane.rowIndex="1" />
+                           </children>
+                        </GridPane>
+                     </children>
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </VBox>
+               </children>
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </padding>
+            </AnchorPane>
+         </left>
+         <center>
+            <SplitPane dividerPositions="0.5570388349514563" orientation="VERTICAL" BorderPane.alignment="CENTER">
+               <items>
+                  <GridPane>
+                     <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="25.0" minWidth="25.0" prefWidth="25.0" />
+                        <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="10.0" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                     </rowConstraints>
+                     <children>
+                        <ListView fx:id="lv_sideBar" disable="true" />
+                        <SplitPane dividerPositions="0.33" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1">
+                           <items>
+                              <ListView fx:id="lv_machineCode" disable="true" prefHeight="200.0" prefWidth="172.0" />
+                              <ListView fx:id="lv_assemblerCode" disable="true" />
+                           </items>
+                        </SplitPane>
+                     </children>
+                  </GridPane>
+                  <GridPane>
+                     <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="212.0" minWidth="212.0" prefWidth="212.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="343.0" minWidth="342.0" prefWidth="342.0" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                     </rowConstraints>
+                     <children>
+                        <TableView fx:id="tv_portMap" GridPane.rowIndex="1" />
+                        <TableView fx:id="tv_registerMap" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="Register Map" GridPane.columnIndex="1">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="Port Map">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </GridPane>
+               </items>
+            </SplitPane>
+         </center>
+         <bottom>
+            <AnchorPane BorderPane.alignment="CENTER">
+               <children>
+                  <Label fx:id="lb_statusBar" prefHeight="27.0" prefWidth="957.0" style="-fx-background-color: rgb(230,230,230);" text="Status Bar" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </Label>
+               </children>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+            </AnchorPane>
+         </bottom>
+      </BorderPane>
+   </children>
+</AnchorPane>
