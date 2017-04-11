@@ -29,4 +29,20 @@ public class BinaryNumberHelper {
         return value;
     }
     
+    public static boolean areBitsZero(int value, Integer... bits) {
+        for (Integer bit : bits) {
+            int temp = (value >> bit) & 1;
+            if (temp != 0) return false;
+        }
+        return true;
+    }
+    
+    public static boolean areBitsOne(int value, Integer... bits) {
+        for (Integer bit : bits) {
+            int temp = (value >> bit) & 1;
+            if (temp != 1) return false;
+        }
+        return true;
+    }
+    
 }
