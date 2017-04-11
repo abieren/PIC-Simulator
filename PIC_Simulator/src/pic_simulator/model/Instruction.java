@@ -10,6 +10,7 @@ package pic_simulator.model;
  * @author Alex
  */
 public enum Instruction {
+    INVALID_INSTRUCTION,
     ADDWF,
     ANDWF,
     CLRF,
