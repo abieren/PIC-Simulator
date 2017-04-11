@@ -24,5 +24,7 @@ public interface Notifier {
     public void popStack(int popedValue);
 
     public void pushStack(int pushedValue);
+
+    public void invalidInstruction(int instruction);
     
 }

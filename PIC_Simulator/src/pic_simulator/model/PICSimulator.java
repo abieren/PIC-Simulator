@@ -8,6 +8,7 @@ package pic_simulator.model;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
+import pic_simulator.utils.BinaryNumberHelper;
 
 /**
  *
@@ -238,19 +239,14 @@ public class PICSimulator {
             case XORLW:
                 XORLW(instruction);
                 break;
+            case INVALID_INSTRUCTION:
+                _notifier.invalidInstruction(instruction);
+                //make a nop as default operation on invalid instruction
+                NOP();
+                break;
             default:
                 throw new AssertionError();
         }
-    }
-    
-    public int extractBits(int value, int from, int to) {
-        int result = 0;
-        int diff = to-from;
-        for (int i = 0; i <= diff; i++) {
-            int bit = value & (1 << (from + i) );
-            if (bit != 0) result = result | (1 << i);
-        }
-        return result;
     }
     
     public void nextCycle() {
@@ -268,7 +264,7 @@ public class PICSimulator {
     
     public void setSTATUSRegister(int value) {
         //short int to 8 bit
-        value = value & 0b1111111;
+        value = BinaryNumberHelper.normalizeToNBitNumber(value, 8);
         _registers.put(STATUS_REGISTER_ADDRESS_BANK0, value);
         _registers.put(STATUS_REGISTER_ADDRESS_BANK1, value);
     }
@@ -392,6 +388,7 @@ public class PICSimulator {
     }
     
     public void NOP() {
+        nextCycle();
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     

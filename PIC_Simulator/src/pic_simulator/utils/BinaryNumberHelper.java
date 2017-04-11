@@ -19,6 +19,15 @@ public class BinaryNumberHelper {
         return value & ((1 << (nBits + 1)) - 1);
     }
     
+    public static int extractBits(int value, int from, int to) {
+        int result = 0;
+        for (int i = from; i <= to; i++) {
+            int currentBit = getBit(value, i);
+            result = result | currentBit << (i-from);
+        }
+        return result;
+    }
+    
     public static int setBitsToZero(int value, Integer... bits) {
         for (Integer bit : bits) {
             value = value & (~(1 << bit));
