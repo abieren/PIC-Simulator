@@ -3,13 +3,15 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Alex/Documents/Git%20Repos/PIC-Simulator/PIC_Simulator_GUI/src/pic_simulator_gui/MainWindowPresenterImpl.java</file>
-            <file>file:/C:/Users/Alex/Documents/Git%20Repos/PIC-Simulator/PIC_Simulator_GUI/src/pic_simulator_gui/style.css</file>
-            <file>file:/C:/Users/Alex/Documents/Git%20Repos/PIC-Simulator/PIC_Simulator_GUI/src/pic_simulator_gui/MainWindowController.java</file>
-            <file>file:/C:/Users/Alex/Documents/Git%20Repos/PIC-Simulator/PIC_Simulator_GUI/src/pic_simulator_gui/MainWindow.fxml</file>
+            <file>file:/C:/Users/Alex/Documents/Git%20Repos/PIC-Simulator/PIC_Simulator_GUI/src/pic_simulator_gui/presenter/MainWindowPresenterImpl.java</file>
+            <file>file:/C:/Users/Alex/Documents/Git%20Repos/PIC-Simulator/PIC_Simulator_GUI/src/pic_simulator_gui/view/main/MainWindow.fxml</file>
             <file>file:/C:/Users/Alex/Documents/Git%20Repos/PIC-Simulator/PIC_Simulator_GUI/src/pic_simulator_gui/MC_Sim_GUI_Application.java</file>
-            <file>file:/C:/Users/Alex/Documents/Git%20Repos/PIC-Simulator/PIC_Simulator_GUI/src/pic_simulator_gui/MainWindowPresenter.java</file>
-            <file>file:/C:/Users/Alex/Documents/Git%20Repos/PIC-Simulator/PIC_Simulator_GUI/src/pic_simulator_gui/MainWindowView.java</file>
+            <file>file:/C:/Users/Alex/Documents/Git%20Repos/PIC-Simulator/PIC_Simulator_GUI/src/pic_simulator_gui/interfaces/MainWindowPresenter.java</file>
+            <file>file:/C:/Users/Alex/Documents/Git%20Repos/PIC-Simulator/PIC_Simulator_GUI/src/pic_simulator_gui/interfaces/MainWindowView.java</file>
+            <file>file:/C:/Users/Alex/Documents/Git%20Repos/PIC-Simulator/PIC_Simulator_GUI/src/pic_simulator_gui/view/main/MainWindowController.java</file>
+            <file>file:/C:/Users/Alex/Documents/Git%20Repos/PIC-Simulator/PIC_Simulator_GUI/src/pic_simulator_gui/view/main/style.css</file>
+            <file>file:/C:/Users/Alex/Documents/Git%20Repos/PIC-Simulator/PIC_Simulator_GUI/src/pic_simulator_gui/view/main/MessageColor.java</file>
+            <file>file:/C:/Users/Alex/Documents/Git%20Repos/PIC-Simulator/PIC_Simulator_GUI/src/pic_simulator_gui/view/main/MessageType.java</file>
         </group>
     </open-files>
 </project-private>
