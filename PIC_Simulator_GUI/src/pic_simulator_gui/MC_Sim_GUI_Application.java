@@ -5,14 +5,16 @@
  */
 package pic_simulator_gui;
 
+import pic_simulator_gui.presenter.MainWindowPresenterImpl;
+import pic_simulator_gui.view.main.MainWindowController;
 import java.awt.SplashScreen;
-import pic_simulator.Model;
+import pic_simulator.interfaces.Model;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import pic_simulator.Simulator;
+import pic_simulator.model.Simulator;
 
 /**
  *
@@ -34,7 +36,7 @@ public class MC_Sim_GUI_Application extends Application {
 //        }
         
         //Parent root = FXMLLoader.load(getClass().getResource("MainWindow.fxml"));
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("MainWindow.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("view/main/MainWindow.fxml"));
         Parent root = loader.load();
         
         //instanciate presenter

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package pic_simulator_gui;
+package pic_simulator_gui.view.main;
 
 import java.io.File;
 import java.net.URL;
@@ -24,6 +24,8 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import pic_simulator_gui.interfaces.MainWindowPresenter;
+import pic_simulator_gui.interfaces.MainWindowView;
 
 /**
  *
@@ -371,20 +373,20 @@ public class MainWindowController
         String bgColor;
         switch (level) {
             case CONFIRMATION:
-                bgColor = GlobalVars.COLOR_CONFIRMATION;
+                bgColor = MessageColor.COLOR_CONFIRMATION;
                 break;
             case ERROR:
-                bgColor = GlobalVars.COLOR_ERROR;
+                bgColor = MessageColor.COLOR_ERROR;
                 break;
             case WARNING:
-                bgColor = GlobalVars.COLOR_WARNING;
+                bgColor = MessageColor.COLOR_WARNING;
                 break;
             case NOTIFICATION:
-                bgColor = GlobalVars.COLOR_NOTIFICATION;
+                bgColor = MessageColor.COLOR_NOTIFICATION;
                 break;
             case INFO:
             default:
-                bgColor = GlobalVars.COLOR_INFO;
+                bgColor = MessageColor.COLOR_INFO;
                 break;
         }
         lb_statusBar.setStyle("-fx-background-color: " + bgColor);

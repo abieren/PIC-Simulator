@@ -3,7 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package pic_simulator_gui;
+package pic_simulator_gui.interfaces;
+
+import pic_simulator_gui.view.main.MessageType;
 
 /**
  *

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fileparser;
+package pic_simulator.utils;
 
 import java.util.List;
 import java.util.Map;
