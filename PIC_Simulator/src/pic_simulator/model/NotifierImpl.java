@@ -42,20 +42,18 @@ public class NotifierImpl implements Notifier {
     }
 
     @Override
-    public void popStack(int value) {
+    public void popStack(int value, boolean isUnderflow) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public void pushStack(int value) {
+    public void pushStack(int value, boolean isOverflow) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void invalidInstruction(int instruction) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-    
-    
+    }    
     
 }
