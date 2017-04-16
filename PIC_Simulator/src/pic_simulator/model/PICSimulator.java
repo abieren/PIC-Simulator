@@ -6,6 +6,7 @@
 package pic_simulator.model;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import pic_simulator.utils.BinaryNumberHelper;
@@ -25,6 +26,7 @@ public class PICSimulator {
     public int _instructionRegsiter;
     public int _wRegister;
 
+    public final int MAX_STACK_SIZE = 8;
     public final int DEFAULT_INSTRUCTION_VALUE = 0;
     public final int DEFAULT_REGSITER_VALUE = 0;
     public final int STATUS_REGISTER_ADDRESS_BANK0 = 0x3;
@@ -52,6 +54,7 @@ public class PICSimulator {
     };
     
     public void setPCRegister(int value) {
+        value = BinaryNumberHelper.truncateToNBit(value, 13);
         _notifier.changedPCRegister(_pcRegister, value);
         _pcRegister = value;
     }
@@ -61,6 +64,7 @@ public class PICSimulator {
     }
     
     public void setInstructionRegsiter(int value) {
+        value = BinaryNumberHelper.truncateToNBit(value, 14);
         _notifier.changedInstructionRegister(_instructionRegsiter, value);
         _instructionRegsiter = value;
     }
@@ -70,32 +74,41 @@ public class PICSimulator {
     }
     
     public void setWRegister(int value) {
+        value = BinaryNumberHelper.truncateToNBit(value, 8);
         _notifier.changedWRegister(_wRegister, value);
         _wRegister = value;
     }
     
     public int getRegister(int address) {
         //shrink to an 7 bit address
-        address = address & 0b1111111;
+        address = BinaryNumberHelper.truncateToNBit(address, 7);
         //use the RP0 bit in the STATUS register to form an 8 bit address
-        if (getSTATUSbitRP0() != 0) address = address | 0b10000000;
-        int value = _registers.get(address);
+        BinaryNumberHelper.setBit(address, 7, getSTATUSbitRP0());
+        Integer value = _registers.get(address);
+        //make sure a default value is returned if value of register in
+        //hash map hasn't been set yet
+        if (value == null) {
+            value = DEFAULT_REGSITER_VALUE;
+        }
         return value;
     }
     
     public void setRegister(int address, int value) {
-        //shrink to an 7 bit address
-        address = address & 0b1111111;
+        value = BinaryNumberHelper.truncateToNBit(value, 8);
+        address = BinaryNumberHelper.truncateToNBit(value, 7);
         //use the RP0 bit in the STATUS register to form an 8 bit address
-        if (getSTATUSbitRP0() != 0) address = address | 0b10000000;
-        _registers.put(address, value);
-        _notifier.changedRegister(address, getRegister(address), value);
-        //also set the mapped registers if address belongs to an mapped register
-        
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        address = BinaryNumberHelper.setBit(address, 7, getSTATUSbitRP0());
+        //get all mapped registers for address
+        List<Integer> registers = RegisterAddressDecoder.getAllRegistersForAddress(address);
+        //modify hash map for every mapped register for given address
+        for (Integer register : registers) {
+            _notifier.changedRegister(register, getRegister(register), value);
+            _registers.put(register, value);
+        }
     }
     
     public int getInstructionFromProgramMemory(int address) {
+        address = BinaryNumberHelper.truncateToNBit(address, 13);
         Integer value = _programMemory.get(address);
         if (value == null) {
             value = DEFAULT_INSTRUCTION_VALUE;
@@ -104,24 +117,38 @@ public class PICSimulator {
     }
     
     public void setInstructionToProgramMemory(int address, int instruction) {
+        address = BinaryNumberHelper.truncateToNBit(address, 13);
+        instruction = BinaryNumberHelper.truncateToNBit(instruction, 14);
         _programMemory.put(address, instruction);
     }
     
     public int popStack() {
+        boolean isUnderflow = false;
+        if (_stack.isEmpty()) {
+            _stack.push(0);
+            isUnderflow = true;
+        }
         int value = _stack.pop();
-        _notifier.popStack(value);
+        _notifier.popStack(value, isUnderflow);
         return value;
     }
     
     public void pushStack(int value) {
+        //simulate circular stack on PIC:
+        //if stack has maximum size, override the oldest value in stack
+        value = BinaryNumberHelper.truncateToNBit(value, 13);
+        boolean isOverflow = false;
+        if (_stack.size() == MAX_STACK_SIZE) {
+            _stack.remove(0);
+            isOverflow = true;
+        }
         _stack.push(value);
-        _notifier.pushStack(value);
+        _notifier.pushStack(value, isOverflow);
     }
     
     public void makeStep() {
         fetchNextInstruction();
         decodeAndExecuteInstruction(getInstructionRegsiter());
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     public void fetchNextInstruction() {
@@ -257,89 +284,81 @@ public class PICSimulator {
         }
     }
     
+    public void skipNextInstructionWithNOP() {
+        NOP();
+        nextCycle();
+    }
+    
     public void nextCycle() {
         _notifier.nextCycle();
     }
     
     /*STATUS REGSITER*/
     public int getSTATUSRegister() {
-        Integer value = _registers.get(STATUS_REGISTER_ADDRESS_BANK0);
-        if (value == null) {
-            value = DEFAULT_REGSITER_VALUE;
-        }
-        return value;
+        return getRegister(STATUS_REGISTER_ADDRESS_BANK0);
     }
     
     public void setSTATUSRegister(int value) {
-        //short int to 8 bit
-        value = BinaryNumberHelper.normalizeToNBitNumber(value, 8);
-        _registers.put(STATUS_REGISTER_ADDRESS_BANK0, value);
-        _registers.put(STATUS_REGISTER_ADDRESS_BANK1, value);
+        setRegister(STATUS_REGISTER_ADDRESS_BANK0, value);
     }
     
     public int getSTATUSbitC() {
-        return getSTATUSRegister() & 1;
+        return BinaryNumberHelper.getBit(getSTATUSRegister(), 0);
     }
     
     public void setSTATUSbitC(int b) {
-        int bitmask = 1;
-        int value = getSTATUSRegister() & ~bitmask;
-        if (b != 0) value = value | bitmask;
+        int value = getSTATUSRegister();
+        value = BinaryNumberHelper.setBit(value, 0, b);
         setSTATUSRegister(value);
     }
     
     public int getSTATUSbitDC() {
-        return getSTATUSRegister() & 2;
+        return BinaryNumberHelper.getBit(getSTATUSRegister(), 1);
     }
     
     public void setSTATUSbitDC(int b) {
-        int bitmask = 2;
-        int value = getSTATUSRegister() & ~bitmask;
-        if (b != 0) value = value | bitmask;
+        int value = getSTATUSRegister();
+        value = BinaryNumberHelper.setBit(value, 1, b);
         setSTATUSRegister(value);
     }
     
     public int getSTATUSbitZ() {
-        return getSTATUSRegister() & 4;
+        return BinaryNumberHelper.getBit(getSTATUSRegister(), 2);
     }
     
     public void setSTATUSbitZ(int b) {
-        int bitmask = 4;
-        int value = getSTATUSRegister() & ~bitmask;
-        if (b != 0) value = value | bitmask;
+        int value = getSTATUSRegister();
+        value = BinaryNumberHelper.setBit(value, 2, b);
         setSTATUSRegister(value);
     }
     
     public int getSTATUSbitPD() {
-        return getSTATUSRegister() & 8;
+        return BinaryNumberHelper.getBit(getSTATUSRegister(), 3);
     }
     
     public void setSTATUSbitPD(int b) {
-        int bitmask = 8;
-        int value = getSTATUSRegister() & ~bitmask;
-        if (b != 0) value = value | bitmask;
+        int value = getSTATUSRegister();
+        value = BinaryNumberHelper.setBit(value, 3, b);
         setSTATUSRegister(value);
     }
     
     public int getSTATUSbitTO() {
-        return getSTATUSRegister() & 16;
+        return BinaryNumberHelper.getBit(getSTATUSRegister(), 4);
     }
     
     public void setSTATUSbitTO(int b) {
-        int bitmask = 16;
-        int value = getSTATUSRegister() & ~bitmask;
-        if (b != 0) value = value | bitmask;
+        int value = getSTATUSRegister();
+        value = BinaryNumberHelper.setBit(value, 4, b);
         setSTATUSRegister(value);
     }
     
     public int getSTATUSbitRP0() {
-        return getSTATUSRegister() & 32;
+        return BinaryNumberHelper.getBit(getSTATUSRegister(), 5);
     }
     
     public void setSTATUSbitRP0(int b) {
-        int bitmask = 32;
-        int value = getSTATUSRegister() & ~bitmask;
-        if (b != 0) value = value | bitmask;
+        int value = getSTATUSRegister();
+        value = BinaryNumberHelper.setBit(value, 5, b);
         setSTATUSRegister(value);
     }
     
@@ -348,50 +367,148 @@ public class PICSimulator {
     
     /*BYTE-ORIENTED FILE REGISTER OPERATIONS*/
     public void ADDWF(int f, int d) {
+        int result = getWRegister() + getRegister(f);
+        if (result == 0) {
+            setSTATUSbitZ(1);
+        }
+        if (result > 0xF) {
+            setSTATUSbitDC(1);
+        }
+        if (result > 0xFF) {
+            setSTATUSbitC(1);
+        }
+        if (d == 0) {
+            setWRegister(result);
+        } else {
+            setRegister(f, result);
+        }
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     public void ANDWF(int f, int d) {
+        int result = getWRegister() & getRegister(f);
+        if (result == 0) {
+            setSTATUSbitZ(1);
+        }
+        if (d == 0) {
+            setWRegister(result);
+        } else {
+            setRegister(f, result);
+        }
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     public void CLRF(int f) {
+        setRegister(f, 0);
+        setSTATUSbitZ(1);
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     public void CLRW() {
+        setWRegister(0);
+        setSTATUSbitZ(1);
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     public void COMF(int f, int d) {
+        int result = ~getRegister(f);
+        if (result == 0) {
+            setSTATUSbitZ(1);
+        }
+        if (d == 0) {
+            setWRegister(result);
+        } else {
+            setRegister(f, result);
+        }
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     public void DECF(int f, int d) {
+        int result = getRegister(f) - 1;
+        if (result == 0) {
+            setSTATUSbitZ(1);
+        }
+        if (d == 0) {
+            setWRegister(result);
+        } else {
+            setRegister(f, result);
+        }
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     public void DECFSZ(int f, int d) {
+        int result = getRegister(f) - 1;
+        //no status affected
+        if (d == 0) {
+            setWRegister(result);
+        } else {
+            setRegister(f, result);
+        }
+        if (result == 0) {
+            skipNextInstructionWithNOP();
+        }
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     public void INCF(int f, int d) {
+        int result = getRegister(f) + 1;
+        result = BinaryNumberHelper.truncateToNBit(result, 8);
+        if (result == 0) {
+            setSTATUSbitZ(1);
+        }
+        if (d == 0) {
+            setWRegister(result);
+        } else {
+            setRegister(f, result);
+        }
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     public void INCFSZ(int f, int d) {
+        int result = getRegister(f) + 1;
+        result = BinaryNumberHelper.truncateToNBit(result, 8);
+        //no status affected
+        if (d == 0) {
+            setWRegister(result);
+        } else {
+            setRegister(f, result);
+        }
+        if (result == 0) {
+            skipNextInstructionWithNOP();
+        }
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     public void IORWF(int f, int d) {
+        int result = getWRegister() ^ getRegister(f);
+        if (result == 0) {
+            setSTATUSbitZ(1);
+        }
+        if (d == 0) {
+            setWRegister(result);
+        } else {
+            setRegister(f, result);
+        }
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     public void MOVF(int f, int d) {
+        int result = getRegister(f);
+        if (result == 0) {
+            setSTATUSbitZ(1);
+        }
+        if (d == 0) {
+            setWRegister(result);
+        } else {
+            setRegister(f, result);
+        }
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     public void MOVWF(int f) {
+        int result = getWRegister();
+        //no status affectred
+        setRegister(f, result);
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
@@ -401,14 +518,38 @@ public class PICSimulator {
     }
     
     public void RLF(int f, int d) {
+        int result = getRegister(f);
+        int tmp = BinaryNumberHelper.getBit(result, 7);
+        setSTATUSbitC(tmp);
+        result = result << 1;
+        result = BinaryNumberHelper.setBit(result, 0, tmp);
+        if (d == 0) {
+            setWRegister(result);
+        } else {
+            setRegister(f, result);
+        }
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     public void RRF(int f, int d) {
+        int result = getRegister(f);
+        int tmp = BinaryNumberHelper.getBit(result, 0);
+        setSTATUSbitC(tmp);
+        result = result >> 1;
+        result = BinaryNumberHelper.setBit(result, 7, tmp);
+        if (d == 0) {
+            setWRegister(result);
+        } else {
+            setRegister(f, result);
+        }
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     public void SUBWF(int f, int d) {
+        int result = getRegister(f) - getWRegister();
+        if (result == 0) {
+            setSTATUSbitZ(1);
+        }
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
