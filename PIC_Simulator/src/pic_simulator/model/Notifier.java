@@ -21,9 +21,9 @@ public interface Notifier {
 
     void nextCycle();
 
-    public void popStack(int popedValue);
+    public void popStack(int popedValue, boolean isUnderflow);
 
-    public void pushStack(int pushedValue);
+    public void pushStack(int pushedValue, boolean isOverflow);
 
     public void invalidInstruction(int instruction);
     
