@@ -15,7 +15,7 @@ public class BinaryNumberHelper {
         return (value >> bit) & 1;
     }
     
-    public static int normalizeToNBitNumber(int value, int nBits) {
+    public static int truncateToNBit(int value, int nBits) {
         return value & ((1 << (nBits + 1)) - 1);
     }
     
@@ -26,6 +26,14 @@ public class BinaryNumberHelper {
             result = result | currentBit << (i-from);
         }
         return result;
+    }
+    
+    public static int setBit(int value, int bit, int b) {
+        if (b == 0) {
+            return setBitsToZero(value, bit);
+        } else {
+            return setBitsToOne(value, bit);
+        }
     }
     
     public static int setBitsToZero(int value, Integer... bits) {
