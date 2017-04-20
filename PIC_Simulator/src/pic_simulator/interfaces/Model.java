@@ -36,5 +36,7 @@ public interface Model {
     public void setAutomaticSteppingInterval(int ms);
 
     public void setAutomaticSteppingMode(boolean b);
+
+    public void stepOver();
     
 }

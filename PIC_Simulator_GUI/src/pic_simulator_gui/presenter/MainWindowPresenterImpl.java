@@ -64,7 +64,7 @@ public class MainWindowPresenterImpl
 
     @Override
     public void stepOver() {
-        _model.stepOut();
+        _model.stepOver();
     }
 
     @Override
