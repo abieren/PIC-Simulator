@@ -18,7 +18,7 @@ public class NotifierImpl implements Notifier {
     
     @Override
     public void changedWRegister(int oldValue, int newValue) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        _presenter.displayWRegister(newValue);
     }
 
     @Override
