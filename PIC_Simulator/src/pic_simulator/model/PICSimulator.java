@@ -318,6 +318,17 @@ public class PICSimulator {
         }
     }
     
+    public boolean isUnderCarry(int a, int b) {
+        if (a >= b) {
+            return false;
+        } else {
+            return true;
+        } 
+    }
+    
+    public boolean isUnderDigitCarry(int a, int b) {
+        return isUnderCarry(a & 0x0000000F, b & 0x0000000F);
+    }
     /*STATUS REGSITER*/
     public int getSTATUSRegister() {
         return getRegister(STATUS_REGISTER_ADDRESS_BANK0);
@@ -575,6 +586,12 @@ public class PICSimulator {
         if (result == 0) {
             setSTATUSbitZ(1);
         }
+        if (isUnderCarry(getRegister(f), getWRegister())) {
+            setSTATUSbitC(1);
+        }
+        if (isUnderDigitCarry(getRegister(f), getWRegister())) {
+            setSTATUSbitDC(1);
+        }
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
@@ -644,6 +661,11 @@ public class PICSimulator {
     }
     
     public void ANDLW(int k) {
+        int result = getWRegister() & k;
+        if (result == 0) {
+            setSTATUSbitZ(1);
+        }
+        setWRegister(result);
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
@@ -652,6 +674,9 @@ public class PICSimulator {
     }
     
     public void CLRWDT() {
+        setSTATUSbitTO(1);
+        setSTATUSbitPD(1);
+        // TODO add: write 00h into WDT  AND 0 into WDT prescaler
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
@@ -660,10 +685,16 @@ public class PICSimulator {
     }
     
     public void IORLW(int k) {
+        int result = getWRegister() | k;
+        if (result == 0) {
+            setSTATUSbitZ(1);
+        }
+        setWRegister(result);
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     public void MOVLW(int k) {
+        setWRegister(k);
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
@@ -684,10 +715,26 @@ public class PICSimulator {
     }
     
     public void SUBLW(int k) {
+        int result = k - getWRegister();
+        if (isUnderCarry(k, getWRegister())) {
+            setSTATUSbitC(1);
+        }
+        if (isUnderDigitCarry(k, getWRegister())) {
+            setSTATUSbitDC(1);
+        }
+        if (result == 0) {
+            setSTATUSbitZ(1);
+        }
+        setWRegister(result);
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     public void XORLW(int k) {
+        int result = getWRegister() ^ k;
+        if (result == 0) {
+            setSTATUSbitZ(1);
+        }
+        setWRegister(result);
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
