@@ -28,7 +28,7 @@ public class NotifierImpl implements Notifier {
 
     @Override
     public void changedInstructionRegister(int oldValue, int newValue) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //instruction register is not displayed yet
     }
 
     @Override
