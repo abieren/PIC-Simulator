@@ -293,6 +293,31 @@ public class PICSimulator {
         _notifier.nextCycle();
     }
     
+    
+    /* Carry and Digit Carry Helpers*/
+    
+    public boolean isCarry(int a, int b) {
+        int tmpa = a & 0x000000FF;
+        int tmpb = b & 0x000000FF;
+        int resultint = (tmpa+tmpb) >> 8; // is only 0 or 1
+        if (resultint == 0) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+    
+    public boolean isDigitCarry(int a, int b) {
+        int tmpa = a & 0x0000000F;
+        int tmpb = b & 0x0000000F;
+        int resultint =  (tmpa+tmpb) >> 4; // is only 0 or 1
+        if (resultint == 0) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+    
     /*STATUS REGSITER*/
     public int getSTATUSRegister() {
         return getRegister(STATUS_REGISTER_ADDRESS_BANK0);
@@ -371,10 +396,10 @@ public class PICSimulator {
         if (result == 0) {
             setSTATUSbitZ(1);
         }
-        if (result > 0xF) {
+        if (isDigitCarry(getWRegister(), getRegister(f))) {
             setSTATUSbitDC(1);
         }
-        if (result > 0xFF) {
+        if (isCarry(getWRegister(), getRegister(f))) {
             setSTATUSbitC(1);
         }
         if (d == 0) {
@@ -604,6 +629,17 @@ public class PICSimulator {
     
     /*LITERAL AND CONTROL OPERATIONS*/
     public void ADDLW(int k) {
+        int result = getWRegister() + k;
+        if (isCarry(getWRegister(), k)) {
+            setSTATUSbitC(1);
+        }
+        if (isDigitCarry(getWRegister(), k)) {
+            setSTATUSbitDC(1);
+        }
+        if (result == 0) {
+            setSTATUSbitZ(1);
+        }
+        setWRegister(result);
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
