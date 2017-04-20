@@ -581,10 +581,16 @@ public class PICSimulator {
     
     /*BIT-ORIENTED FILE REGISTER OPERATIONS*/
     public void BCF(int f, int b) {
+        int result = getRegister(f);
+        result = BinaryNumberHelper.setBit(result, b, 0);
+        setRegister(f, result);
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     public void BSF(int f, int b) {
+        int result = getRegister(f);
+        result = BinaryNumberHelper.setBit(result, b, 1);
+        setRegister(f, result);
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
