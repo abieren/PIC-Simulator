@@ -554,6 +554,15 @@ public class PICSimulator {
     }
     
     public void SWAPF(int f, int d) {
+        int result = getRegister(f);
+        int front2back = (result & 0x000000F0) >> 4;
+        int back2front = (result & 0x0000000F) << 4;
+        result = front2back + back2front;
+        if (d == 0) {
+            setWRegister(result);
+        } else {
+            setRegister(f, result);
+        }
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
