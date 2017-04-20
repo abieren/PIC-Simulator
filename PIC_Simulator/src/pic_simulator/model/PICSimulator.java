@@ -152,9 +152,11 @@ public class PICSimulator {
     }
     
     public void fetchNextInstruction() {
-        int value = getPCRegister();
-        value = getInstructionFromProgramMemory(value);
-        setInstructionRegsiter(value);
+        int currentPC = getPCRegister();
+        int currentInstr = getInstructionFromProgramMemory(currentPC);
+        setInstructionRegsiter(currentInstr);
+        //inrement PC register after fetch
+        setPCRegister(currentPC+1);
     }
     
     public void decodeAndExecuteInstruction(int instruction) {
