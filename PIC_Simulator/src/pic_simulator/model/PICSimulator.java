@@ -567,6 +567,15 @@ public class PICSimulator {
     }
     
     public void XORWF(int f, int d) {
+        int result = getWRegister() ^ getRegister(f);
+        if (result == 0) {
+            setSTATUSbitZ(1);
+        }
+        if (d == 0) {
+            setWRegister(result);
+        } else {
+            setRegister(f, result);
+        }
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
