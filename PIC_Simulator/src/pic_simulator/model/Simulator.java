@@ -116,7 +116,6 @@ public class Simulator implements Model {
                 _pic.setInstructionToProgramMemory(pr.address.get(i), pr.instruction.get(i));
             }
         }
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
