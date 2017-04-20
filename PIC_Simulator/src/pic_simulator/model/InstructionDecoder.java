@@ -61,7 +61,7 @@ public class InstructionDecoder {
         if (BinaryNumberHelper.matchPattern(instruction, "13:d_0111xxxxxxxxxx")) return Instruction.BTFSS;
         //LITERAL AND CONTROL OPERATIONS
         //ANDLW
-        if (BinaryNumberHelper.matchPattern(instruction, "13:d_11111xxxxxxxxx")) return Instruction.ANDLW;
+        if (BinaryNumberHelper.matchPattern(instruction, "13:d_111001xxxxxxxx")) return Instruction.ANDLW;
         //CALL
         if (BinaryNumberHelper.matchPattern(instruction, "13:d_100xxxxxxxxxxx")) return Instruction.CALL;
         //CLRWDT
