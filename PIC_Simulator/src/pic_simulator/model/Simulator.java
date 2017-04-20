@@ -75,7 +75,7 @@ public class Simulator implements Model {
     
     @Override
     public void stepOver() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        _pic.makeStep();
     }
     
     @Override
