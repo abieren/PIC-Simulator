@@ -694,8 +694,8 @@ public class PICSimulator {
     }
     
     public void MOVLW(int k) {
+        //no status affected
         setWRegister(k);
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     public void RETFIE() {
