@@ -272,7 +272,7 @@ public class MainWindowController
     }
 
     @FXML
-    private void bt_stepOver_onClicked() {;
+    private void bt_stepOver_onClicked() {
         _presenter.stepOver();
     }
 
@@ -507,7 +507,7 @@ public class MainWindowController
     }
 
     @Override
-    public void displayCurrentCodeLine(int line) {
+    public void displayExecutedCodeLine(int line) {
         lv_sideBar.getSelectionModel().select(line);
         lv_sourceCode.getSelectionModel().select(line);
     }
