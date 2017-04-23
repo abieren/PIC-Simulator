@@ -508,8 +508,8 @@ public class MainWindowController
 
     @Override
     public void displayExecutedCodeLine(int line) {
-        lv_sideBar.getSelectionModel().select(line);
-        lv_sourceCode.getSelectionModel().select(line);
+        lv_sideBar.getSelectionModel().select(line-1);
+        lv_sourceCode.getSelectionModel().select(line-1);
     }
 
     @Override
