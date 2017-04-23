@@ -22,7 +22,7 @@ public interface MainWindowView {
 
     public void addCodeLine(Integer address, Integer instruction, String sourceCode);
 
-    public void displayCurrentCodeLine(int line);
+    public void displayExecutedCodeLine(int line);
 
     public void displayRunningTime(int microSeconds);
 
