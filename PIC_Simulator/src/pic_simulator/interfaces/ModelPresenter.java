@@ -14,6 +14,8 @@ public interface ModelPresenter {
     public void initializeView();
     
     public void addCodeLine(Integer address, Integer instruction, String sourceCode);
+    
+    public void displayExecutedCodeLine(int line);
 
     public void displayAutomaticSteppingMode(boolean b);
 
