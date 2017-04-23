@@ -14,8 +14,8 @@ import pic_simulator.utils.BinaryNumberHelper;
 public class InstructionDecoder {
     public static Instruction decode(int instruction) {
         //BYTE-ORIENTED FILE REGISTER OPERATIONS
-        //ADDLW
-        if (BinaryNumberHelper.matchPattern(instruction, "13:d_000111xxxxxxxx")) return Instruction.ADDLW;
+        //ADDWF
+        if (BinaryNumberHelper.matchPattern(instruction, "13:d_000111xxxxxxxx")) return Instruction.ADDWF;
         //ANDWF
         if (BinaryNumberHelper.matchPattern(instruction, "13:d_000101xxxxxxxx")) return Instruction.ANDWF;
         //CLRF
@@ -60,6 +60,8 @@ public class InstructionDecoder {
         //BTFSS
         if (BinaryNumberHelper.matchPattern(instruction, "13:d_0111xxxxxxxxxx")) return Instruction.BTFSS;
         //LITERAL AND CONTROL OPERATIONS
+        //ADDLW
+        if (BinaryNumberHelper.matchPattern(instruction, "13:d_11111xxxxxxxxx")) return Instruction.ADDLW;
         //ANDLW
         if (BinaryNumberHelper.matchPattern(instruction, "13:d_111001xxxxxxxx")) return Instruction.ANDLW;
         //CALL
@@ -81,7 +83,7 @@ public class InstructionDecoder {
         //SLEEP
         if (BinaryNumberHelper.matchPattern(instruction, "13:d_00000001100011")) return Instruction.SLEEP;
         //SUBLW
-        if (BinaryNumberHelper.matchPattern(instruction, "13:d_111100xxxxxxxx")) return Instruction.SUBLW;
+        if (BinaryNumberHelper.matchPattern(instruction, "13:d_11110xxxxxxxxx")) return Instruction.SUBLW;
         //XORLW
         if (BinaryNumberHelper.matchPattern(instruction, "13:d_111010xxxxxxxx")) return Instruction.XORLW;
         //if no instruction has been recognized yet, it is a invalid instruction
