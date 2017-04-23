@@ -19,8 +19,9 @@ public class Simulator implements Model {
     private final ModelPresenter _presenter;
     private final Notifier _notifier;
     private final PICSimulator _pic;
-    
     private String _lstFilePath;
+    private ParseResult _parseResult;
+    
     private boolean _automaticSteppingMode;
     private int _automaticSteppingInterval;     //interval in ms
     private double _oscillatorFrequency;
@@ -75,6 +76,9 @@ public class Simulator implements Model {
     
     @Override
     public void stepOver() {
+        int pc = _pic.getPCRegister();
+        int line = _parseResult.addressToLineNumber.get(pc);
+        _presenter.displayExecutedCodeLine(line);
         _pic.makeStep();
     }
     
@@ -110,6 +114,7 @@ public class Simulator implements Model {
         initialize();
         _lstFilePath = filePath;
         ParseResult pr = FileParser.parse(filePath);
+        _parseResult = pr;
         for (int i = 0; i < pr.fileLines.size(); i++) {
             _presenter.addCodeLine(pr.address.get(i), pr.instruction.get(i), pr.sourceCode.get(i));
             if (pr.address.get(i) != null) {
