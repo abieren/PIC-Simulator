@@ -171,5 +171,10 @@ public class MainWindowPresenterImpl
     public void addCodeLine(Integer address, Integer instruction, String sourceCode) {
         _view.addCodeLine(address, instruction, sourceCode);
     }
+
+    @Override
+    public void displayExecutedCodeLine(int line) {
+        _view.displayExecutedCodeLine(line);
+    }
     
 }
