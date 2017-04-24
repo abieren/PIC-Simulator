@@ -29,8 +29,8 @@ public class PICSimulator {
     public final int MAX_STACK_SIZE = 8;
     public final int DEFAULT_INSTRUCTION_VALUE = 0;
     public final int DEFAULT_REGSITER_VALUE = 0;
-    public final int STATUS_REGISTER_ADDRESS_BANK0 = 0x3;
-    public final int STATUS_REGISTER_ADDRESS_BANK1 = 0x83;
+    public final int STATUS_REGISTER_ADDRESS_BANK0 = 0x03;
+    public final int PCLATH_REGISTER_ADDRESS_BANK0 = 0x0A;
 
     
     public PICSimulator(Notifier notifier) {
@@ -417,11 +417,20 @@ public class PICSimulator {
         if (result == 0) {
             setSTATUSbitZ(1);
         }
+        else {
+            setSTATUSbitZ(0);
+        }
         if (isDigitCarry(getWRegister(), getRegister(f))) {
             setSTATUSbitDC(1);
         }
+        else {
+            setSTATUSbitDC(0);
+        }
         if (isCarry(getWRegister(), getRegister(f))) {
             setSTATUSbitC(1);
+        }
+        else {
+            setSTATUSbitC(0);
         }
         if (d == 0) {
             setWRegister(result);
@@ -560,7 +569,6 @@ public class PICSimulator {
     
     public void NOP() {
         nextCycle();
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     public void RLF(int f, int d) {
@@ -660,11 +668,20 @@ public class PICSimulator {
         if (isCarry(getWRegister(), k)) {
             setSTATUSbitC(1);
         }
+        else {
+            setSTATUSbitC(0);
+        }
         if (isDigitCarry(getWRegister(), k)) {
             setSTATUSbitDC(1);
         }
+        else {
+            setSTATUSbitDC(0);
+        }
         if (result == 0) {
             setSTATUSbitZ(1);
+        }
+        else {
+            setSTATUSbitZ(0);
         }
         setWRegister(result);
     }
@@ -678,7 +695,15 @@ public class PICSimulator {
     }
     
     public void CALL(int addressk) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //pushStack(getPCRegister()+1);
+        //don't increment by one, because it is already done after the fetch procedure
+        pushStack(getPCRegister());
+        int pclath = getRegister(PCLATH_REGISTER_ADDRESS_BANK0);
+        addressk = BinaryNumberHelper.setBit(addressk, 11, BinaryNumberHelper.getBit(pclath, 3));
+        addressk = BinaryNumberHelper.setBit(addressk, 12, BinaryNumberHelper.getBit(pclath, 4));
+        setPCRegister(addressk);
+        nextCycle();
+        nextCycle();
     }
     
     public void CLRWDT() {
@@ -689,7 +714,12 @@ public class PICSimulator {
     }
     
     public void GOTO(int addressk) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        int pclath = getRegister(PCLATH_REGISTER_ADDRESS_BANK0);
+        addressk = BinaryNumberHelper.setBit(addressk, 11, BinaryNumberHelper.getBit(pclath, 3));
+        addressk = BinaryNumberHelper.setBit(addressk, 12, BinaryNumberHelper.getBit(pclath, 4));
+        setPCRegister(addressk);
+        nextCycle();
+        nextCycle();
     }
     
     public void IORLW(int k) {
@@ -706,15 +736,24 @@ public class PICSimulator {
     }
     
     public void RETFIE() {
+        nextCycle();
+        nextCycle();
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     public void RETLW(int k) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        int address = popStack();
+        setPCRegister(address);
+        setWRegister(k);
+        nextCycle();
+        nextCycle();
     }
     
     public void RETURN() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        int address = popStack();
+        setPCRegister(address);
+        nextCycle();
+        nextCycle();
     }
     
     public void SLEEP() {

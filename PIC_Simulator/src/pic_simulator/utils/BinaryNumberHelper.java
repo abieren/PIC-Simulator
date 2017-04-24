@@ -114,7 +114,7 @@ public class BinaryNumberHelper {
                 if (!result) return false;
             }
         } else {
-            for (int i = startBit; i > 0; i--) {
+            for (int i = startBit; i >= 0; i--) {
                 int currentBit = getBit(value, i);
                 char expectedBit = bitPattern.charAt(bitPattern.length()-1-i); //begin at start of string
                 boolean result = checkPatternForBit(currentBit, expectedBit);
