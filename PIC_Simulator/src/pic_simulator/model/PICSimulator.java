@@ -287,7 +287,7 @@ public class PICSimulator {
     }
     
     public void skipNextInstructionWithNOP() {
-        NOP();
+        setPCRegister(getPCRegister()+1);
         nextCycle();
     }
     
