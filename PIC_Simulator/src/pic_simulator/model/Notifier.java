@@ -26,5 +26,7 @@ public interface Notifier {
     public void pushStack(int pushedValue, boolean isOverflow);
 
     public void invalidInstruction(int instruction);
+
+    public void changedSTATUSRegister(int statusRegister, int value);
     
 }

@@ -33,7 +33,7 @@ public class NotifierImpl implements Notifier {
 
     @Override
     public void changedRegister(int register, int oldValue, int newValue) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
@@ -55,5 +55,10 @@ public class NotifierImpl implements Notifier {
     public void invalidInstruction(int instruction) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }    
+
+    @Override
+    public void changedSTATUSRegister(int oldValue, int newValue) {
+        _presenter.displaySTATUSRegister(newValue);
+    }
     
 }

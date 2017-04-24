@@ -95,7 +95,7 @@ public class PICSimulator {
     
     public void setRegister(int address, int value) {
         value = BinaryNumberHelper.truncateToNBit(value, 8);
-        address = BinaryNumberHelper.truncateToNBit(value, 7);
+        address = BinaryNumberHelper.truncateToNBit(address, 7);
         //use the RP0 bit in the STATUS register to form an 8 bit address
         address = BinaryNumberHelper.setBit(address, 7, getSTATUSbitRP0());
         //get all mapped registers for address
@@ -320,7 +320,7 @@ public class PICSimulator {
         }
     }
     
-    public boolean isUnderCarry(int a, int b) {
+    public boolean isBorrow(int a, int b) {
         if (a >= b) {
             return false;
         } else {
@@ -328,15 +328,23 @@ public class PICSimulator {
         } 
     }
     
-    public boolean isUnderDigitCarry(int a, int b) {
-        return isUnderCarry(a & 0x0000000F, b & 0x0000000F);
+    public boolean isDigitBorrow(int a, int b) {
+        return isBorrow(a & 0x0000000F, b & 0x0000000F);
     }
+    
     /*STATUS REGSITER*/
     public int getSTATUSRegister() {
-        return getRegister(STATUS_REGISTER_ADDRESS_BANK0);
+        Integer value = _registers.get(STATUS_REGISTER_ADDRESS_BANK0);
+        //make sure a default value is returned if value of register in
+        //hash map hasn't been set yet
+        if (value == null) {
+            value = DEFAULT_REGSITER_VALUE;
+        }
+        return value;
     }
     
     public void setSTATUSRegister(int value) {
+        _notifier.changedSTATUSRegister(getSTATUSRegister(), value);
         setRegister(STATUS_REGISTER_ADDRESS_BANK0, value);
     }
     
@@ -588,10 +596,10 @@ public class PICSimulator {
         if (result == 0) {
             setSTATUSbitZ(1);
         }
-        if (isUnderCarry(getRegister(f), getWRegister())) {
+        if (isBorrow(getRegister(f), getWRegister())) {
             setSTATUSbitC(1);
         }
-        if (isUnderDigitCarry(getRegister(f), getWRegister())) {
+        if (isDigitBorrow(getRegister(f), getWRegister())) {
             setSTATUSbitDC(1);
         }
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -659,7 +667,6 @@ public class PICSimulator {
             setSTATUSbitZ(1);
         }
         setWRegister(result);
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     public void ANDLW(int k) {
@@ -668,7 +675,6 @@ public class PICSimulator {
             setSTATUSbitZ(1);
         }
         setWRegister(result);
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     public void CALL(int addressk) {
@@ -692,7 +698,6 @@ public class PICSimulator {
             setSTATUSbitZ(1);
         }
         setWRegister(result);
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     public void MOVLW(int k) {
@@ -718,17 +723,22 @@ public class PICSimulator {
     
     public void SUBLW(int k) {
         int result = k - getWRegister();
-        if (isUnderCarry(k, getWRegister())) {
-            setSTATUSbitC(1);
+        if (isBorrow(k, getWRegister())) {
+            setSTATUSbitC(0); //borrow is low active
         }
-        if (isUnderDigitCarry(k, getWRegister())) {
+        else {
+            setSTATUSbitC(1); 
+        }
+        if (isDigitBorrow(k, getWRegister())) {
+            setSTATUSbitDC(0); //borrow is low active
+        }
+        else {
             setSTATUSbitDC(1);
         }
         if (result == 0) {
             setSTATUSbitZ(1);
         }
         setWRegister(result);
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     public void XORLW(int k) {
@@ -737,7 +747,6 @@ public class PICSimulator {
             setSTATUSbitZ(1);
         }
         setWRegister(result);
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 }

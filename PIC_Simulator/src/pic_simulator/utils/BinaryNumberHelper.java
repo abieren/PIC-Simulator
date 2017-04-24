@@ -16,7 +16,8 @@ public class BinaryNumberHelper {
     }
     
     public static int truncateToNBit(int value, int nBits) {
-        return value & ((1 << (nBits + 1)) - 1);
+        int mask = (1 << nBits) -1;
+        return value & mask;
     }
     
     public static int extractBits(int value, int from, int to) {
