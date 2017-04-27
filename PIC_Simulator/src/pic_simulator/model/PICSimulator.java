@@ -584,10 +584,11 @@ public class PICSimulator {
     
     public void RLF(int f, int d) {
         int result = getRegister(f);
-        int tmp = BinaryNumberHelper.getBit(result, 7);
+        int tmp = BinaryNumberHelper.getBit(getRegister(f), 7);
+        int carryold = getSTATUSbitC();
         setSTATUSbitC(tmp);
         result = result << 1;
-        result = BinaryNumberHelper.setBit(result, 0, tmp);
+        result = BinaryNumberHelper.setBit(result, 0, carryold);
         if (d == 0) {
             setWRegister(result);
         } else {
@@ -598,10 +599,11 @@ public class PICSimulator {
     
     public void RRF(int f, int d) {
         int result = getRegister(f);
-        int tmp = BinaryNumberHelper.getBit(result, 0);
+        int tmp = BinaryNumberHelper.getBit(getRegister(f), 0);
+        int carryold = getSTATUSbitC();
         setSTATUSbitC(tmp);
         result = result >> 1;
-        result = BinaryNumberHelper.setBit(result, 7, tmp);
+        result = BinaryNumberHelper.setBit(result, 7, carryold);
         if (d == 0) {
             setWRegister(result);
         } else {
