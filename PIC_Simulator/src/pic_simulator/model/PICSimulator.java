@@ -320,11 +320,12 @@ public class PICSimulator {
         }
     }
     
+    // maybe change to is not borrow
     public boolean isBorrow(int a, int b) {
         if (a >= b) {
-            return false;
-        } else {
             return true;
+        } else {
+            return false;
         } 
     }
     
@@ -469,6 +470,8 @@ public class PICSimulator {
         int result = ~getRegister(f);
         if (result == 0) {
             setSTATUSbitZ(1);
+        } else {
+            setSTATUSbitZ(0);
         }
         if (d == 0) {
             setWRegister(result);
@@ -482,6 +485,8 @@ public class PICSimulator {
         int result = getRegister(f) - 1;
         if (result == 0) {
             setSTATUSbitZ(1);
+        } else {
+            setSTATUSbitZ(0);
         }
         if (d == 0) {
             setWRegister(result);
@@ -510,6 +515,8 @@ public class PICSimulator {
         result = BinaryNumberHelper.truncateToNBit(result, 8);
         if (result == 0) {
             setSTATUSbitZ(1);
+        } else {
+            setSTATUSbitZ(0);
         }
         if (d == 0) {
             setWRegister(result);
@@ -538,6 +545,8 @@ public class PICSimulator {
         int result = getWRegister() ^ getRegister(f);
         if (result == 0) {
             setSTATUSbitZ(1);
+        } else {
+            setSTATUSbitZ(0);
         }
         if (d == 0) {
             setWRegister(result);
@@ -551,6 +560,8 @@ public class PICSimulator {
         int result = getRegister(f);
         if (result == 0) {
             setSTATUSbitZ(1);
+        } else {
+            setSTATUSbitZ(0);
         }
         if (d == 0) {
             setWRegister(result);
@@ -603,12 +614,23 @@ public class PICSimulator {
         int result = getRegister(f) - getWRegister();
         if (result == 0) {
             setSTATUSbitZ(1);
+        }  else {
+            setSTATUSbitZ(0);
         }
         if (isBorrow(getRegister(f), getWRegister())) {
             setSTATUSbitC(1);
+        } else {
+            setSTATUSbitC(0);
         }
         if (isDigitBorrow(getRegister(f), getWRegister())) {
             setSTATUSbitDC(1);
+        } else {
+            setSTATUSbitDC(0);
+        }
+        if (d == 0) {
+            setWRegister(result);
+        } else {
+            setRegister(f, result);
         }
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
@@ -630,6 +652,8 @@ public class PICSimulator {
         int result = getWRegister() ^ getRegister(f);
         if (result == 0) {
             setSTATUSbitZ(1);
+        } else {
+            setSTATUSbitZ(0);
         }
         if (d == 0) {
             setWRegister(result);
@@ -690,6 +714,8 @@ public class PICSimulator {
         int result = getWRegister() & k;
         if (result == 0) {
             setSTATUSbitZ(1);
+        } else {
+            setSTATUSbitZ(0);
         }
         setWRegister(result);
     }
@@ -726,6 +752,8 @@ public class PICSimulator {
         int result = getWRegister() | k;
         if (result == 0) {
             setSTATUSbitZ(1);
+        } else {
+            setSTATUSbitZ(0);
         }
         setWRegister(result);
     }
@@ -770,12 +798,14 @@ public class PICSimulator {
         }
         if (isDigitBorrow(k, getWRegister())) {
             setSTATUSbitDC(0); //borrow is low active
-        }
+        } 
         else {
             setSTATUSbitDC(1);
         }
         if (result == 0) {
             setSTATUSbitZ(1);
+        } else {
+            setSTATUSbitZ(0);
         }
         setWRegister(result);
     }
@@ -784,6 +814,8 @@ public class PICSimulator {
         int result = getWRegister() ^ k;
         if (result == 0) {
             setSTATUSbitZ(1);
+        } else {
+            setSTATUSbitZ(0);
         }
         setWRegister(result);
     }
