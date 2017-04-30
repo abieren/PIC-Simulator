@@ -400,7 +400,7 @@ public class MainWindowController
 
     @Override
     public void displaySTATUSRegister(int value) {
-        lb_statusRegHexValue.setText(Integer.toHexString(value));
+        lb_statusRegHexValue.setText(BinaryNumberHelper.formatToDisplayableHex(value, 2, true));
         lb_statusRegDecValue.setText(Integer.toString(value));
         Integer b0 = (value & 1);
         Integer b1 = (value & 2) >> 1;
@@ -427,32 +427,32 @@ public class MainWindowController
 
     @Override
     public void displayWRegister(int value) {
-        lb_wRegHexValue.setText(Integer.toHexString(value));
+        lb_wRegHexValue.setText(BinaryNumberHelper.formatToDisplayableHex(value, 2, true));
     }
 
     @Override
     public void displayFSRRegister(int value) {
-        lb_fsrRegHexValue.setText(Integer.toHexString(value));
+        lb_fsrRegHexValue.setText(BinaryNumberHelper.formatToDisplayableHex(value, 2, true));
     }
 
     @Override
     public void displayPCRegsiter(int value) {
-        lb_pcRegHexValue.setText(Integer.toHexString(value));
+        lb_pcRegHexValue.setText(BinaryNumberHelper.formatToDisplayableHex(value, 3, true));
     }
 
     @Override
     public void displayPCLRegister(int value) {
-        lb_pclRegHexValue.setText(Integer.toHexString(value));
+        lb_pclRegHexValue.setText(BinaryNumberHelper.formatToDisplayableHex(value, 2, true));
     }
 
     @Override
     public void displayPCLATHRegsiter(int value) {
-        lb_pclathRegHexValue.setText(Integer.toHexString(value));
+        lb_pclathRegHexValue.setText(BinaryNumberHelper.formatToDisplayableHex(value, 2, true));
     }
 
     @Override
     public void displayOPTIONRegister(int value) {
-        lb_optionRegHexValue.setText(Integer.toHexString(value));
+        lb_optionRegHexValue.setText(BinaryNumberHelper.formatToDisplayableHex(value, 2, true));
         lb_optionRegDecValue.setText(Integer.toString(value));
         Integer b0 = (value & 1);
         Integer b1 = (value & 2) >> 1;
@@ -474,7 +474,7 @@ public class MainWindowController
 
     @Override
     public void displayINTCONRegister(int value) {
-        lb_intconRegHexValue.setText(Integer.toHexString(value));
+        lb_intconRegHexValue.setText(BinaryNumberHelper.formatToDisplayableHex(value, 2, true));
         lb_intconRegDecValue.setText(Integer.toString(value));
         Integer b0 = (value & 1);
         Integer b1 = (value & 2) >> 1;
