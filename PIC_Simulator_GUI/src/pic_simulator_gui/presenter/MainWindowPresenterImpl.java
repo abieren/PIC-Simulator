@@ -176,5 +176,10 @@ public class MainWindowPresenterImpl
     public void displayExecutedCodeLine(int line) {
         _view.displayExecutedCodeLine(line);
     }
+
+    @Override
+    public void displayRegister(int register, int value) {
+        _view.displayRegister(register, value);
+    }
     
 }
