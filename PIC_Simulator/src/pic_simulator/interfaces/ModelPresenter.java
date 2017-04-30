@@ -44,5 +44,7 @@ public interface ModelPresenter {
     public void displayOPTIONRegister(int value);
 
     public void displayINTCONRegister(int value);
+
+    public void displayRegister(int register, int value);
     
 }
