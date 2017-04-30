@@ -24,6 +24,8 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javax.swing.text.Position;
+import pic_simulator.utils.BinaryNumberHelper;
 import pic_simulator_gui.interfaces.MainWindowPresenter;
 import pic_simulator_gui.interfaces.MainWindowView;
 
@@ -551,7 +553,67 @@ public class MainWindowController
 
     @Override
     public void displayRegister(int register, int value) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //divide address by addresses per line to get map record
+        int recordNumber = register / 16;
+        //get corresponding map record
+        RegisterMapRecord record = _registerMapRecords.get(recordNumber);
+        //use modulo to dertermine the cell which displays the register
+        int cellNumber = register % 16;
+        String cellString = BinaryNumberHelper.formatToDisplayableHex(value, 2, true);
+        switch (cellNumber) {
+            case 0:
+                record.setByte0(cellString);
+                break;
+            case 1:
+                record.setByte1(cellString);
+                break;
+            case 2:
+                record.setByte2(cellString);
+                break;
+            case 3:
+                record.setByte3(cellString);
+                break;
+            case 4:
+                record.setByte4(cellString);
+                break;
+            case 5:
+                record.setByte5(cellString);
+                break;
+            case 6:
+                record.setByte6(cellString);
+                break;
+            case 7:
+                record.setByte7(cellString);
+                break;
+            case 8:
+                record.setByte8(cellString);
+                break;
+            case 9:
+                record.setByte9(cellString);
+                break;
+            case 10:
+                record.setByte10(cellString);
+                break;
+            case 11:
+                record.setByte11(cellString);
+                break;
+            case 12:
+                record.setByte12(cellString);
+                break;
+            case 13:
+                record.setByte13(cellString);
+                break;
+            case 14:
+                record.setByte14(cellString);
+                break;
+            case 15:
+                record.setByte15(cellString);
+                break;
+            default:
+                throw new AssertionError();
+        }
+        //write back chanched record
+        _registerMapRecords.set(recordNumber, record);
     }
 
 }
