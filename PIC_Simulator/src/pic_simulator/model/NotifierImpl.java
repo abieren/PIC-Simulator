@@ -33,6 +33,7 @@ public class NotifierImpl implements Notifier {
 
     @Override
     public void changedRegister(int register, int oldValue, int newValue) {
+        _presenter.displayRegister(register, newValue);
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
