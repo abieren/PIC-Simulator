@@ -257,8 +257,8 @@ public class MainWindowController
         tv_registerMap.setItems(_registerMapRecords);
         //set style
         for (TableColumn column : _registerMapColumns) {
-            column.setMinWidth(20);
-            column.setMaxWidth(20);
+            column.setMinWidth(25);
+            column.setMaxWidth(25);
         }
         //create blank entries for every register
         for (int i=0x0; i<=0xF; i++) {
