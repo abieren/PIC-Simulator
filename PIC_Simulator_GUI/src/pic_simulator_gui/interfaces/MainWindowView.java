@@ -51,5 +51,7 @@ public interface MainWindowView {
     public void displayBreakOnWatchdogTrigger(boolean b);
 
     public void displayBreakOnInterrupt(boolean b);
+
+    public void displayRegister(int register, int value);
     
 }
