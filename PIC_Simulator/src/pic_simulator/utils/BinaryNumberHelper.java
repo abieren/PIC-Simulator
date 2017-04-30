@@ -11,6 +11,17 @@ package pic_simulator.utils;
  */
 public class BinaryNumberHelper {
     
+    public static String formatToDisplayableHex(int value, int fillZeroesToLength, boolean capitalize) {
+        String result = Integer.toHexString(value);
+        if (capitalize) {
+            result = result.toUpperCase();
+        }
+        while (result.length() < fillZeroesToLength) {            
+            result = "0" + result;
+        }
+        return result;
+    }
+    
     public static int getBit(int value, int bit) {
         return (value >> bit) & 1;
     }
