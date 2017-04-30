@@ -178,7 +178,7 @@ public class MainWindowController
     }
     
     private void initializePortMapView() {
-        //initialize port map table vire
+        //initialize port map table view
         _portMapColumns = new ArrayList<>(); //init,reset
         _portMapColumns.add(new TableColumn<>());
         _portMapColumns.add(new TableColumn<>("7"));
@@ -258,7 +258,11 @@ public class MainWindowController
             column.setMinWidth(20);
             column.setMaxWidth(20);
         }
-        _registerMapRecords.add(new RegisterMapRecord("00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00"));
+        //create blank entries for every register
+        for (int i=0x0; i<=0xF; i++) {
+            RegisterMapRecord record = new RegisterMapRecord(Integer.toHexString(i).toUpperCase(), "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00");
+            _registerMapRecords.add(record);
+        }
     }
 
     @FXML
@@ -543,6 +547,11 @@ public class MainWindowController
     @Override
     public void displayBreakOnInterrupt(boolean b) {
         cb_breakOnInterrupt.selectedProperty().set(b);
+    }
+
+    @Override
+    public void displayRegister(int register, int value) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }
