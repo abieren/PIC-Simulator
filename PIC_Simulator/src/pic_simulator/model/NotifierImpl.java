@@ -44,7 +44,7 @@ public class NotifierImpl implements Notifier {
 
     @Override
     public void popStack(int value, boolean isUnderflow) {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        _presenter.popStack(value, isUnderflow);
     }
 
     @Override
