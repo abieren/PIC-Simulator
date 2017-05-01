@@ -5,6 +5,7 @@
  */
 package pic_simulator_gui.presenter;
 
+import java.util.List;
 import pic_simulator.interfaces.Model;
 import pic_simulator.interfaces.ModelPresenter;
 import pic_simulator_gui.interfaces.MainWindowPresenter;
@@ -180,6 +181,11 @@ public class MainWindowPresenterImpl
     @Override
     public void displayRegister(int register, int value) {
         _view.displayRegister(register, value);
+    }
+
+    @Override
+    public void displayStack(List<Integer> stack) {
+        _view.displayStack(stack);
     }
     
 }
