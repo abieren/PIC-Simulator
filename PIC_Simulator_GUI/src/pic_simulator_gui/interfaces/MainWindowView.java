@@ -59,6 +59,6 @@ public interface MainWindowView {
 
     public void pushStack(int value, boolean isOverflow);
 
-    public void popStack();
+    public void popStack(int value, boolean isUnderflow);
     
 }
