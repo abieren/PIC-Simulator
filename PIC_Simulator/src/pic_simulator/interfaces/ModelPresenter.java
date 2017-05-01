@@ -5,6 +5,8 @@
  */
 package pic_simulator.interfaces;
 
+import java.util.List;
+
 /**
  *
  * @author Alex
@@ -47,4 +49,5 @@ public interface ModelPresenter {
 
     public void displayRegister(int register, int value);
     
+    public void displayStack(List<Integer> stack);
 }
