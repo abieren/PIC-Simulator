@@ -6,10 +6,12 @@
 package pic_simulator_gui.presenter;
 
 import java.util.List;
+import javafx.collections.ObservableList;
 import pic_simulator.interfaces.Model;
 import pic_simulator.interfaces.ModelPresenter;
 import pic_simulator_gui.interfaces.MainWindowPresenter;
 import pic_simulator_gui.interfaces.MainWindowView;
+import pic_simulator_gui.view.main.StackRecord;
 
 
 public class MainWindowPresenterImpl 
@@ -17,6 +19,9 @@ public class MainWindowPresenterImpl
 
     private Model _model;
     private MainWindowView _view;
+    
+    //records of the stack view
+    ObservableList<StackRecord> _stackRecords;
     
     @Override
     public void setModel(Model model) {
@@ -186,6 +191,11 @@ public class MainWindowPresenterImpl
     @Override
     public void displayStack(List<Integer> stack) {
         _view.displayStack(stack);
+    }
+
+    @Override
+    public void pushStack(int value, boolean isOverflow) {
+        _view.pushStack(value, isOverflow);
     }
     
 }
