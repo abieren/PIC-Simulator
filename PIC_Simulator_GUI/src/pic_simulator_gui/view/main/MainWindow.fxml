@@ -567,7 +567,7 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <TableView fx:id="tv_registerMap1" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                        <TableView fx:id="tv_stack" GridPane.columnIndex="2" GridPane.rowIndex="1" />
                      </children>
                   </GridPane>
                </items>
