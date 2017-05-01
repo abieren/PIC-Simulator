@@ -52,4 +52,7 @@ public interface ModelPresenter {
     public void displayStack(List<Integer> stack);
 
     public void pushStack(int value, boolean isOverflow);
+
+    public void popStack(int value, boolean underflow);
+    
 }
