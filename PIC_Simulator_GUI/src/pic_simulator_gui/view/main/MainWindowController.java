@@ -128,6 +128,8 @@ public class MainWindowController
     private TableView tv_portMap;
     @FXML
     private TableView tv_registerMap;
+    @FXML
+    private TableView tv_stack;
 
     //Stage that is used by the view of this controller
     private Stage _primaryStage;
@@ -143,7 +145,9 @@ public class MainWindowController
     //table columns of the register map
     List<TableColumn> _registerMapColumns;
     //records of the register map
-    ObservableList<RegisterMapRecord> _registerMapRecords = FXCollections.observableArrayList();
+    ObservableList<RegisterMapRecord> _registerMapRecords;
+    //records of the stack view
+    ObservableList<StackRecord> _stackRecords;
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -265,6 +269,19 @@ public class MainWindowController
             RegisterMapRecord record = new RegisterMapRecord(Integer.toHexString(i).toUpperCase(), "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00");
             _registerMapRecords.add(record);
         }
+    }
+    
+    private void initializeStackView() {
+        TableColumn tc = new TableColumn<>("PC values");
+        tc.setCellValueFactory(new PropertyValueFactory<>("value"));
+        tc.setMinWidth(98);
+        tc.setMaxWidth(98);
+        tv_stack.getColumns().clear(); //init,reset
+        tv_stack.getColumns().add(tc);
+        _stackRecords = FXCollections.observableArrayList();
+        tv_stack.setItems(_stackRecords);
+        _stackRecords.add(new StackRecord("top"));
+        _stackRecords.add(new StackRecord("bottom"));
     }
 
     @FXML
@@ -524,6 +541,7 @@ public class MainWindowController
         initializeCodeView();
         initializePortMapView();
         initializeRegisterMapView();
+        initializeStackView();
     }
 
     @Override
