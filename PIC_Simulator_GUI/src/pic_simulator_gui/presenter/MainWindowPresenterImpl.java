@@ -197,5 +197,10 @@ public class MainWindowPresenterImpl
     public void pushStack(int value, boolean isOverflow) {
         _view.pushStack(value, isOverflow);
     }
+
+    @Override
+    public void popStack(int value, boolean isUnderflow) {
+        _view.popStack();
+    }
     
 }
