@@ -652,7 +652,7 @@ public class MainWindowController
             //the new value added
             _stackRecords.remove(_stackRecords.size()-2);
         }
-        _stackRecords.add(1, new StackRecord(Integer.toString(value)));
+        _stackRecords.add(1, new StackRecord(BinaryNumberHelper.formatToDisplayableHex(value, 2, true)));
     }
     
     @Override
