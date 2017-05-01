@@ -8,6 +8,7 @@ package pic_simulator_gui.view.main;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
@@ -36,7 +37,7 @@ import pic_simulator_gui.interfaces.MainWindowView;
 public class MainWindowController 
         implements Initializable, MainWindowView {
 
-    @FXML
+    @FXML 
     private ToggleButton bt_automaticSteppingMode;
     @FXML
     private TextField tf_automaticSteppingIntervall;
@@ -634,4 +635,15 @@ public class MainWindowController
         _registerMapRecords.set(recordNumber, record);
     }
 
+    @Override
+    public void displayStack(List<Integer> stack) {
+        //clear stack view
+        initializeStackView();
+        //display values in list
+        Collections.reverse(stack);
+        for (Integer stackValue : stack) {
+            _stackRecords.add(1, new StackRecord(stackValue.toString()));
+        }
+    }
+    
 }
