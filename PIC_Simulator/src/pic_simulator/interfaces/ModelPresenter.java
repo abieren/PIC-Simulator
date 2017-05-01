@@ -53,6 +53,6 @@ public interface ModelPresenter {
 
     public void pushStack(int value, boolean isOverflow);
 
-    public void popStack(int value, boolean underflow);
+    public void popStack(int value, boolean isUnderflow);
     
 }
