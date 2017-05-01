@@ -655,4 +655,14 @@ public class MainWindowController
         _stackRecords.add(1, new StackRecord(Integer.toString(value)));
     }
     
+    @Override
+    public void popStack(int value, boolean isUnderflow) {
+        if (isUnderflow) {
+            //stack underflow is currently not displayed in view
+        } else {
+            _stackRecords.remove(1);
+        }
+        
+    }
+    
 }
