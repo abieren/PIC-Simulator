@@ -50,4 +50,6 @@ public interface ModelPresenter {
     public void displayRegister(int register, int value);
     
     public void displayStack(List<Integer> stack);
+
+    public void pushStack(int value, boolean overflow);
 }
