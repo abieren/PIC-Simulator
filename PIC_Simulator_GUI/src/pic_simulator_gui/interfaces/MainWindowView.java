@@ -58,5 +58,7 @@ public interface MainWindowView {
     public void displayStack(List<Integer> stack);
 
     public void pushStack(int value, boolean isOverflow);
+
+    public void popStack();
     
 }
