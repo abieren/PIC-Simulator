@@ -25,7 +25,6 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javax.swing.text.Position;
 import pic_simulator.utils.BinaryNumberHelper;
 import pic_simulator_gui.interfaces.MainWindowPresenter;
 import pic_simulator_gui.interfaces.MainWindowView;
@@ -644,6 +643,16 @@ public class MainWindowController
         for (Integer stackValue : stack) {
             _stackRecords.add(1, new StackRecord(stackValue.toString()));
         }
+    }
+
+    @Override
+    public void pushStack(int value, boolean isOverflow) {
+        if (isOverflow) {
+            //when overflow occurs, last stack value is being dropped and
+            //the new value added
+            _stackRecords.remove(_stackRecords.size()-2);
+        }
+        _stackRecords.add(1, new StackRecord(Integer.toString(value)));
     }
     
 }
