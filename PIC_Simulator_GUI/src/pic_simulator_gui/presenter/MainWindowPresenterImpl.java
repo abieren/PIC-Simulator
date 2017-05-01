@@ -200,7 +200,7 @@ public class MainWindowPresenterImpl
 
     @Override
     public void popStack(int value, boolean isUnderflow) {
-        _view.popStack();
+        _view.popStack(value, isUnderflow);
     }
     
 }
