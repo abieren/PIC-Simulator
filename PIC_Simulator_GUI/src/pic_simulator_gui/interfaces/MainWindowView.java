@@ -5,6 +5,7 @@
  */
 package pic_simulator_gui.interfaces;
 
+import java.util.List;
 import pic_simulator_gui.view.main.MessageType;
 
 /**
@@ -53,5 +54,7 @@ public interface MainWindowView {
     public void displayBreakOnInterrupt(boolean b);
 
     public void displayRegister(int register, int value);
+
+    public void displayStack(List<Integer> stack);
     
 }
