@@ -109,7 +109,7 @@ public class PICSimulator {
             address = fsrValue;
         }
         else if (address == FSR_ADDRESS_BANK0) {
-            _notifier.changeFSRRegister(getRegister(FSR_ADDRESS_BANK0), value);
+            _notifier.changedFSRRegister(getRegister(FSR_ADDRESS_BANK0), value);
         }
         //use the RP0 bit in the STATUS register to form an 8 bit address
         address = BinaryNumberHelper.setBit(address, 7, getSTATUSbitRP0());
