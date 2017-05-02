@@ -28,5 +28,7 @@ public interface Notifier {
     public void invalidInstruction(int instruction);
 
     public void changedSTATUSRegister(int statusRegister, int value);
+
+    public void changedFSRRegister(int register, int value);
     
 }
