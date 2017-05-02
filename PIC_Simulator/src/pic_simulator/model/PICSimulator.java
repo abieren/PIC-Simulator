@@ -31,6 +31,7 @@ public class PICSimulator {
     public final int DEFAULT_REGSITER_VALUE = 0;
     public final int STATUS_REGISTER_ADDRESS_BANK0 = 0x03;
     public final int PCLATH_REGISTER_ADDRESS_BANK0 = 0x0A;
+    public final int FSR_ADDRESS_BANK0 = 0x4;
 
     
     public PICSimulator(Notifier notifier) {
@@ -82,9 +83,15 @@ public class PICSimulator {
     public int getRegister(int address) {
         //shrink to an 7 bit address
         address = BinaryNumberHelper.truncateToNBit(address, 7);
-        //use the RP0 bit in the STATUS register to form an 8 bit address
-        BinaryNumberHelper.setBit(address, 7, getSTATUSbitRP0());
-        Integer value = _registers.get(address);
+        Integer value;
+        if (address == 0x0) {
+            int fsrValue = getRegister(FSR_ADDRESS_BANK0);
+            value = _registers.get(fsrValue);
+        } else {
+            //use the RP0 bit in the STATUS register to form an 8 bit address
+            BinaryNumberHelper.setBit(address, 7, getSTATUSbitRP0());
+            value = _registers.get(address);
+        }
         //make sure a default value is returned if value of register in
         //hash map hasn't been set yet
         if (value == null) {
@@ -96,6 +103,14 @@ public class PICSimulator {
     public void setRegister(int address, int value) {
         value = BinaryNumberHelper.truncateToNBit(value, 8);
         address = BinaryNumberHelper.truncateToNBit(address, 7);
+        //use pointer in fsr when address is 0x0
+        if (address == 0x0) {
+            int fsrValue = getRegister(FSR_ADDRESS_BANK0);
+            address = fsrValue;
+        }
+        else if (address == FSR_ADDRESS_BANK0) {
+            _notifier.changeFSRRegister(getRegister(FSR_ADDRESS_BANK0), value);
+        }
         //use the RP0 bit in the STATUS register to form an 8 bit address
         address = BinaryNumberHelper.setBit(address, 7, getSTATUSbitRP0());
         //get all mapped registers for address
