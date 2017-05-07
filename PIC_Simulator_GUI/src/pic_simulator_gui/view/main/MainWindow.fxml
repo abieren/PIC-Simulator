@@ -111,7 +111,7 @@
                                     <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                                  </rowConstraints>
                                  <children>
-                                    <Label alignment="CENTER_RIGHT" text=" µs" GridPane.columnIndex="1" />
+                                    <Label alignment="CENTER_RIGHT" text=" ms" GridPane.columnIndex="1" />
                                     <Label fx:id="lb_automaticSteppingInterval" text="200" />
                                  </children>
                               </GridPane>
