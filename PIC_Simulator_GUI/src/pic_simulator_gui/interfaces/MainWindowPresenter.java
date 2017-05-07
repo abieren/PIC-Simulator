@@ -46,5 +46,7 @@ public interface MainWindowPresenter {
     public void setBreakOnWatchdogTriggered(boolean b);
 
     public void setBreakOnInterrupt(boolean b);
+
+    public void setRegister(int address, int value);
     
 }
