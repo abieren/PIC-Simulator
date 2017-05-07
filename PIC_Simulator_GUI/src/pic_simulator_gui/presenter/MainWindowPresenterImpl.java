@@ -104,7 +104,7 @@ public class MainWindowPresenterImpl
     }
 
     @Override
-    public void displayRunningTime(int microSeconds) {
+    public void displayRunningTime(double microSeconds) {
         _view.displayRunningTime(microSeconds);
     }
 
