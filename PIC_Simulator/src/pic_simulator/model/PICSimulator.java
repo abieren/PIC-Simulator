@@ -453,6 +453,7 @@ public class PICSimulator {
         } else {
             setRegister(f, result);
         }
+        nextCycle();
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
@@ -466,18 +467,21 @@ public class PICSimulator {
         } else {
             setRegister(f, result);
         }
+        nextCycle();
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     public void CLRF(int f) {
         setRegister(f, 0);
         setSTATUSbitZ(1);
+        nextCycle();
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     public void CLRW() {
         setWRegister(0);
         setSTATUSbitZ(1);
+        nextCycle();
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
@@ -493,6 +497,7 @@ public class PICSimulator {
         } else {
             setRegister(f, result);
         }
+        nextCycle();
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
@@ -508,6 +513,7 @@ public class PICSimulator {
         } else {
             setRegister(f, result);
         }
+        nextCycle();
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
@@ -522,6 +528,7 @@ public class PICSimulator {
         if (result == 0) {
             skipNextInstructionWithNOP();
         }
+        nextCycle();
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
@@ -538,6 +545,7 @@ public class PICSimulator {
         } else {
             setRegister(f, result);
         }
+        nextCycle();
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
@@ -553,6 +561,7 @@ public class PICSimulator {
         if (result == 0) {
             skipNextInstructionWithNOP();
         }
+        nextCycle();
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
@@ -568,6 +577,7 @@ public class PICSimulator {
         } else {
             setRegister(f, result);
         }
+        nextCycle();
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
@@ -583,6 +593,7 @@ public class PICSimulator {
         } else {
             setRegister(f, result);
         }
+        nextCycle();
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
@@ -590,6 +601,7 @@ public class PICSimulator {
         int result = getWRegister();
         //no status affectred
         setRegister(f, result);
+        nextCycle();
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
@@ -609,6 +621,7 @@ public class PICSimulator {
         } else {
             setRegister(f, result);
         }
+        nextCycle();
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
@@ -624,6 +637,7 @@ public class PICSimulator {
         } else {
             setRegister(f, result);
         }
+        nextCycle();
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
@@ -649,6 +663,7 @@ public class PICSimulator {
         } else {
             setRegister(f, result);
         }
+        nextCycle();
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
@@ -662,6 +677,7 @@ public class PICSimulator {
         } else {
             setRegister(f, result);
         }
+        nextCycle();
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
@@ -677,6 +693,7 @@ public class PICSimulator {
         } else {
             setRegister(f, result);
         }
+        nextCycle();
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
@@ -685,6 +702,7 @@ public class PICSimulator {
         int result = getRegister(f);
         result = BinaryNumberHelper.setBit(result, b, 0);
         setRegister(f, result);
+        nextCycle();
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
@@ -692,14 +710,17 @@ public class PICSimulator {
         int result = getRegister(f);
         result = BinaryNumberHelper.setBit(result, b, 1);
         setRegister(f, result);
+        nextCycle();
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     public void BTFSC(int f, int b) {
+        nextCycle();
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     public void BTFSS(int f, int b) {
+        nextCycle();
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
@@ -725,6 +746,7 @@ public class PICSimulator {
             setSTATUSbitZ(0);
         }
         setWRegister(result);
+        nextCycle();
     }
     
     public void ANDLW(int k) {
@@ -735,6 +757,7 @@ public class PICSimulator {
             setSTATUSbitZ(0);
         }
         setWRegister(result);
+        nextCycle();
     }
     
     public void CALL(int addressk) {
@@ -752,6 +775,7 @@ public class PICSimulator {
     public void CLRWDT() {
         setSTATUSbitTO(1);
         setSTATUSbitPD(1);
+        nextCycle();
         // TODO add: write 00h into WDT  AND 0 into WDT prescaler
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
@@ -773,11 +797,13 @@ public class PICSimulator {
             setSTATUSbitZ(0);
         }
         setWRegister(result);
+        nextCycle();
     }
     
     public void MOVLW(int k) {
         //no status affected
         setWRegister(k);
+        nextCycle();
     }
     
     public void RETFIE() {
@@ -802,6 +828,7 @@ public class PICSimulator {
     }
     
     public void SLEEP() {
+        nextCycle();
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
@@ -825,6 +852,7 @@ public class PICSimulator {
             setSTATUSbitZ(0);
         }
         setWRegister(result);
+        nextCycle();
     }
     
     public void XORLW(int k) {
@@ -835,6 +863,7 @@ public class PICSimulator {
             setSTATUSbitZ(0);
         }
         setWRegister(result);
+        nextCycle();
     }
     
 }
