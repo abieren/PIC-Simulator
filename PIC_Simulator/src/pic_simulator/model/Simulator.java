@@ -132,5 +132,10 @@ public class Simulator implements Model {
     public void setAutomaticSteppingMode(boolean b) {
         _automaticSteppingMode = b;
     }
+
+    @Override
+    public void setRegister(int address, int value) {
+        _pic.setRegister(address, value);
+    }
     
 }

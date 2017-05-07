@@ -46,19 +46,19 @@ public class RegisterAddressDecoder {
             return result;
         }
         //General Purposee Registers
-        if (address <= 0x0C && 0x4F <= address) {
+        if (address >= 0x0C && 0x4F >= address) {
             result.add(address);
             result.add(address + 0x80);
             return result;
         }
-        if (address <= 0x8C && 0xCF <= address) {
+        if (address >= 0x8C && 0xCF >= address) {
             result.add(address);
             result.add(address - 0x80);
             return result;
         }
         //unimplemented memory addresses
-        if ( (address <= 0x50 && 0x7f <= address) ||
-                (address <= 0xD0 && 0xFF <= address) ||
+        if ( (address >= 0x50 && 0x7f >= address) ||
+                (address >= 0xD0 && 0xFF >= address) ||
                 address == 0x70 ||
                 address == 0x87) {
             return result;

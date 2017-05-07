@@ -10,19 +10,27 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import pic_simulator.utils.BinaryNumberHelper;
@@ -127,9 +135,9 @@ public class MainWindowController
     @FXML
     private TableView tv_portMap;
     @FXML
-    private TableView tv_registerMap;
-    @FXML
     private TableView tv_stack;
+    @FXML
+    private GridPane gp_register_view_container;
 
     //Stage that is used by the view of this controller
     private Stage _primaryStage;
@@ -142,10 +150,6 @@ public class MainWindowController
     List<TableColumn> _portMapColumns;
     //records of the port map
     ObservableList<PortMapRecord> _portMapRecords;
-    //table columns of the register map
-    List<TableColumn> _registerMapColumns;
-    //records of the register map
-    ObservableList<RegisterMapRecord> _registerMapRecords;
     //records of the stack view
     ObservableList<StackRecord> _stackRecords;
     
@@ -219,55 +223,43 @@ public class MainWindowController
     }
     
     private void initializeRegisterMapView() {
-        //initialize register map table view
-        _registerMapColumns = new ArrayList<>(); //init,reset
-        _registerMapColumns.add(new TableColumn<>());
-        _registerMapColumns.add(new TableColumn<>("F"));
-        _registerMapColumns.add(new TableColumn<>("E"));
-        _registerMapColumns.add(new TableColumn<>("D"));
-        _registerMapColumns.add(new TableColumn<>("C"));
-        _registerMapColumns.add(new TableColumn<>("B"));
-        _registerMapColumns.add(new TableColumn<>("A"));
-        _registerMapColumns.add(new TableColumn<>("9"));
-        _registerMapColumns.add(new TableColumn<>("8"));
-        _registerMapColumns.add(new TableColumn<>("7"));
-        _registerMapColumns.add(new TableColumn<>("6"));
-        _registerMapColumns.add(new TableColumn<>("5"));
-        _registerMapColumns.add(new TableColumn<>("4"));
-        _registerMapColumns.add(new TableColumn<>("3"));
-        _registerMapColumns.add(new TableColumn<>("2"));
-        _registerMapColumns.add(new TableColumn<>("1"));
-        _registerMapColumns.add(new TableColumn<>("0"));
-        _registerMapColumns.get(0).setCellValueFactory(new PropertyValueFactory<>("baseAddress"));
-        _registerMapColumns.get(1).setCellValueFactory(new PropertyValueFactory<>("byte15"));
-        _registerMapColumns.get(2).setCellValueFactory(new PropertyValueFactory<>("byte14"));
-        _registerMapColumns.get(3).setCellValueFactory(new PropertyValueFactory<>("byte13"));
-        _registerMapColumns.get(4).setCellValueFactory(new PropertyValueFactory<>("byte12"));
-        _registerMapColumns.get(5).setCellValueFactory(new PropertyValueFactory<>("byte11"));
-        _registerMapColumns.get(6).setCellValueFactory(new PropertyValueFactory<>("byte10"));
-        _registerMapColumns.get(7).setCellValueFactory(new PropertyValueFactory<>("byte9"));
-        _registerMapColumns.get(8).setCellValueFactory(new PropertyValueFactory<>("byte8"));
-        _registerMapColumns.get(9).setCellValueFactory(new PropertyValueFactory<>("byte7"));
-        _registerMapColumns.get(10).setCellValueFactory(new PropertyValueFactory<>("byte6"));
-        _registerMapColumns.get(11).setCellValueFactory(new PropertyValueFactory<>("byte5"));
-        _registerMapColumns.get(12).setCellValueFactory(new PropertyValueFactory<>("byte4"));
-        _registerMapColumns.get(13).setCellValueFactory(new PropertyValueFactory<>("byte3"));
-        _registerMapColumns.get(14).setCellValueFactory(new PropertyValueFactory<>("byte2"));
-        _registerMapColumns.get(15).setCellValueFactory(new PropertyValueFactory<>("byte1"));
-        _registerMapColumns.get(16).setCellValueFactory(new PropertyValueFactory<>("byte0"));
-        tv_registerMap.getColumns().clear(); //init,reset
-        tv_registerMap.getColumns().addAll(_registerMapColumns);
-        _registerMapRecords = FXCollections.observableArrayList(); //init,reset
-        tv_registerMap.setItems(_registerMapRecords);
-        //set style
-        for (TableColumn column : _registerMapColumns) {
-            column.setMinWidth(25);
-            column.setMaxWidth(25);
-        }
-        //create blank entries for every register
-        for (int i=0x0; i<=0xF; i++) {
-            RegisterMapRecord record = new RegisterMapRecord(Integer.toHexString(i).toUpperCase(), "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00", "00");
-            _registerMapRecords.add(record);
+        //reinitialize the grid panel
+        gp_register_view_container.getChildren().clear();
+        //genrate labels inside the grid
+        for (int row = 0; row < 17; row++) {
+            for (int col = 0; col < 17; col++) {
+                if (col == 0 && row == 0) {
+                    continue;
+                }
+                Label lb = new Label();
+                lb.setMinHeight(19);
+                lb.setMaxWidth(19);
+                lb.setMinHeight(19);
+                lb.setMaxHeight(19);
+                lb.setStyle("-fx-background-color: white;");
+                //fill upper table head and left table head
+                if (row == 0 && col > 0) {
+                    lb.setText(BinaryNumberHelper.formatToDisplayableHex(col-1, 1, false));
+                    lb.setStyle("-fx-font-weight: bold;");
+                    gp_register_view_container.add(lb, col, row);
+                    continue;
+                } else if (col == 0 && row > 0) {
+                    lb.setText(BinaryNumberHelper.formatToDisplayableHex(row-1, 1, true));
+                    lb.setStyle("-fx-font-weight: bold;");
+                    gp_register_view_container.add(lb, col, row);
+                    continue;
+                }
+                lb.setText(BinaryNumberHelper.formatToDisplayableHex(0, 2, true));
+                //use id to get the address which the label displays
+                lb.setId(Integer.toString((row-1)*16+col-1));
+                //add onclick handler to change value of the register
+                lb.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent event) -> {
+                    Label label = (Label)event.getSource();
+                    int address = Integer.parseInt(label.getId());
+                    setRegisterValueDialog(address);
+                });
+                gp_register_view_container.add(lb, col, row);
+            }
         }
     }
     
@@ -571,67 +563,13 @@ public class MainWindowController
 
     @Override
     public void displayRegister(int register, int value) {
-        //divide address by addresses per line to get map record
-        int recordNumber = register / 16;
-        //get corresponding map record
-        RegisterMapRecord record = _registerMapRecords.get(recordNumber);
-        //use modulo to dertermine the cell which displays the register
-        int cellNumber = register % 16;
-        String cellString = BinaryNumberHelper.formatToDisplayableHex(value, 2, true);
-        switch (cellNumber) {
-            case 0:
-                record.setByte0(cellString);
-                break;
-            case 1:
-                record.setByte1(cellString);
-                break;
-            case 2:
-                record.setByte2(cellString);
-                break;
-            case 3:
-                record.setByte3(cellString);
-                break;
-            case 4:
-                record.setByte4(cellString);
-                break;
-            case 5:
-                record.setByte5(cellString);
-                break;
-            case 6:
-                record.setByte6(cellString);
-                break;
-            case 7:
-                record.setByte7(cellString);
-                break;
-            case 8:
-                record.setByte8(cellString);
-                break;
-            case 9:
-                record.setByte9(cellString);
-                break;
-            case 10:
-                record.setByte10(cellString);
-                break;
-            case 11:
-                record.setByte11(cellString);
-                break;
-            case 12:
-                record.setByte12(cellString);
-                break;
-            case 13:
-                record.setByte13(cellString);
-                break;
-            case 14:
-                record.setByte14(cellString);
-                break;
-            case 15:
-                record.setByte15(cellString);
-                break;
-            default:
-                throw new AssertionError();
-        }
-        //write back chanched record
-        _registerMapRecords.set(recordNumber, record);
+        int row = register/16;
+        int col = register%16;
+        int nthChild = (row+1)*17+col;
+        
+        ObservableList<Node> nodes = gp_register_view_container.getChildren();
+        Label lb = (Label)nodes.get(nthChild);
+        lb.setText(BinaryNumberHelper.formatToDisplayableHex(value, 2, true));
     }
 
     @Override
@@ -663,6 +601,31 @@ public class MainWindowController
             _stackRecords.remove(1);
         }
         
+    }
+
+    private void setRegisterValueDialog(int address) {
+        System.out.println(address);
+        TextInputDialog dialog = new TextInputDialog("0");
+        dialog.setTitle("Set register value");
+        String register = BinaryNumberHelper.formatToDisplayableHex(address, 2, true);
+        dialog.setHeaderText("Set new value of register 0x" + register);
+        dialog.setContentText("Please enter new hex value:");
+
+        // Traditional way to get the response value.
+        Optional<String> result = dialog.showAndWait();
+        if (result.isPresent()){
+            try {
+                int newValue = Integer.parseInt(result.get(),16);
+                _presenter.setRegister(address, newValue);
+            } catch (NumberFormatException e) {
+                Alert alert = new Alert(AlertType.ERROR);
+                alert.setTitle("Invalid Number");
+                alert.setHeaderText("Invlaid Number");
+                alert.setContentText("\""+ result.get() +"\" is not a valid hex number!");
+                alert.showAndWait();
+            }
+            
+        }
     }
     
 }

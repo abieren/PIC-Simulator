@@ -202,5 +202,10 @@ public class MainWindowPresenterImpl
     public void popStack(int value, boolean isUnderflow) {
         _view.popStack(value, isUnderflow);
     }
+
+    @Override
+    public void setRegister(int address, int value) {
+        _model.setRegister(address, value);
+    }
     
 }

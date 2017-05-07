@@ -38,5 +38,7 @@ public interface Model {
     public void setAutomaticSteppingMode(boolean b);
 
     public void stepOver();
+
+    public void setRegister(int address, int value);
     
 }
