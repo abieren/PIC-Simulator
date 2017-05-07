@@ -383,7 +383,6 @@ public class PICSimulator {
     }
     
     public void setSTATUSRegister(int value) {
-        _notifier.changedSTATUSRegister(getSTATUSRegister(), value);
         setRegister(STATUS_REGISTER_ADDRESS_BANK0, value);
     }
     
@@ -453,14 +452,13 @@ public class PICSimulator {
     }
     
     public void setINTCONRegister(int value) {
-        _notifier.changedSTATUSRegister(getSTATUSRegister(), value);
         setRegister(INTCON_REGISTER_ADDRESS_BANK0, value);
     }
     
     public void setINTCONbitGIE(int b) {
-        int value = getSTATUSRegister();
+        int value = getINTCONRegister();
         value = BinaryNumberHelper.setBit(value, 7, b);
-        setSTATUSRegister(value);
+        setINTCONRegister(value);
     }
     
     public int getINTCONbitGIE() {
@@ -468,9 +466,9 @@ public class PICSimulator {
     }
     
     public void setINTCONbitEEIE(int b) {
-        int value = getSTATUSRegister();
+        int value = getINTCONRegister();
         value = BinaryNumberHelper.setBit(value, 6, b);
-        setSTATUSRegister(value);
+        setINTCONRegister(value);
     }
     
     public int getINTCONbitEEIE() {
@@ -478,9 +476,9 @@ public class PICSimulator {
     }
     
     public void setINTCONbitT0IE(int b) {
-        int value = getSTATUSRegister();
+        int value = getINTCONRegister();
         value = BinaryNumberHelper.setBit(value, 5, b);
-        setSTATUSRegister(value);
+        setINTCONRegister(value);
     }
     
     public int getINTCONbitT0IE() {
@@ -488,9 +486,9 @@ public class PICSimulator {
     }
     
     public void setINTCONbitINTE(int b) {
-        int value = getSTATUSRegister();
+        int value = getINTCONRegister();
         value = BinaryNumberHelper.setBit(value, 4, b);
-        setSTATUSRegister(value);
+        setINTCONRegister(value);
     }
     
     public int getINTCONbitINTE() {
@@ -498,9 +496,9 @@ public class PICSimulator {
     }
     
     public void setINTCONbitRBIE(int b) {
-        int value = getSTATUSRegister();
+        int value = getINTCONRegister();
         value = BinaryNumberHelper.setBit(value, 3, b);
-        setSTATUSRegister(value);
+        setINTCONRegister(value);
     }
     
     public int getINTCONbitRBIE() {
@@ -508,9 +506,9 @@ public class PICSimulator {
     }
     
     public void setINTCONbitT0IF(int b) {
-        int value = getSTATUSRegister();
+        int value = getINTCONRegister();
         value = BinaryNumberHelper.setBit(value, 2, b);
-        setSTATUSRegister(value);
+        setINTCONRegister(value);
     }
     
     public int getINTCONbitT0IF() {
@@ -518,9 +516,9 @@ public class PICSimulator {
     }
     
     public void setINTCONbitINTF(int b) {
-        int value = getSTATUSRegister();
+        int value = getINTCONRegister();
         value = BinaryNumberHelper.setBit(value, 1, b);
-        setSTATUSRegister(value);
+        setINTCONRegister(value);
     }
     
     public int getINTCONbitINTF() {
@@ -528,9 +526,9 @@ public class PICSimulator {
     }
     
     public void setINTCONbitRBIF(int b) {
-        int value = getSTATUSRegister();
+        int value = getINTCONRegister();
         value = BinaryNumberHelper.setBit(value, 0, b);
-        setSTATUSRegister(value);
+        setINTCONRegister(value);
     }
     
     public int getINTCONbitRBIF() {
