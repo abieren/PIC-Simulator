@@ -23,7 +23,7 @@ public interface ModelPresenter {
 
     public void displayAutomaticSteppingIntervall(int ms);
 
-    public void displayRunningTime(int microSeconds);
+    public void displayRunningTime(double microSeconds);
 
     public void displayOscillatorFrequency(double megaHz);
 
