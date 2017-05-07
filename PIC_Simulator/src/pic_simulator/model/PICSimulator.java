@@ -106,7 +106,7 @@ public class PICSimulator {
         value = BinaryNumberHelper.truncateToNBit(value, 8);
         address = BinaryNumberHelper.truncateToNBit(address, 7);
         
-        //handle special file addresses
+        //handle special files that are accessible on both banks
         switch (address) {
             case 0x0:
                 //use pointer in fsr when address is 0x0
@@ -119,12 +119,25 @@ public class PICSimulator {
             case STATUS_REGISTER_ADDRESS_BANK0:
                 _notifier.changedSTATUSRegister(getSTATUSRegister(), value);
                 break;
+            case INTCON_REGISTER_ADDRESS_BANK0:
+                _notifier.changedINTCONRegister(getINTCONRegister(), value);
+                break;
             default:
                 break;
         }
         
         //use the RP0 bit in the STATUS register to form an 8 bit address
         address = BinaryNumberHelper.setBit(address, 7, getSTATUSbitRP0());
+        
+        //handle special files that are only accessible on bank1
+        switch (address) {
+            case OPTION_REGISTER_ADDRESS_BANK1:
+                _notifier.changedOPTIONRegister(getOPTIONRegister(), value);
+                break;
+            default:
+                break;
+        }
+
         //get all mapped registers for address
         List<Integer> registers = RegisterAddressDecoder.getAllRegistersForAddress(address);
         //modify hash map for every mapped register for given address
