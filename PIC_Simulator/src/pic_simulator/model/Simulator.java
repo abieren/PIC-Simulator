@@ -24,14 +24,14 @@ public class Simulator implements Model {
     
     private boolean _automaticSteppingMode;
     private int _automaticSteppingInterval;     //interval in ms
-    private double _oscillatorFrequency;
-    private int _runningTime;                   //running time in ms
+    private double _oscillatorFrequency;        //frequency in mega hz
+    private double _runningTime;                   //running time in micro seconds
     private boolean _breakOnWatchdogTrigger;
     private boolean _breakOnInterrupt;
 
     public Simulator(ModelPresenter presenter) {
         _presenter = presenter;
-        _notifier = new NotifierImpl(_presenter);
+        _notifier = new NotifierImpl(_presenter, this);
         _pic = new PICSimulator(_notifier);
     }
     
@@ -136,6 +136,11 @@ public class Simulator implements Model {
     @Override
     public void setRegister(int address, int value) {
         _pic.setRegister(address, value);
+    }
+
+    void nextCycle() {
+        _runningTime = _runningTime + 1/_oscillatorFrequency;
+        _presenter.displayRunningTime(_runningTime);
     }
     
 }
