@@ -47,9 +47,9 @@ public class MainWindowController
     @FXML 
     private ToggleButton bt_automaticSteppingMode;
     @FXML
-    private TextField tf_automaticSteppingIntervall;
+    private Label lb_automaticSteppingInterval;
     @FXML
-    private TextField tf_oscillatorFrequency;
+    private Label lb_oscillatorFrequency;
     @FXML
     private CheckBox cb_breakOnWatchdogTrigger;
     @FXML
@@ -127,8 +127,6 @@ public class MainWindowController
     @FXML
     private Label lb_intconRegBit7;
     @FXML
-    private Label lb_statusBar;
-    @FXML
     private ListView lv_sideBar;
     @FXML
     private ListView lv_sourceCode;
@@ -155,29 +153,11 @@ public class MainWindowController
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        registerListeners();
     }
 
     public void initializeData(Stage primaryStage, MainWindowPresenter presenter) {
         _primaryStage = primaryStage;
         _presenter = presenter;
-        displayStatusMessage(MessageType.CONFIRMATION, "PIC simulator successfully started");
-    }
-
-    private void registerListeners() {
-        tf_automaticSteppingIntervall.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue == false) {
-                //textbox has lost focus, apply changes now
-                tf_automaticSteppingIntervall_onChanged();
-            }
-        });
-
-        tf_oscillatorFrequency.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue == false) {
-                //textbox has lost focus, apply changes now
-                tf_oscillatorFrequency_onChanged();
-            }
-        });
     }
 
     private void initializeCodeView() {
@@ -316,6 +296,52 @@ public class MainWindowController
     private void bt_resetRunningTimeStopWatch() {
         _presenter.resetRunningTimeStopWatch();
     }
+    
+    @FXML
+    private void bt_changeAutomaticSteppingInterval() {
+        TextInputDialog dialog = new TextInputDialog("1000");
+        dialog.setTitle("Set automatic stepping interval");
+        dialog.setHeaderText("Set automatic stepping interval");
+        dialog.setContentText("Please enter interval in ms:");
+        
+        Optional<String> result = dialog.showAndWait();
+        if (result.isPresent()){
+            try {
+                int newValue = Integer.parseInt(result.get());
+                _presenter.setAutomaticSteppingInterval(newValue);
+                lb_automaticSteppingInterval.setText(Integer.toString(newValue));
+            } catch (NumberFormatException e) {
+                Alert alert = new Alert(AlertType.ERROR);
+                alert.setTitle("Invalid Number");
+                alert.setHeaderText("Invlaid Number");
+                alert.setContentText("\""+ result.get() +"\" is not a valid interval in ms!");
+                alert.showAndWait();
+            }
+        }
+    }
+    
+    @FXML
+    private void bt_changeOscillatorFrequency() {
+        TextInputDialog dialog = new TextInputDialog("4.0");
+        dialog.setTitle("Set oscillator requency");
+        dialog.setHeaderText("Set oscillator requency");
+        dialog.setContentText("Please enter frequency in MHz:");
+        
+        Optional<String> result = dialog.showAndWait();
+        if (result.isPresent()){
+            try {
+                double newValue = Double.parseDouble(result.get());
+                _presenter.setOscillatorFrequency(newValue);
+                lb_oscillatorFrequency.setText(Double.toString(newValue));
+            } catch (NumberFormatException e) {
+                Alert alert = new Alert(AlertType.ERROR);
+                alert.setTitle("Invalid Number");
+                alert.setHeaderText("Invlaid Number");
+                alert.setContentText("\""+ result.get() +"\" is not a valid frequency in MHz!");
+                alert.showAndWait();
+            }
+        }
+    }
 
     @FXML
     private void cb_breakOnWatchdogTrigger_onClicked() {
@@ -347,28 +373,26 @@ public class MainWindowController
     }
 
     private void tf_automaticSteppingIntervall_onChanged() {
-        String newValue = tf_automaticSteppingIntervall.getText();
+        String newValue = lb_automaticSteppingInterval.getText();
         int value;
         try {
             value = Integer.parseInt(newValue);
         } catch (NumberFormatException e) {
             //don't respect the value in simulation if it is invalid and just
             //ignore it
-            displayStatusMessage(MessageType.ERROR, "\"" + newValue + "\" is not a valid number");
             return;
         }
         _presenter.setAutomaticSteppingInterval(value);
     }
 
     private void tf_oscillatorFrequency_onChanged() {
-        String newValue = tf_oscillatorFrequency.getText();
+        String newValue = lb_oscillatorFrequency.getText();
         double value;
         try {
             value = Double.parseDouble(newValue);
         } catch (NumberFormatException e) {
             //don't respect the value in simulation if it is invalid and just
             //ignore it
-            displayStatusMessage(MessageType.ERROR, "\"" + newValue + "\" is not a valid number");
             return;
         }
         _presenter.setOscillatorFrequency(value);
@@ -380,31 +404,6 @@ public class MainWindowController
 
     public void removeBreakPointMarker(int line) {
         _sideBarAnnotations.set(line, "");
-    }
-    
-    @Override
-    public void displayStatusMessage(MessageType level, String message) {
-        lb_statusBar.setText(message);
-        String bgColor;
-        switch (level) {
-            case CONFIRMATION:
-                bgColor = MessageColor.COLOR_CONFIRMATION;
-                break;
-            case ERROR:
-                bgColor = MessageColor.COLOR_ERROR;
-                break;
-            case WARNING:
-                bgColor = MessageColor.COLOR_WARNING;
-                break;
-            case NOTIFICATION:
-                bgColor = MessageColor.COLOR_NOTIFICATION;
-                break;
-            case INFO:
-            default:
-                bgColor = MessageColor.COLOR_INFO;
-                break;
-        }
-        lb_statusBar.setStyle("-fx-background-color: " + bgColor);
     }
 
     @Override
@@ -430,8 +429,11 @@ public class MainWindowController
     }
 
     @Override
-    public void displayRunningTime(int microSeconds) {
-        lb_runningTime.setText(Integer.toString(microSeconds));
+    public void displayRunningTime(double microSeconds) {
+        //jusst show the first three fractional digits
+        microSeconds = Math.round(microSeconds * 1000);
+        microSeconds = microSeconds / 1000;
+        lb_runningTime.setText(Double.toString(microSeconds));
     }
 
     @Override
@@ -543,12 +545,12 @@ public class MainWindowController
 
     @Override
     public void displayAutomaticSteppingIntervall(int ms) {
-        tf_automaticSteppingIntervall.setText(Integer.toString(ms));
+        lb_automaticSteppingInterval.setText(Integer.toString(ms));
     }
 
     @Override
     public void displayOscillatorFrequency(double megaHz) {
-        tf_oscillatorFrequency.setText(Double.toString(megaHz));
+        lb_oscillatorFrequency.setText(Double.toString(megaHz));
     }
 
     @Override
@@ -604,11 +606,10 @@ public class MainWindowController
     }
 
     private void setRegisterValueDialog(int address) {
-        System.out.println(address);
         TextInputDialog dialog = new TextInputDialog("0");
         dialog.setTitle("Set register value");
         String register = BinaryNumberHelper.formatToDisplayableHex(address, 2, true);
-        dialog.setHeaderText("Set new value of register 0x" + register);
+        dialog.setHeaderText("Set new value for register 0x" + register);
         dialog.setContentText("Please enter new hex value:");
 
         // Traditional way to get the response value.
