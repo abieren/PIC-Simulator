@@ -557,7 +557,6 @@ public class PICSimulator {
             setRegister(f, result);
         }
         nextCycle();
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     public void ANDWF(int f, int d) {
@@ -578,14 +577,12 @@ public class PICSimulator {
         setRegister(f, 0);
         setSTATUSbitZ(1);
         nextCycle();
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     public void CLRW() {
         setWRegister(0);
         setSTATUSbitZ(1);
         nextCycle();
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     public void COMF(int f, int d) {
@@ -632,12 +629,12 @@ public class PICSimulator {
             skipNextInstructionWithNOP();
         }
         nextCycle();
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     public void INCF(int f, int d) {
         int result = getRegister(f) + 1;
         result = BinaryNumberHelper.truncateToNBit(result, 8);
+        //status affected: Z
         if (result == 0) {
             setSTATUSbitZ(1);
         } else {
@@ -649,7 +646,6 @@ public class PICSimulator {
             setRegister(f, result);
         }
         nextCycle();
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     public void INCFSZ(int f, int d) {
@@ -665,7 +661,6 @@ public class PICSimulator {
             skipNextInstructionWithNOP();
         }
         nextCycle();
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     public void IORWF(int f, int d) {
@@ -705,7 +700,6 @@ public class PICSimulator {
         //no status affectred
         setRegister(f, result);
         nextCycle();
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     public void NOP() {
@@ -741,7 +735,6 @@ public class PICSimulator {
             setRegister(f, result);
         }
         nextCycle();
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     public void SUBWF(int f, int d) {
