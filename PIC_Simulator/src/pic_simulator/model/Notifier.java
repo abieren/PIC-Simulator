@@ -16,6 +16,10 @@ public interface Notifier {
     void changedPCRegister(int oldValue, int newValue);
 
     void changedInstructionRegister(int oldValue, int newValue);
+    
+    public void changedINTCONRegister(int oldValue, int newValue);
+
+    public void changedOPTIONRegister(int oldValue, int newValue);
 
     void changedRegister(int register, int oldValue, int newValue);
 
