@@ -323,8 +323,8 @@ public class MainWindowController
     @FXML
     private void bt_changeOscillatorFrequency() {
         TextInputDialog dialog = new TextInputDialog("4.0");
-        dialog.setTitle("Set oscillator requency");
-        dialog.setHeaderText("Set oscillator requency");
+        dialog.setTitle("Set oscillator frequency");
+        dialog.setHeaderText("Set oscillator frequency");
         dialog.setContentText("Please enter frequency in MHz:");
         
         Optional<String> result = dialog.showAndWait();
