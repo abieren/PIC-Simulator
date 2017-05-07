@@ -105,9 +105,11 @@ public class PICSimulator {
     public void setRegister(int address, int value) {
         value = BinaryNumberHelper.truncateToNBit(value, 8);
         address = BinaryNumberHelper.truncateToNBit(address, 7);
-        //use pointer in fsr when address is 0x0
+        
+        //handle special file addresses
         switch (address) {
             case 0x0:
+                //use pointer in fsr when address is 0x0
                 int fsrValue = getRegister(FSR_ADDRESS_BANK0);
                 address = fsrValue;
                 break;
