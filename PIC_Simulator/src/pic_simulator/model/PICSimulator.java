@@ -603,6 +603,7 @@ public class PICSimulator {
     
     public void DECF(int f, int d) {
         int result = getRegister(f) - 1;
+        //status affeceted: Z
         if (result == 0) {
             setSTATUSbitZ(1);
         } else {
@@ -614,7 +615,6 @@ public class PICSimulator {
             setRegister(f, result);
         }
         nextCycle();
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     public void DECFSZ(int f, int d) {
@@ -681,6 +681,7 @@ public class PICSimulator {
     
     public void MOVF(int f, int d) {
         int result = getRegister(f);
+        //status affected: Z
         if (result == 0) {
             setSTATUSbitZ(1);
         } else {
@@ -692,7 +693,6 @@ public class PICSimulator {
             setRegister(f, result);
         }
         nextCycle();
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     public void MOVWF(int f) {
@@ -719,7 +719,6 @@ public class PICSimulator {
             setRegister(f, result);
         }
         nextCycle();
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     public void RRF(int f, int d) {
@@ -768,17 +767,18 @@ public class PICSimulator {
         int front2back = (result & 0x000000F0) >> 4;
         int back2front = (result & 0x0000000F) << 4;
         result = front2back + back2front;
+        //status affected: none
         if (d == 0) {
             setWRegister(result);
         } else {
             setRegister(f, result);
         }
         nextCycle();
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     public void XORWF(int f, int d) {
         int result = getWRegister() ^ getRegister(f);
+        //status affected: Z
         if (result == 0) {
             setSTATUSbitZ(1);
         } else {
@@ -790,34 +790,43 @@ public class PICSimulator {
             setRegister(f, result);
         }
         nextCycle();
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     /*BIT-ORIENTED FILE REGISTER OPERATIONS*/
     public void BCF(int f, int b) {
         int result = getRegister(f);
+        //status affected: none
         result = BinaryNumberHelper.setBit(result, b, 0);
         setRegister(f, result);
         nextCycle();
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     public void BSF(int f, int b) {
         int result = getRegister(f);
+        //status affected: none
         result = BinaryNumberHelper.setBit(result, b, 1);
         setRegister(f, result);
         nextCycle();
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     public void BTFSC(int f, int b) {
+        int result = getRegister(f);
+        result = BinaryNumberHelper.getBit(result, b);
+        //status affected: none
+        if (result == 0) {
+            skipNextInstructionWithNOP();
+        } 
         nextCycle();
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     public void BTFSS(int f, int b) {
+        int result = getRegister(f);
+        result = BinaryNumberHelper.getBit(result, b);
+        //status affected: none
+        if (result == 1) {
+            skipNextInstructionWithNOP();
+        } 
         nextCycle();
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     /*LITERAL AND CONTROL OPERATIONS*/
