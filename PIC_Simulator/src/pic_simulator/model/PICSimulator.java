@@ -314,6 +314,16 @@ public class PICSimulator {
         }
     }
     
+     private void handleInterrupts() {
+        //chek GIE
+        if (getINTCONbitGIE() == 0) return;
+        //check Timer Overflow Interrupt
+        if (getINTCONbitT0IE() != 0 && getINTCONbitT0IF() != 0) {
+            //Interrupt
+            CALL(0x4);
+        }
+    }
+    
     public void skipNextInstructionWithNOP() {
         setPCRegister(getPCRegister()+1);
         nextCycle();
@@ -527,19 +537,94 @@ public class PICSimulator {
         return BinaryNumberHelper.getBit(getINTCONRegister(), 0);
     }
     
-    private void handleInterrupts() {
-        //chek GIE
-        if (getINTCONbitGIE() == 0) return;
-        //check Timer Overflow Interrupt
-        if (getINTCONbitT0IE() != 0 && getINTCONbitT0IF() != 0) {
-            //Interrupt
-            CALL(0x4);
-        }
+    /*OPTION REGISTER*/
+    public int getOPTIONRegister() {
+        return getRegister(OPTION_REGISTER_ADDRESS_BANK1);
     }
     
+    public void setOPTIONRegister(int value) {
+        setRegister(OPTION_REGISTER_ADDRESS_BANK1, value);
+    }
     
+    public void setOPTIONbitPS0(int b) {
+        int value = getOPTIONRegister();
+        value = BinaryNumberHelper.setBit(value, 0, b);
+        setOPTIONRegister(value);
+    }
     
+    public int getOPTIONbitPS0() {
+        return BinaryNumberHelper.getBit(getINTCONRegister(), 0);
+    }
     
+    public void setOPTIONbitPS1(int b) {
+        int value = getOPTIONRegister();
+        value = BinaryNumberHelper.setBit(value, 1, b);
+        setOPTIONRegister(value);
+    }
+    
+    public int getOPTIONbitPS1() {
+        return BinaryNumberHelper.getBit(getINTCONRegister(), 1);
+    }
+    
+    public void setOPTIONbitPS2(int b) {
+        int value = getOPTIONRegister();
+        value = BinaryNumberHelper.setBit(value, 2, b);
+        setOPTIONRegister(value);
+    }
+    
+    public int getOPTIONbitPS2() {
+        return BinaryNumberHelper.getBit(getINTCONRegister(), 2);
+    }
+    
+    public void setOPTIONbitPSA(int b) {
+        int value = getOPTIONRegister();
+        value = BinaryNumberHelper.setBit(value, 3, b);
+        setOPTIONRegister(value);
+    }
+    
+    public int getOPTIONbitPSA() {
+        return BinaryNumberHelper.getBit(getINTCONRegister(), 3);
+    }
+    
+    public void setOPTIONbitT0SE(int b) {
+        int value = getOPTIONRegister();
+        value = BinaryNumberHelper.setBit(value, 0, 4);
+        setOPTIONRegister(value);
+    }
+    
+    public int getOPTIONbitT0SE() {
+        return BinaryNumberHelper.getBit(getINTCONRegister(), 4);
+    }
+    
+    public void setOPTIONbitT0CS(int b) {
+        int value = getOPTIONRegister();
+        value = BinaryNumberHelper.setBit(value, 5, b);
+        setOPTIONRegister(value);
+    }
+    
+    public int getOPTIONbitT0CS() {
+        return BinaryNumberHelper.getBit(getINTCONRegister(), 5);
+    }
+    
+    public void setOPTIONbitINTEDG(int b) {
+        int value = getOPTIONRegister();
+        value = BinaryNumberHelper.setBit(value, 6, b);
+        setOPTIONRegister(value);
+    }
+    
+    public int getOPTIONbitINTEDG() {
+        return BinaryNumberHelper.getBit(getINTCONRegister(), 6);
+    }
+    
+    public void setOPTIONbitRBPU(int b) {
+        int value = getOPTIONRegister();
+        value = BinaryNumberHelper.setBit(value, 7, b);
+        setOPTIONRegister(value);
+    }
+    
+    public int getOPTIONbitRBPU() {
+        return BinaryNumberHelper.getBit(getINTCONRegister(), 7);
+    }
     
     /*BYTE-ORIENTED FILE REGISTER OPERATIONS*/
     public void ADDWF(int f, int d) {
