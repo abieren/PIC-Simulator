@@ -32,6 +32,7 @@ public class PICSimulator {
     public final int STATUS_REGISTER_ADDRESS_BANK0 = 0x03;
     public final int PCLATH_REGISTER_ADDRESS_BANK0 = 0x0A;
     public final int FSR_ADDRESS_BANK0 = 0x4;
+    public final int INTCON_REGISTER_ADDRESS_BANK0 = 0x0B;
 
     
     public PICSimulator(Notifier notifier) {
@@ -162,6 +163,7 @@ public class PICSimulator {
     }
     
     public void makeStep() {
+        handleInterrupts();
         fetchNextInstruction();
         decodeAndExecuteInstruction(getInstructionRegsiter());
     }
@@ -423,6 +425,107 @@ public class PICSimulator {
         value = BinaryNumberHelper.setBit(value, 5, b);
         setSTATUSRegister(value);
     }
+    
+    /*INTCON REGISTER*/
+    public int getINTCONRegister() {
+        return getRegister(INTCON_REGISTER_ADDRESS_BANK0);
+    }
+    
+    public void setINTCONRegister(int value) {
+        _notifier.changedSTATUSRegister(getSTATUSRegister(), value);
+        setRegister(INTCON_REGISTER_ADDRESS_BANK0, value);
+    }
+    
+    public void setINTCONbitGIE(int b) {
+        int value = getSTATUSRegister();
+        value = BinaryNumberHelper.setBit(value, 7, b);
+        setSTATUSRegister(value);
+    }
+    
+    public int getINTCONbitGIE() {
+        return BinaryNumberHelper.getBit(getINTCONRegister(), 7);
+    }
+    
+    public void setINTCONbitEEIE(int b) {
+        int value = getSTATUSRegister();
+        value = BinaryNumberHelper.setBit(value, 6, b);
+        setSTATUSRegister(value);
+    }
+    
+    public int getINTCONbitEEIE() {
+        return BinaryNumberHelper.getBit(getINTCONRegister(), 6);
+    }
+    
+    public void setINTCONbitT0IE(int b) {
+        int value = getSTATUSRegister();
+        value = BinaryNumberHelper.setBit(value, 5, b);
+        setSTATUSRegister(value);
+    }
+    
+    public int getINTCONbitT0IE() {
+        return BinaryNumberHelper.getBit(getINTCONRegister(), 5);
+    }
+    
+    public void setINTCONbitINTE(int b) {
+        int value = getSTATUSRegister();
+        value = BinaryNumberHelper.setBit(value, 4, b);
+        setSTATUSRegister(value);
+    }
+    
+    public int getINTCONbitINTE() {
+        return BinaryNumberHelper.getBit(getINTCONRegister(), 4);
+    }
+    
+    public void setINTCONbitRBIE(int b) {
+        int value = getSTATUSRegister();
+        value = BinaryNumberHelper.setBit(value, 3, b);
+        setSTATUSRegister(value);
+    }
+    
+    public int getINTCONbitRBIE() {
+        return BinaryNumberHelper.getBit(getINTCONRegister(), 3);
+    }
+    
+    public void setINTCONbitT0IF(int b) {
+        int value = getSTATUSRegister();
+        value = BinaryNumberHelper.setBit(value, 2, b);
+        setSTATUSRegister(value);
+    }
+    
+    public int getINTCONbitT0IF() {
+        return BinaryNumberHelper.getBit(getINTCONRegister(), 2);
+    }
+    
+    public void setINTCONbitINTF(int b) {
+        int value = getSTATUSRegister();
+        value = BinaryNumberHelper.setBit(value, 1, b);
+        setSTATUSRegister(value);
+    }
+    
+    public int getINTCONbitINTF() {
+        return BinaryNumberHelper.getBit(getINTCONRegister(), 1);
+    }
+    
+    public void setINTCONbitRBIF(int b) {
+        int value = getSTATUSRegister();
+        value = BinaryNumberHelper.setBit(value, 0, b);
+        setSTATUSRegister(value);
+    }
+    
+    public int getINTCONbitRBIF() {
+        return BinaryNumberHelper.getBit(getINTCONRegister(), 0);
+    }
+    
+    private void handleInterrupts() {
+        //chek GIE
+        if (getINTCONbitGIE() == 0) return;
+        //check Timer Overflow Interrupt
+        if (getINTCONbitT0IE() != 0 && getINTCONbitT0IF() != 0) {
+            //Interrupt
+            CALL(0x4);
+        }
+    }
+    
     
     
     
