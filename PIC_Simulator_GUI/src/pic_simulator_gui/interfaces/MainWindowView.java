@@ -6,7 +6,6 @@
 package pic_simulator_gui.interfaces;
 
 import java.util.List;
-import pic_simulator_gui.view.main.MessageType;
 
 /**
  *
@@ -19,13 +18,11 @@ public interface MainWindowView {
     
     public void initializeView();
 
-    public void displayStatusMessage(MessageType level, String message);
-
     public void addCodeLine(Integer address, Integer instruction, String sourceCode);
 
     public void displayExecutedCodeLine(int line);
 
-    public void displayRunningTime(int microSeconds);
+    public void displayRunningTime(double microSeconds);
 
     public void displayWRegister(int value);
 

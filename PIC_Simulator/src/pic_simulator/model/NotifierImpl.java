@@ -11,9 +11,11 @@ import pic_simulator.interfaces.ModelPresenter;
 public class NotifierImpl implements Notifier {
 
     private final ModelPresenter _presenter;
+    private final Simulator _simulator;
 
-    public NotifierImpl(ModelPresenter presenter) {
+    public NotifierImpl(ModelPresenter presenter, Simulator simulator) {
         _presenter = presenter;
+        _simulator = simulator;
     }
     
     @Override
@@ -39,7 +41,7 @@ public class NotifierImpl implements Notifier {
 
     @Override
     public void nextCycle() {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        _simulator.nextCycle();
     }
 
     @Override
