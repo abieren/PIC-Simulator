@@ -28,6 +28,12 @@ public class Port {
         _tris = ~0;
         updateOutput();
     }
+
+    public Port(int latch, int tris) {
+        _latch = latch;
+        _tris = tris;
+        updateOutput();
+    }
     
     public void setLatch(int value) {
         updateOutput();
