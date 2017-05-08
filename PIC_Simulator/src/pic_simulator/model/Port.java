@@ -40,7 +40,7 @@ public class Port {
         
     }
     
-    public int getTris(int pin) {
+    public int getTris() {
         return _tris;
     }    
 }
