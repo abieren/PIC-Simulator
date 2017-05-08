@@ -54,5 +54,11 @@ public interface ModelPresenter {
     public void pushStack(int value, boolean isOverflow);
 
     public void popStack(int value, boolean isUnderflow);
+
+    public void displayPortLath(String port, int oldValue, int newValue);
+
+    public void displayPortOutput(String port, int oldValue, int newValue);
+
+    public void displayPortTris(String port, int oldValue, int newValue);
     
 }
