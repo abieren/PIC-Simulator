@@ -22,6 +22,12 @@ public class Port {
         //during an AND operation
         _output = _latch & (~_tris);
     }
+
+    public Port() {
+        _latch = 0;
+        _tris = ~0;
+        updateOutput();
+    }
     
     public void setLatch(int value) {
         updateOutput();
