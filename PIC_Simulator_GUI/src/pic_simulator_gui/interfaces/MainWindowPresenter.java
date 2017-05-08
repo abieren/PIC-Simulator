@@ -49,8 +49,8 @@ public interface MainWindowPresenter {
 
     public void setRegister(int address, int value);
 
-    public void setPortTris(String a, Integer get);
+    public void setPortTris(String port, int value);
 
-    public void setPortLatch(String b, Integer get);
+    public void setPortLatch(String port, int value);
     
 }
