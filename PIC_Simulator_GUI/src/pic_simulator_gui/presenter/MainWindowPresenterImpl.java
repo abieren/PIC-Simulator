@@ -207,5 +207,30 @@ public class MainWindowPresenterImpl
     public void setRegister(int address, int value) {
         _model.setRegister(address, value);
     }
+
+    @Override
+    public void displayPortLatch(String port, int oldValue, int newValue) {
+        _view.displayPortLatch(port, oldValue, newValue);
+    }
+
+    @Override
+    public void displayPortOutput(String port, int oldValue, int newValue) {
+        _view.displayPortOutput(port, oldValue, newValue);
+    }
+
+    @Override
+    public void displayPortTris(String port, int oldValue, int newValue) {
+        _view.displayPortTris(port, oldValue, newValue);
+    }
+
+    @Override
+    public void setPortTris(String port, int value) {
+        _model.setPortTris(port, value);
+    }
+
+    @Override
+    public void setPortLatch(String port, int value) {
+        _model.setPortLatch(port, value);
+    }
     
 }
