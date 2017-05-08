@@ -25,7 +25,7 @@ public class Port {
 
     public Port() {
         _latch = 0;
-        _tris = ~0;
+        _tris = ~0; //set every bit to 1 to mark every pin as input as default
         updateOutput();
     }
 
