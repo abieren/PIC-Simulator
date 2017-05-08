@@ -40,5 +40,9 @@ public interface Model {
     public void stepOver();
 
     public void setRegister(int address, int value);
+
+    public void setPortTris(String port, int value);
+
+    public void setPortLatch(String port, int value);
     
 }
