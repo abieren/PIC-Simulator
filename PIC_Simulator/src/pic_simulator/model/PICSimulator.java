@@ -90,49 +90,58 @@ public class PICSimulator {
         _wRegister = value;
     }
     
-    public int getRegister(int address) {
-        //shrink to an 7 bit address
-        address = BinaryNumberHelper.truncateToNBit(address, 7);
+    public int getRegister(int address, boolean useBankSelect) {
+        int address7bit = BinaryNumberHelper.truncateToNBit(address, 7);
+        int address8bit = BinaryNumberHelper.truncateToNBit(address, 8);
         Integer result;     //variable to store the result value to be returned
         
         //handle special files that are accessible on both banks
-        switch (address) {
+        //use bank0 addresses to identify case of special file        
+        switch (address7bit) {
             case INDF_REGISTER_BANK0:
-                int fsrValue = getRegister(FSR_ADDRESS_BANK0);
+                int fsrValue = getRegister(FSR_ADDRESS_BANK0, false);
                 result = _registers.get(fsrValue);
                 break;
             default:
                 break;
         }
         
-        //handle special files that are accessible only on bank0
-        switch (address) {
-            case PORTA_REGISTER_BANK0:
-                result = _portA.getOutput();
-                break; 
-            case PORTB_REGISTER_BANK0:
-                result = _portA.getOutput();
-                break;
-            default:
-                break;
+        //if useBankSelect is true get the RP0 bit of the STATUS regsiter to
+        //determine which bank should be accessed. Otherwise use the given 
+        //eight bit address as is.
+        if (useBankSelect) {
+            //use the RP0 bit in the STATUS register to form an 8 bit address
+            address8bit = BinaryNumberHelper.setBit(address, 7, getSTATUSbitRP0());
         }
         
-        //use the RP0 bit in the STATUS register to form an 8 bit address
-        BinaryNumberHelper.setBit(address, 7, getSTATUSbitRP0());
-        
-        //handle special files that are accessible only on bank1
-        switch (address) {
-            case TRISA_REGISTER_BANK1:
-                result = _portA.getTris();
-                break; 
-            case TRISB_REGISTER_BANK1:
-                result = _portA.getTris();
-                break;
-            default:
-                break;
-        }
+        int addressBit8 = BinaryNumberHelper.getBit(address8bit, 7);
+        if (addressBit8 == 0) {
+            //handle special files that are accessible only on bank0
+            switch (address8bit) {
+                case PORTA_REGISTER_BANK0:
+                    result = _portA.getOutput();
+                    break; 
+                case PORTB_REGISTER_BANK0:
+                    result = _portA.getOutput();
+                    break;
+                default:
+                    break;
+            }
+        } else {
+            //handle special files that are accessible only on bank1
+            switch (address8bit) {
+                case TRISA_REGISTER_BANK1:
+                    result = _portA.getTris();
+                    break; 
+                case TRISB_REGISTER_BANK1:
+                    result = _portA.getTris();
+                    break;
+                default:
+                    break;
+            }
+        }    
   
-        result = _registers.get(address);
+        result = _registers.get(address8bit);
         //make sure a default value is returned if value of register in
         //hash map hasn't been set yet
         if (result == null) {
@@ -141,19 +150,24 @@ public class PICSimulator {
         return result;
     }
     
-    public void setRegister(int address, int value) {
+    public void setRegister(int address, int value, boolean useBankSelect) {
         value = BinaryNumberHelper.truncateToNBit(value, 8);
-        address = BinaryNumberHelper.truncateToNBit(address, 7);
+        
+        int address7bit;
+        int address8bit;
+        address7bit = BinaryNumberHelper.truncateToNBit(address, 7);
+        address8bit = BinaryNumberHelper.truncateToNBit(address, 8);
         
         //handle special files that are accessible on both banks
-        switch (address) {
+        //use bank0 addresses to identify case of special file
+        switch (address7bit) {
             case 0x0:
                 //use pointer in fsr when address is 0x0
-                int fsrValue = getRegister(FSR_ADDRESS_BANK0);
-                address = fsrValue;
+                int fsrValue = getRegister(FSR_ADDRESS_BANK0, false);
+                address8bit = fsrValue;
                 break;
             case FSR_ADDRESS_BANK0:
-                _notifier.changedFSRRegister(getRegister(FSR_ADDRESS_BANK0), value);
+                _notifier.changedFSRRegister(getRegister(FSR_ADDRESS_BANK0, false), value);
                 break;
             case STATUS_REGISTER_ADDRESS_BANK0:
                 _notifier.changedSTATUSRegister(getSTATUSRegister(), value);
@@ -165,64 +179,73 @@ public class PICSimulator {
                 break;
         }
         
-        //handle special files that are accessible on bank0
-        int oldLatch;               //helper variable to hold old latch of port
-        int oldOutput;              //helper variable to hold old output of port
-        switch (address) {
-            case PORTA_REGISTER_BANK0:
-                oldLatch = _portA.getLatch();
-                oldOutput = _portA.getOutput();
-                _portA.setLatch(value);
-                _notifier.changedPortALatch(oldLatch, _portA.getLatch());
-                _notifier.changedPortAOutput(oldOutput, _portA.getOutput());
-                //everything handled exit function
-                return; 
-            case PORTB_REGISTER_BANK0:
-                oldLatch = _portB.getLatch();
-                oldOutput = _portB.getOutput();
-                _portB.setLatch(value);
-                _notifier.changedPortBLatch(oldLatch, _portB.getLatch());
-                _notifier.changedPortBOutput(oldOutput, _portB.getOutput());
-                //everything handled exit function
-                return;
-            default:
-                break;
+        //if useBankSelect is true get the RP0 bit of the STATUS regsiter to
+        //determine which bank should be accessed. Otherwise use the given 
+        //eight bit address as is.
+        if (useBankSelect) {
+            //use the RP0 bit in the STATUS register to form an 8 bit address
+            address8bit = BinaryNumberHelper.setBit(address, 7, getSTATUSbitRP0());
         }
         
-        //use the RP0 bit in the STATUS register to form an 8 bit address
-        address = BinaryNumberHelper.setBit(address, 7, getSTATUSbitRP0());
-        
-        //handle special files that are only accessible on bank1
-        int oldTris;               //helper variable to hold old tris of port
-        switch (address) {
-            case OPTION_REGISTER_ADDRESS_BANK1:
-                _notifier.changedOPTIONRegister(getOPTIONRegister(), value);
-                break;
-            case TRISA_REGISTER_BANK1:
-                oldOutput = _portA.getOutput();
-                oldTris = _portA.getTris();
-                _portA.setTris(value);
-                _notifier.changedPortAOutput(oldOutput, _portA.getOutput());
-                _notifier.changedPortATris(oldTris, _portA.getTris());
-                //everything handled exit function
-                return;
-            case TRISB_REGISTER_BANK1:
-                oldOutput = _portB.getOutput();
-                oldTris = _portB.getTris();
-                _portB.setTris(value);
-                _notifier.changedPortBOutput(oldOutput, _portB.getOutput());
-                _notifier.changedPortBTris(oldTris, _portB.getTris());
-                //everything handled exit function
-                return;
-            default:
-                break;
+        int addressBit8 = BinaryNumberHelper.getBit(address8bit, 7);
+        if (addressBit8 == 0) {
+            //handle special files that are only accessible on bank0
+            int oldLatch;               //helper variable to hold old latch of port
+            int oldOutput;              //helper variable to hold old output of port
+            switch (address) {
+                case PORTA_REGISTER_BANK0:
+                    oldLatch = _portA.getLatch();
+                    oldOutput = _portA.getOutput();
+                    _portA.setLatch(value);
+                    _notifier.changedPortALatch(oldLatch, _portA.getLatch());
+                    _notifier.changedPortAOutput(oldOutput, _portA.getOutput());
+                    //everything handled exit function
+                    return; 
+                case PORTB_REGISTER_BANK0:
+                    oldLatch = _portB.getLatch();
+                    oldOutput = _portB.getOutput();
+                    _portB.setLatch(value);
+                    _notifier.changedPortBLatch(oldLatch, _portB.getLatch());
+                    _notifier.changedPortBOutput(oldOutput, _portB.getOutput());
+                    //everything handled exit function
+                    return;
+                default:
+                    break;
+            }
+        } else {
+            //handle special files that are only accessible on bank1
+            int oldTris;               //helper variable to hold old tris of port
+            int oldOutput;              //helper variable to hold old output of port
+            switch (address) {
+                case OPTION_REGISTER_ADDRESS_BANK1:
+                    _notifier.changedOPTIONRegister(getOPTIONRegister(), value);
+                    break;
+                case TRISA_REGISTER_BANK1:
+                    oldOutput = _portA.getOutput();
+                    oldTris = _portA.getTris();
+                    _portA.setTris(value);
+                    _notifier.changedPortAOutput(oldOutput, _portA.getOutput());
+                    _notifier.changedPortATris(oldTris, _portA.getTris());
+                    //everything handled exit function
+                    return;
+                case TRISB_REGISTER_BANK1:
+                    oldOutput = _portB.getOutput();
+                    oldTris = _portB.getTris();
+                    _portB.setTris(value);
+                    _notifier.changedPortBOutput(oldOutput, _portB.getOutput());
+                    _notifier.changedPortBTris(oldTris, _portB.getTris());
+                    //everything handled exit function
+                    return;
+                default:
+                    break;
+            }
         }
-
+      
         //get all mapped registers for address
-        List<Integer> registers = RegisterAddressDecoder.getAllRegistersForAddress(address);
+        List<Integer> registers = RegisterAddressDecoder.getAllRegistersForAddress(address8bit);
         //modify hash map for every mapped register for given address
         for (Integer register : registers) {
-            _notifier.changedRegister(register, getRegister(register), value);
+            _notifier.changedRegister(register, getRegister(register, false), value);
             _registers.put(register, value);
         }
     }
@@ -495,7 +518,7 @@ public class PICSimulator {
     }
     
     public void setSTATUSRegister(int value) {
-        setRegister(STATUS_REGISTER_ADDRESS_BANK0, value);
+        setRegister(STATUS_REGISTER_ADDRESS_BANK0, value, false);
     }
     
     public int getSTATUSbitC() {
@@ -560,11 +583,11 @@ public class PICSimulator {
     
     /*INTCON REGISTER*/
     public int getINTCONRegister() {
-        return getRegister(INTCON_REGISTER_ADDRESS_BANK0);
+        return getRegister(INTCON_REGISTER_ADDRESS_BANK0, false);
     }
     
     public void setINTCONRegister(int value) {
-        setRegister(INTCON_REGISTER_ADDRESS_BANK0, value);
+        setRegister(INTCON_REGISTER_ADDRESS_BANK0, value, false);
     }
     
     public void setINTCONbitGIE(int b) {
@@ -649,11 +672,11 @@ public class PICSimulator {
     
     /*OPTION REGISTER*/
     public int getOPTIONRegister() {
-        return getRegister(OPTION_REGISTER_ADDRESS_BANK1);
+        return getRegister(OPTION_REGISTER_ADDRESS_BANK1, false);
     }
     
     public void setOPTIONRegister(int value) {
-        setRegister(OPTION_REGISTER_ADDRESS_BANK1, value);
+        setRegister(OPTION_REGISTER_ADDRESS_BANK1, value, false);
     }
     
     public void setOPTIONbitPS0(int b) {
@@ -739,11 +762,11 @@ public class PICSimulator {
     /*EECON1 REGISTER*/
     public void setEECON1Register(int value) {
         value = BinaryNumberHelper.truncateToNBit(value, 5);
-        setRegister(EECON1_REGISTER_BANK1, value);
+        setRegister(EECON1_REGISTER_BANK1, value, false);
     }
     
     public int getEECON1Register() {
-        return getRegister(EECON1_REGISTER_BANK1);
+        return getRegister(EECON1_REGISTER_BANK1, false);
     }
     
     public void setEECON1bitEEIF(int b) {
@@ -758,20 +781,20 @@ public class PICSimulator {
     
     /*BYTE-ORIENTED FILE REGISTER OPERATIONS*/
     public void ADDWF(int f, int d) {
-        int result = getWRegister() + getRegister(f);
+        int result = getWRegister() + getRegister(f, true);
         if (result == 0) {
             setSTATUSbitZ(1);
         }
         else {
             setSTATUSbitZ(0);
         }
-        if (isDigitCarry(getWRegister(), getRegister(f))) {
+        if (isDigitCarry(getWRegister(), getRegister(f, true))) {
             setSTATUSbitDC(1);
         }
         else {
             setSTATUSbitDC(0);
         }
-        if (isCarry(getWRegister(), getRegister(f))) {
+        if (isCarry(getWRegister(), getRegister(f, true))) {
             setSTATUSbitC(1);
         }
         else {
@@ -780,27 +803,27 @@ public class PICSimulator {
         if (d == 0) {
             setWRegister(result);
         } else {
-            setRegister(f, result);
+            setRegister(f, result, true);
         }
         nextCycle();
     }
     
     public void ANDWF(int f, int d) {
-        int result = getWRegister() & getRegister(f);
+        int result = getWRegister() & getRegister(f, true);
         if (result == 0) {
             setSTATUSbitZ(1);
         }
         if (d == 0) {
             setWRegister(result);
         } else {
-            setRegister(f, result);
+            setRegister(f, result, true);
         }
         nextCycle();
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     public void CLRF(int f) {
-        setRegister(f, 0);
+        setRegister(f, 0, true);
         setSTATUSbitZ(1);
         nextCycle();
     }
@@ -812,7 +835,7 @@ public class PICSimulator {
     }
     
     public void COMF(int f, int d) {
-        int result = ~getRegister(f);
+        int result = ~getRegister(f, true);
         if (result == 0) {
             setSTATUSbitZ(1);
         } else {
@@ -821,14 +844,14 @@ public class PICSimulator {
         if (d == 0) {
             setWRegister(result);
         } else {
-            setRegister(f, result);
+            setRegister(f, result, true);
         }
         nextCycle();
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     public void DECF(int f, int d) {
-        int result = getRegister(f) - 1;
+        int result = getRegister(f, true) - 1;
         //status affeceted: Z
         if (result == 0) {
           
@@ -839,18 +862,18 @@ public class PICSimulator {
         if (d == 0) {
             setWRegister(result);
         } else {
-            setRegister(f, result);
+            setRegister(f, result, true);
         }
         nextCycle();
     }
     
     public void DECFSZ(int f, int d) {
-        int result = getRegister(f) - 1;
+        int result = getRegister(f, true) - 1;
         //no status affected
         if (d == 0) {
             setWRegister(result);
         } else {
-            setRegister(f, result);
+            setRegister(f, result, true);
         }
         if (result == 0) {
             skipNextInstructionWithNOP();
@@ -859,7 +882,7 @@ public class PICSimulator {
     }
     
     public void INCF(int f, int d) {
-        int result = getRegister(f) + 1;
+        int result = getRegister(f, true) + 1;
         result = BinaryNumberHelper.truncateToNBit(result, 8);
         //status affected: Z
         if (result == 0) {
@@ -870,19 +893,19 @@ public class PICSimulator {
         if (d == 0) {
             setWRegister(result);
         } else {
-            setRegister(f, result);
+            setRegister(f, result, true);
         }
         nextCycle();
     }
     
     public void INCFSZ(int f, int d) {
-        int result = getRegister(f) + 1;
+        int result = getRegister(f, true) + 1;
         result = BinaryNumberHelper.truncateToNBit(result, 8);
         //no status affected
         if (d == 0) {
             setWRegister(result);
         } else {
-            setRegister(f, result);
+            setRegister(f, result, true);
         }
         if (result == 0) {
             skipNextInstructionWithNOP();
@@ -891,7 +914,7 @@ public class PICSimulator {
     }
     
     public void IORWF(int f, int d) {
-        int result = getWRegister() ^ getRegister(f);
+        int result = getWRegister() ^ getRegister(f, true);
         if (result == 0) {
             setSTATUSbitZ(1);
         } else {
@@ -900,14 +923,14 @@ public class PICSimulator {
         if (d == 0) {
             setWRegister(result);
         } else {
-            setRegister(f, result);
+            setRegister(f, result, true);
         }
         nextCycle();
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     public void MOVF(int f, int d) {
-        int result = getRegister(f);
+        int result = getRegister(f, true);
         //status affected: Z
         if (result == 0) {
             setSTATUSbitZ(1);
@@ -917,7 +940,7 @@ public class PICSimulator {
         if (d == 0) {
             setWRegister(result);
         } else {
-            setRegister(f, result);
+            setRegister(f, result, true);
         }
         nextCycle();
     }
@@ -925,7 +948,7 @@ public class PICSimulator {
     public void MOVWF(int f) {
         int result = getWRegister();
         //no status affectred
-        setRegister(f, result);
+        setRegister(f, result, true);
         nextCycle();
     }
     
@@ -934,8 +957,8 @@ public class PICSimulator {
     }
     
     public void RLF(int f, int d) {
-        int result = getRegister(f);
-        int tmp = BinaryNumberHelper.getBit(getRegister(f), 7);
+        int result = getRegister(f, true);
+        int tmp = BinaryNumberHelper.getBit(getRegister(f, true), 7);
         int carryold = getSTATUSbitC();
         setSTATUSbitC(tmp);
         result = result << 1;
@@ -943,14 +966,14 @@ public class PICSimulator {
         if (d == 0) {
             setWRegister(result);
         } else {
-            setRegister(f, result);
+            setRegister(f, result, true);
         }
         nextCycle();
     }
     
     public void RRF(int f, int d) {
-        int result = getRegister(f);
-        int tmp = BinaryNumberHelper.getBit(getRegister(f), 0);
+        int result = getRegister(f, true);
+        int tmp = BinaryNumberHelper.getBit(getRegister(f, true), 0);
         int carryold = getSTATUSbitC();
         setSTATUSbitC(tmp);
         result = result >> 1;
@@ -958,24 +981,24 @@ public class PICSimulator {
         if (d == 0) {
             setWRegister(result);
         } else {
-            setRegister(f, result);
+            setRegister(f, result, true);
         }
         nextCycle();
     }
     
     public void SUBWF(int f, int d) {
-        int result = getRegister(f) - getWRegister();
+        int result = getRegister(f, true) - getWRegister();
         if (result == 0) {
             setSTATUSbitZ(1);
         }  else {
             setSTATUSbitZ(0);
         }
-        if (isBorrow(getRegister(f), getWRegister())) {
+        if (isBorrow(getRegister(f, true), getWRegister())) {
             setSTATUSbitC(1);
         } else {
             setSTATUSbitC(0);
         }
-        if (isDigitBorrow(getRegister(f), getWRegister())) {
+        if (isDigitBorrow(getRegister(f, true), getWRegister())) {
             setSTATUSbitDC(1);
         } else {
             setSTATUSbitDC(0);
@@ -983,14 +1006,14 @@ public class PICSimulator {
         if (d == 0) {
             setWRegister(result);
         } else {
-            setRegister(f, result);
+            setRegister(f, result, true);
         }
         nextCycle();
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     public void SWAPF(int f, int d) {
-        int result = getRegister(f);
+        int result = getRegister(f, true);
         int front2back = (result & 0x000000F0) >> 4;
         int back2front = (result & 0x0000000F) << 4;
         result = front2back + back2front;
@@ -998,13 +1021,13 @@ public class PICSimulator {
         if (d == 0) {
             setWRegister(result);
         } else {
-            setRegister(f, result);
+            setRegister(f, result, true);
         }
         nextCycle();
     }
     
     public void XORWF(int f, int d) {
-        int result = getWRegister() ^ getRegister(f);
+        int result = getWRegister() ^ getRegister(f, true);
         //status affected: Z
         if (result == 0) {
             setSTATUSbitZ(1);
@@ -1014,30 +1037,30 @@ public class PICSimulator {
         if (d == 0) {
             setWRegister(result);
         } else {
-            setRegister(f, result);
+            setRegister(f, result, true);
         }
         nextCycle();
     }
     
     /*BIT-ORIENTED FILE REGISTER OPERATIONS*/
     public void BCF(int f, int b) {
-        int result = getRegister(f);
+        int result = getRegister(f, true);
         //status affected: none
         result = BinaryNumberHelper.setBit(result, b, 0);
-        setRegister(f, result);
+        setRegister(f, result, true);
         nextCycle();
     }
     
     public void BSF(int f, int b) {
-        int result = getRegister(f);
+        int result = getRegister(f, true);
         //status affected: none
         result = BinaryNumberHelper.setBit(result, b, 1);
-        setRegister(f, result);
+        setRegister(f, result, true);
         nextCycle();
     }
     
     public void BTFSC(int f, int b) {
-        int result = getRegister(f);
+        int result = getRegister(f, true);
         result = BinaryNumberHelper.getBit(result, b);
         //status affected: none
         if (result == 0) {
@@ -1047,7 +1070,7 @@ public class PICSimulator {
     }
     
     public void BTFSS(int f, int b) {
-        int result = getRegister(f);
+        int result = getRegister(f, true);
         result = BinaryNumberHelper.getBit(result, b);
         //status affected: none
         if (result == 1) {
@@ -1096,7 +1119,7 @@ public class PICSimulator {
         //pushStack(getPCRegister()+1);
         //don't increment by one, because it is already done after the fetch procedure
         pushStack(getPCRegister());
-        int pclath = getRegister(PCLATH_REGISTER_ADDRESS_BANK0);
+        int pclath = getRegister(PCLATH_REGISTER_ADDRESS_BANK0, false);
         addressk = BinaryNumberHelper.setBit(addressk, 11, BinaryNumberHelper.getBit(pclath, 3));
         addressk = BinaryNumberHelper.setBit(addressk, 12, BinaryNumberHelper.getBit(pclath, 4));
         setPCRegister(addressk);
@@ -1113,7 +1136,7 @@ public class PICSimulator {
     }
     
     public void GOTO(int addressk) {
-        int pclath = getRegister(PCLATH_REGISTER_ADDRESS_BANK0);
+        int pclath = getRegister(PCLATH_REGISTER_ADDRESS_BANK0, false);
         addressk = BinaryNumberHelper.setBit(addressk, 11, BinaryNumberHelper.getBit(pclath, 3));
         addressk = BinaryNumberHelper.setBit(addressk, 12, BinaryNumberHelper.getBit(pclath, 4));
         setPCRegister(addressk);
