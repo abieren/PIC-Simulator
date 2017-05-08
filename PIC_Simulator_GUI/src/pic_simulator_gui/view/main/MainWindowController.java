@@ -208,27 +208,30 @@ public class MainWindowController
         //genrate labels inside the grid
         for (int row = 0; row < 17; row++) {
             for (int col = 0; col < 17; col++) {
+                Label lb = new Label();
+                lb.setMinHeight(20);
+                lb.setMaxWidth(20);
+                lb.setMinHeight(20);
+                lb.setMaxHeight(20);
+                //fill upper table head and left table head
                 if (col == 0 && row == 0) {
+                    //add empty label
+                    lb.setStyle("-fx-background-color: rgb(200,200,200); -fx-font-weight: bold;");
+                    gp_register_view_container.add(lb, col, row);
                     continue;
                 }
-                Label lb = new Label();
-                lb.setMinHeight(19);
-                lb.setMaxWidth(19);
-                lb.setMinHeight(19);
-                lb.setMaxHeight(19);
-                lb.setStyle("-fx-background-color: white;");
-                //fill upper table head and left table head
                 if (row == 0 && col > 0) {
                     lb.setText(BinaryNumberHelper.formatToDisplayableHex(col-1, 1, false));
-                    lb.setStyle("-fx-font-weight: bold;");
+                    lb.setStyle("-fx-background-color: rgb(200,200,200); -fx-font-weight: bold; -fx-alignment: center;");
                     gp_register_view_container.add(lb, col, row);
                     continue;
                 } else if (col == 0 && row > 0) {
                     lb.setText(BinaryNumberHelper.formatToDisplayableHex(row-1, 1, true));
-                    lb.setStyle("-fx-font-weight: bold;");
+                    lb.setStyle("-fx-background-color: rgb(200,200,200); -fx-font-weight: bold; -fx-alignment: center;");
                     gp_register_view_container.add(lb, col, row);
                     continue;
                 }
+                lb.setStyle("-fx-background-color: white; -fx-alignment: center;");
                 lb.setText(BinaryNumberHelper.formatToDisplayableHex(0, 2, true));
                 //use id to get the address which the label displays
                 lb.setId(Integer.toString((row-1)*16+col-1));
@@ -323,8 +326,8 @@ public class MainWindowController
     @FXML
     private void bt_changeOscillatorFrequency() {
         TextInputDialog dialog = new TextInputDialog("4.0");
-        dialog.setTitle("Set oscillator requency");
-        dialog.setHeaderText("Set oscillator requency");
+        dialog.setTitle("Set oscillator frequency");
+        dialog.setHeaderText("Set oscillator frequency");
         dialog.setContentText("Please enter frequency in MHz:");
         
         Optional<String> result = dialog.showAndWait();
@@ -567,7 +570,7 @@ public class MainWindowController
     public void displayRegister(int register, int value) {
         int row = register/16;
         int col = register%16;
-        int nthChild = (row+1)*17+col;
+        int nthChild = (row+1)*17+col+1;
         
         ObservableList<Node> nodes = gp_register_view_container.getChildren();
         Label lb = (Label)nodes.get(nthChild);

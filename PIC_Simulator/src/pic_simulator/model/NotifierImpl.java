@@ -68,5 +68,15 @@ public class NotifierImpl implements Notifier {
     public void changedFSRRegister(int oldValue, int newValue) {
         _presenter.displayFSRRegister(newValue);
     }
+
+    @Override
+    public void changedINTCONRegister(int oldValue, int newValue) {
+        _presenter.displayINTCONRegister(newValue);
+    }
+
+    @Override
+    public void changedOPTIONRegister(int oldValue, int newValue) {
+        _presenter.displayOPTIONRegister(newValue);
+    }
     
 }
