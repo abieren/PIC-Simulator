@@ -57,5 +57,11 @@ public interface MainWindowView {
     public void pushStack(int value, boolean isOverflow);
 
     public void popStack(int value, boolean isUnderflow);
+
+    public void displayPortOutput(String port, int oldValue, int newValue);
+
+    public void displayPortLatch(String port, int oldValue, int newValue);
+
+    public void displayPortTris(String port, int oldValue, int newValue);
     
 }
