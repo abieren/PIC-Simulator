@@ -78,5 +78,35 @@ public class NotifierImpl implements Notifier {
     public void changedOPTIONRegister(int oldValue, int newValue) {
         _presenter.displayOPTIONRegister(newValue);
     }
+
+    @Override
+    public void changedPortALatch(int oldValue, int newValue) {
+        _presenter.displayPortLath("A", oldValue, newValue);
+    }
+
+    @Override
+    public void changedPortAOutput(int oldValue, int newValue) {
+        _presenter.displayPortOutput("A", oldValue, newValue);
+    }
+
+    @Override
+    public void changedPortATris(int oldValue, int newValue) {
+        _presenter.displayPortTris("A", oldValue, newValue);
+    }
+
+    @Override
+    public void changedPortBLatch(int oldValue, int newValue) {
+        _presenter.displayPortLath("B", oldValue, newValue);
+    }
+
+    @Override
+    public void changedPortBTris(int oldValue, int newValue) {
+        _presenter.displayPortTris("B", oldValue, newValue);
+    }
+
+    @Override
+    public void changedPortBOutput(int oldValue, int newValue) {
+        _presenter.displayPortTris("B", oldValue, newValue);
+    }
     
 }
