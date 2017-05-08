@@ -17,26 +17,35 @@ import pic_simulator.utils.BinaryNumberHelper;
  */
 public class PICSimulator {
     
+    //notifier notifies presenter to update changed values
     public final Notifier _notifier;
     
+    //data structures to model PIC
     public Map<Integer, Integer> _programMemory;
     public Map<Integer, Integer> _registers;
     public Stack<Integer> _stack;
     public int _pcRegister;
     public int _instructionRegsiter;
     public int _wRegister;
-
+    public Port _portA;
+    public Port _portB;
+    
+    //constants of PIC
     public final int MAX_STACK_SIZE = 8;
     public final int DEFAULT_INSTRUCTION_VALUE = 0;
     public final int DEFAULT_REGSITER_VALUE = 0;
     public final int STATUS_REGISTER_ADDRESS_BANK0 = 0x03;
     public final int PCLATH_REGISTER_ADDRESS_BANK0 = 0x0A;
+    public final int INDF_REGISTER_BANK0 = 0x0;
     public final int FSR_ADDRESS_BANK0 = 0x4;
     public final int INTCON_REGISTER_ADDRESS_BANK0 = 0x0B;
     public final int OPTION_REGISTER_ADDRESS_BANK1 = 0x81;
     public final int INTERRUPT_VECTOR_BANK0 = 0x4;
     public final int EECON1_REGISTER_BANK1 = 0x88;
-
+    public final int PORTA_REGISTER_BANK0 = 0x05;
+    public final int PORTB_REGISTER_BANK0 = 0x06;
+    public final int TRISA_REGISTER_BANK1 = 0x85;
+    public final int TRISB_REGISTER_BANK1 = 0x86;
     
     public PICSimulator(Notifier notifier) {
         _notifier = notifier;
@@ -50,9 +59,6 @@ public class PICSimulator {
         _instructionRegsiter = 0;
         _wRegister = 0;
     }
-    
-//    public int shrinkInt(int value, int bit) {
-//    }
     
     public int getPCRegister() {
         return _pcRegister;
@@ -87,21 +93,52 @@ public class PICSimulator {
     public int getRegister(int address) {
         //shrink to an 7 bit address
         address = BinaryNumberHelper.truncateToNBit(address, 7);
-        Integer value;
-        if (address == 0x0) {
-            int fsrValue = getRegister(FSR_ADDRESS_BANK0);
-            value = _registers.get(fsrValue);
-        } else {
-            //use the RP0 bit in the STATUS register to form an 8 bit address
-            BinaryNumberHelper.setBit(address, 7, getSTATUSbitRP0());
-            value = _registers.get(address);
+        Integer result;     //variable to store the result value to be returned
+        
+        //handle special files that are accessible on both banks
+        switch (address) {
+            case INDF_REGISTER_BANK0:
+                int fsrValue = getRegister(FSR_ADDRESS_BANK0);
+                result = _registers.get(fsrValue);
+                break;
+            default:
+                break;
         }
+        
+        //handle special files that are accessible only on bank0
+        switch (address) {
+            case PORTA_REGISTER_BANK0:
+                result = _portA.getOutput();
+                break; 
+            case PORTB_REGISTER_BANK0:
+                result = _portA.getOutput();
+                break;
+            default:
+                break;
+        }
+        
+        //use the RP0 bit in the STATUS register to form an 8 bit address
+        BinaryNumberHelper.setBit(address, 7, getSTATUSbitRP0());
+        
+        //handle special files that are accessible only on bank1
+        switch (address) {
+            case TRISA_REGISTER_BANK1:
+                result = _portA.getTris();
+                break; 
+            case TRISB_REGISTER_BANK1:
+                result = _portA.getTris();
+                break;
+            default:
+                break;
+        }
+  
+        result = _registers.get(address);
         //make sure a default value is returned if value of register in
         //hash map hasn't been set yet
-        if (value == null) {
-            value = DEFAULT_REGSITER_VALUE;
+        if (result == null) {
+            result = DEFAULT_REGSITER_VALUE;
         }
-        return value;
+        return result;
     }
     
     public void setRegister(int address, int value) {
@@ -128,14 +165,55 @@ public class PICSimulator {
                 break;
         }
         
+        //handle special files that are accessible on bank0
+        int oldLatch;               //helper variable to hold old latch of port
+        int oldOutput;              //helper variable to hold old output of port
+        switch (address) {
+            case PORTA_REGISTER_BANK0:
+                oldLatch = _portA.getLatch();
+                oldOutput = _portA.getOutput();
+                _portA.setLatch(value);
+                _notifier.changedPortALatch(oldLatch, _portA.getLatch());
+                _notifier.changedPortAOutput(oldOutput, _portA.getOutput());
+                //everything handled exit function
+                return; 
+            case PORTB_REGISTER_BANK0:
+                oldLatch = _portB.getLatch();
+                oldOutput = _portB.getOutput();
+                _portB.setLatch(value);
+                _notifier.changedPortBLatch(oldLatch, _portB.getLatch());
+                _notifier.changedPortBOutput(oldOutput, _portB.getOutput());
+                //everything handled exit function
+                return;
+            default:
+                break;
+        }
+        
         //use the RP0 bit in the STATUS register to form an 8 bit address
         address = BinaryNumberHelper.setBit(address, 7, getSTATUSbitRP0());
         
         //handle special files that are only accessible on bank1
+        int oldTris;               //helper variable to hold old tris of port
         switch (address) {
             case OPTION_REGISTER_ADDRESS_BANK1:
                 _notifier.changedOPTIONRegister(getOPTIONRegister(), value);
                 break;
+            case TRISA_REGISTER_BANK1:
+                oldOutput = _portA.getOutput();
+                oldTris = _portA.getTris();
+                _portA.setTris(value);
+                _notifier.changedPortAOutput(oldOutput, _portA.getOutput());
+                _notifier.changedPortATris(oldTris, _portA.getTris());
+                //everything handled exit function
+                return;
+            case TRISB_REGISTER_BANK1:
+                oldOutput = _portB.getOutput();
+                oldTris = _portB.getTris();
+                _portB.setTris(value);
+                _notifier.changedPortBOutput(oldOutput, _portB.getOutput());
+                _notifier.changedPortBTris(oldTris, _portB.getTris());
+                //everything handled exit function
+                return;
             default:
                 break;
         }
@@ -753,6 +831,7 @@ public class PICSimulator {
         int result = getRegister(f) - 1;
         //status affeceted: Z
         if (result == 0) {
+          
             setSTATUSbitZ(1);
         } else {
             setSTATUSbitZ(0);
