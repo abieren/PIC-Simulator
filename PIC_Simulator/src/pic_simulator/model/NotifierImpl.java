@@ -81,7 +81,7 @@ public class NotifierImpl implements Notifier {
 
     @Override
     public void changedPortALatch(int oldValue, int newValue) {
-        _presenter.displayPortLath("A", oldValue, newValue);
+        _presenter.displayPortLatch("A", oldValue, newValue);
     }
 
     @Override
@@ -96,7 +96,7 @@ public class NotifierImpl implements Notifier {
 
     @Override
     public void changedPortBLatch(int oldValue, int newValue) {
-        _presenter.displayPortLath("B", oldValue, newValue);
+        _presenter.displayPortLatch("B", oldValue, newValue);
     }
 
     @Override
