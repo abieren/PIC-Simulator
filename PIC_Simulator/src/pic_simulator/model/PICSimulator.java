@@ -34,6 +34,8 @@ public class PICSimulator {
     public final int FSR_ADDRESS_BANK0 = 0x4;
     public final int INTCON_REGISTER_ADDRESS_BANK0 = 0x0B;
     public final int OPTION_REGISTER_ADDRESS_BANK1 = 0x81;
+    public final int INTERRUPT_VECTOR_BANK0 = 0x4;
+    public final int EECON1_REGISTER_BANK1 = 0x88;
 
     
     public PICSimulator(Notifier notifier) {
@@ -328,13 +330,32 @@ public class PICSimulator {
     }
     
      private void handleInterrupts() {
-        //chek GIE
+        //see PIC Doc Figure 6-10
+        //check GIE
         if (getINTCONbitGIE() == 0) return;
-        //check Timer Overflow Interrupt
-        if (getINTCONbitT0IE() != 0 && getINTCONbitT0IF() != 0) {
-            //Interrupt
-            CALL(0x4);
+        //check interrupt conditions
+        boolean isInterrupt = false;
+        if(getINTCONbitT0IF() == 1 && getINTCONbitT0IE() == 1) {
+            isInterrupt = true;
         }
+        else if(getINTCONbitINTF() == 1 && getINTCONbitINTE() == 1) {
+            isInterrupt = true;
+        }
+        else if(getINTCONbitT0IF() == 1 && getINTCONbitT0IE() == 1) {
+            isInterrupt = true;
+        }
+        else if(getINTCONbitRBIF() == 1 && getINTCONbitRBIE() == 1) {
+            isInterrupt = true;
+        }
+        else if(getEECON1bitEEIF()== 1 && getINTCONbitEEIE() == 1) {
+            isInterrupt = true;
+        }
+        //call interrupt vector when one interrrupt condition is true
+        if (isInterrupt) {
+             setINTCONbitGIE(0);
+             pushStack(getPCRegister());
+             CALL(INTERRUPT_VECTOR_BANK0);      
+         }
     }
     
     public void skipNextInstructionWithNOP() {
@@ -635,6 +656,26 @@ public class PICSimulator {
     
     public int getOPTIONbitRBPU() {
         return BinaryNumberHelper.getBit(getINTCONRegister(), 7);
+    }
+    
+    /*EECON1 REGISTER*/
+    public void setEECON1Register(int value) {
+        value = BinaryNumberHelper.truncateToNBit(value, 5);
+        setRegister(EECON1_REGISTER_BANK1, value);
+    }
+    
+    public int getEECON1Register() {
+        return getRegister(EECON1_REGISTER_BANK1);
+    }
+    
+    public void setEECON1bitEEIF(int b) {
+        int value = getEECON1Register();
+        value = BinaryNumberHelper.setBit(value, 4, b);
+        setEECON1Register(value);
+    }
+    
+    public int getEECON1bitEEIF() {
+        return BinaryNumberHelper.getBit(getEECON1Register(), 4);
     }
     
     /*BYTE-ORIENTED FILE REGISTER OPERATIONS*/
@@ -1019,9 +1060,10 @@ public class PICSimulator {
     }
     
     public void RETFIE() {
-        nextCycle();
-        nextCycle();
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //reenable interrrupts
+        setINTCONbitGIE(1);
+        //then just follow behavior of RETURN instruction
+        RETURN();
     }
     
     public void RETLW(int k) {
