@@ -131,11 +131,11 @@ public class MainWindowController
     @FXML
     private ListView lv_sourceCode;
     @FXML
-    private TableView tv_portMap;
-    @FXML
     private TableView tv_stack;
     @FXML
-    private GridPane gp_register_view_container;
+    private GridPane gp_port_view;
+    @FXML
+    private GridPane gp_register_view;
 
     //Stage that is used by the view of this controller
     private Stage _primaryStage;
@@ -168,43 +168,84 @@ public class MainWindowController
     }
     
     private void initializePortMapView() {
-        //initialize port map table view
-        _portMapColumns = new ArrayList<>(); //init,reset
-        _portMapColumns.add(new TableColumn<>());
-        _portMapColumns.add(new TableColumn<>("7"));
-        _portMapColumns.add(new TableColumn<>("6"));
-        _portMapColumns.add(new TableColumn<>("5"));
-        _portMapColumns.add(new TableColumn<>("4"));
-        _portMapColumns.add(new TableColumn<>("3"));
-        _portMapColumns.add(new TableColumn<>("2"));
-        _portMapColumns.add(new TableColumn<>("1"));
-        _portMapColumns.add(new TableColumn<>("0"));
-        _portMapColumns.get(0).setCellValueFactory(new PropertyValueFactory<>("description"));
-        _portMapColumns.get(1).setCellValueFactory(new PropertyValueFactory<>("bit7"));
-        _portMapColumns.get(2).setCellValueFactory(new PropertyValueFactory<>("bit6"));
-        _portMapColumns.get(3).setCellValueFactory(new PropertyValueFactory<>("bit5"));
-        _portMapColumns.get(4).setCellValueFactory(new PropertyValueFactory<>("bit4"));
-        _portMapColumns.get(5).setCellValueFactory(new PropertyValueFactory<>("bit3"));
-        _portMapColumns.get(6).setCellValueFactory(new PropertyValueFactory<>("bit2"));
-        _portMapColumns.get(7).setCellValueFactory(new PropertyValueFactory<>("bit1"));
-        _portMapColumns.get(8).setCellValueFactory(new PropertyValueFactory<>("bit0"));
-        tv_portMap.getColumns().clear(); //init,reset
-        tv_portMap.getColumns().addAll(_portMapColumns);
-        _portMapRecords = FXCollections.observableArrayList(); //init,reset
-        tv_portMap.setItems(_portMapRecords);
-        //set style
-        for (TableColumn column : _portMapColumns) {
-            column.setMinWidth(20);
-            column.setMaxWidth(20);
-        }
-        _portMapColumns.get(0).setMinWidth(50);
-        _portMapColumns.get(0).setMaxWidth(50);
-        _portMapRecords.add(new PortMapRecord("RA Tris", "0", "0", "0", "0", "1", "1", "1", "1"));
+        //reinitialize the grid panel
+        //gp_register_view.getChildren().clear();
+        //genrate labels inside the grid
+        Label lb;
+        String style = "-fx-background-color: white; -fx-alignment: center;";
+        
+        lb = new Label(BinaryNumberHelper.formatToDisplayableHex(0, 2, true));
+        lb.setMinHeight(20);
+        lb.setMaxWidth(20);
+        lb.setMinHeight(20);
+        lb.setMaxHeight(20);
+        lb.setStyle(style);
+        lb.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent event) -> {
+            Optional<Integer> result = showSetNewValueDialog();
+            if (!result.isPresent()) return;
+            _presenter.setPortLatch("A", result.get());
+        });
+        gp_port_view.add(lb, 1, 1);
+        
+        lb = new Label(BinaryNumberHelper.formatToDisplayableHex(0, 2, true));
+        lb.setMinHeight(20);
+        lb.setMaxWidth(20);
+        lb.setMinHeight(20);
+        lb.setMaxHeight(20);
+        lb.setStyle(style);
+        lb.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent event) -> {
+            Optional<Integer> result = showSetNewValueDialog();
+            if (!result.isPresent()) return;
+            _presenter.setPortTris("A", result.get());
+        });
+        gp_port_view.add(lb, 1, 2);
+        
+        lb = new Label(BinaryNumberHelper.formatToDisplayableHex(0, 2, true));
+        lb.setMinHeight(20);
+        lb.setMaxWidth(20);
+        lb.setMinHeight(20);
+        lb.setMaxHeight(20);
+        lb.setStyle(style);
+        gp_port_view.add(lb, 1, 3);
+        
+        lb = new Label(BinaryNumberHelper.formatToDisplayableHex(0, 2, true));
+        lb.setMinHeight(20);
+        lb.setMaxWidth(20);
+        lb.setMinHeight(20);
+        lb.setMaxHeight(20);
+        lb.setStyle(style);
+        lb.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent event) -> {
+            Optional<Integer> result = showSetNewValueDialog();
+            if (!result.isPresent()) return;
+            _presenter.setPortLatch("B", result.get());
+        });
+        gp_port_view.add(lb, 1, 5);
+        
+        lb = new Label(BinaryNumberHelper.formatToDisplayableHex(0, 2, true));
+        lb.setMinHeight(20);
+        lb.setMaxWidth(20);
+        lb.setMinHeight(20);
+        lb.setMaxHeight(20);
+        lb.setStyle(style);
+        lb.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent event) -> {
+            Optional<Integer> result = showSetNewValueDialog();
+            if (!result.isPresent()) return;
+            _presenter.setPortLatch("B", result.get());
+        });
+        gp_port_view.add(lb, 1, 6);
+        
+        lb = new Label(BinaryNumberHelper.formatToDisplayableHex(0, 2, true));
+        lb.setMinHeight(20);
+        lb.setMaxWidth(20);
+        lb.setMinHeight(20);
+        lb.setMaxHeight(20);
+        lb.setStyle(style);
+        gp_port_view.add(lb, 1, 7);
     }
     
     private void initializeRegisterMapView() {
         //reinitialize the grid panel
-        gp_register_view_container.getChildren().clear();
+        gp_register_view.getChildren().clear();
         //genrate labels inside the grid
         for (int row = 0; row < 17; row++) {
             for (int col = 0; col < 17; col++) {
@@ -216,19 +257,19 @@ public class MainWindowController
                 //fill upper table head and left table head
                 if (col == 0 && row == 0) {
                     //add empty label
-                    lb.setStyle("-fx-background-color: rgb(200,200,200); -fx-font-weight: bold;");
-                    gp_register_view_container.add(lb, col, row);
+                    lb.setStyle("-fx-background-color: rgb(200,200,200);");
+                    gp_register_view.add(lb, col, row);
                     continue;
                 }
                 if (row == 0 && col > 0) {
                     lb.setText(BinaryNumberHelper.formatToDisplayableHex(col-1, 1, false));
                     lb.setStyle("-fx-background-color: rgb(200,200,200); -fx-font-weight: bold; -fx-alignment: center;");
-                    gp_register_view_container.add(lb, col, row);
+                    gp_register_view.add(lb, col, row);
                     continue;
                 } else if (col == 0 && row > 0) {
                     lb.setText(BinaryNumberHelper.formatToDisplayableHex(row-1, 1, true));
                     lb.setStyle("-fx-background-color: rgb(200,200,200); -fx-font-weight: bold; -fx-alignment: center;");
-                    gp_register_view_container.add(lb, col, row);
+                    gp_register_view.add(lb, col, row);
                     continue;
                 }
                 lb.setStyle("-fx-background-color: white; -fx-alignment: center;");
@@ -241,7 +282,7 @@ public class MainWindowController
                     int address = Integer.parseInt(label.getId());
                     setRegisterValueDialog(address);
                 });
-                gp_register_view_container.add(lb, col, row);
+                gp_register_view.add(lb, col, row);
             }
         }
     }
@@ -408,6 +449,53 @@ public class MainWindowController
     public void removeBreakPointMarker(int line) {
         _sideBarAnnotations.set(line, "");
     }
+    
+    private void setRegisterValueDialog(int address) {
+        TextInputDialog dialog = new TextInputDialog("0");
+        dialog.setTitle("Set register value");
+        String register = BinaryNumberHelper.formatToDisplayableHex(address, 2, true);
+        dialog.setHeaderText("Set new value for register 0x" + register);
+        dialog.setContentText("Please enter new hex value:");
+
+        // Traditional way to get the response value.
+        Optional<String> result = dialog.showAndWait();
+        if (result.isPresent()){
+            try {
+                int newValue = Integer.parseInt(result.get(),16);
+                _presenter.setRegister(address, newValue);
+            } catch (NumberFormatException e) {
+                Alert alert = new Alert(AlertType.ERROR);
+                alert.setTitle("Invalid Number");
+                alert.setHeaderText("Invlaid Number");
+                alert.setContentText("\""+ result.get() +"\" is not a valid hex number!");
+                alert.showAndWait();
+            }
+            
+        }
+    }
+    
+    private Optional<Integer> showSetNewValueDialog() {
+        TextInputDialog dialog = new TextInputDialog("0");
+        dialog.setTitle("Set new value");
+        dialog.setHeaderText("Set new value");
+        dialog.setContentText("Please enter new hex value:");
+
+        // Traditional way to get the response value.
+        Optional<String> result = dialog.showAndWait();
+        if (result.isPresent()){
+            try {
+                int newValue = Integer.parseInt(result.get(),16);
+                return Optional.of(newValue);
+            } catch (NumberFormatException e) {
+                Alert alert = new Alert(AlertType.ERROR);
+                alert.setTitle("Invalid Number");
+                alert.setHeaderText("Invlaid Number");
+                alert.setContentText("\""+ result.get() +"\" is not a valid hex number!");
+                alert.showAndWait();
+            }
+        }
+        return Optional.empty();
+    }
 
     @Override
     public void displaySTATUSRegister(int value) {
@@ -572,7 +660,7 @@ public class MainWindowController
         int col = register%16;
         int nthChild = (row+1)*17+col+1;
         
-        ObservableList<Node> nodes = gp_register_view_container.getChildren();
+        ObservableList<Node> nodes = gp_register_view.getChildren();
         Label lb = (Label)nodes.get(nthChild);
         lb.setText(BinaryNumberHelper.formatToDisplayableHex(value, 2, true));
     }
@@ -607,29 +695,52 @@ public class MainWindowController
         }
         
     }
-
-    private void setRegisterValueDialog(int address) {
-        TextInputDialog dialog = new TextInputDialog("0");
-        dialog.setTitle("Set register value");
-        String register = BinaryNumberHelper.formatToDisplayableHex(address, 2, true);
-        dialog.setHeaderText("Set new value for register 0x" + register);
-        dialog.setContentText("Please enter new hex value:");
-
-        // Traditional way to get the response value.
-        Optional<String> result = dialog.showAndWait();
-        if (result.isPresent()){
-            try {
-                int newValue = Integer.parseInt(result.get(),16);
-                _presenter.setRegister(address, newValue);
-            } catch (NumberFormatException e) {
-                Alert alert = new Alert(AlertType.ERROR);
-                alert.setTitle("Invalid Number");
-                alert.setHeaderText("Invlaid Number");
-                alert.setContentText("\""+ result.get() +"\" is not a valid hex number!");
-                alert.showAndWait();
-            }
-            
+    
+    @Override
+    public void displayPortOutput(String port, int oldValue, int newValue) {
+        Label label;
+        switch (port) {
+            case "A":
+                label = (Label)gp_port_view.getChildren().get(7);
+                label.setText(BinaryNumberHelper.formatToDisplayableHex(newValue, 2, true));
+                break;
+            case "B":
+                label = (Label)gp_port_view.getChildren().get(15);
+                label.setText(BinaryNumberHelper.formatToDisplayableHex(newValue, 2, true));
+                break;
+            default:
         }
     }
-    
+
+    @Override
+    public void displayPortLatch(String port, int oldValue, int newValue) {
+        Label label;
+        switch (port) {
+            case "A":
+                label = (Label)gp_port_view.getChildren().get(3);
+                label.setText(BinaryNumberHelper.formatToDisplayableHex(newValue, 2, true));
+                break;
+            case "B":
+                label = (Label)gp_port_view.getChildren().get(11);
+                label.setText(BinaryNumberHelper.formatToDisplayableHex(newValue, 2, true));
+                break;
+            default:
+        }
+    }
+
+    @Override
+    public void displayPortTris(String port, int oldValue, int newValue) {
+        Label label;
+        switch (port) {
+            case "A":
+                label = (Label)gp_port_view.getChildren().get(5);
+                label.setText(BinaryNumberHelper.formatToDisplayableHex(newValue, 2, true));
+                break;
+            case "B":
+                label = (Label)gp_port_view.getChildren().get(13);
+                label.setText(BinaryNumberHelper.formatToDisplayableHex(newValue, 2, true));
+                break;
+            default:
+        }
+    }
 }
