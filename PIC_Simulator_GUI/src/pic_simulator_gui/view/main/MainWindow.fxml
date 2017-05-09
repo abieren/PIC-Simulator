@@ -565,7 +565,7 @@
                         <ListView fx:id="lv_sourceCode" GridPane.columnIndex="1" />
                      </children>
                   </GridPane>
-                  <GridPane hgap="10.0" style="-fx-background-color: rgb(255,255,255);">
+                  <GridPane hgap="10.0" minHeight="398.0" style="-fx-background-color: rgb(255,255,255);">
                      <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="102.0" minWidth="102.0" prefWidth="102.0" />
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="358.0" minWidth="358.0" prefWidth="358.0" />
