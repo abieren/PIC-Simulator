@@ -206,6 +206,11 @@ public class MainWindowController
         lb.setMinHeight(20);
         lb.setMaxHeight(20);
         lb.setStyle(style);
+        lb.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent event) -> {
+            Optional<Integer> result = showSetNewValueDialog();
+            if (!result.isPresent()) return;
+            _presenter.setPortInOut("A", result.get());
+        });
         gp_port_view.add(lb, 1, 3);
         
         lb = new Label(BinaryNumberHelper.formatToDisplayableHex(0, 2, true));
@@ -240,6 +245,11 @@ public class MainWindowController
         lb.setMinHeight(20);
         lb.setMaxHeight(20);
         lb.setStyle(style);
+        lb.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent event) -> {
+            Optional<Integer> result = showSetNewValueDialog();
+            if (!result.isPresent()) return;
+            _presenter.setPortInOut("B", result.get());
+        });
         gp_port_view.add(lb, 1, 7);
     }
     
