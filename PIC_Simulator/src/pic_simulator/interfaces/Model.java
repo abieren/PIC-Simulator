@@ -44,5 +44,7 @@ public interface Model {
     public void setPortTris(String port, int value);
 
     public void setPortLatch(String port, int value);
+
+    public void setPortInOut(String port, int value);
     
 }
