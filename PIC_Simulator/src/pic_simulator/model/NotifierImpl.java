@@ -85,7 +85,7 @@ public class NotifierImpl implements Notifier {
     }
 
     @Override
-    public void changedPortAOutput(int oldValue, int newValue) {
+    public void changedPortAInOut(int oldValue, int newValue) {
         _presenter.displayPortOutput("A", oldValue, newValue);
     }
 
@@ -105,8 +105,18 @@ public class NotifierImpl implements Notifier {
     }
 
     @Override
-    public void changedPortBOutput(int oldValue, int newValue) {
+    public void changedPortBInOut(int oldValue, int newValue) {
         _presenter.displayPortTris("B", oldValue, newValue);
+    }
+
+    @Override
+    public void changedPortAEnvironment(int oldValue, int newValue) {
+        _presenter.changedPortAEnvironment(oldValue, newValue);
+    }
+
+    @Override
+    public void changedPortBEnvironment(int oldValue, int newValue) {
+        _presenter.changedPortBEnvironment(oldValue, newValue);
     }
     
 }
