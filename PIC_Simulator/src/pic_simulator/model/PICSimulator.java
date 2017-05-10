@@ -252,6 +252,22 @@ public class PICSimulator {
         }
     }
     
+    public void setPortAEnvironment(int value) {
+        int oldEnv = _portA.getEnvironment();
+        int oldInOut = _portA.getInOut();
+        _portA.setLatch(value);
+        _notifier.changedPortAEnvironment(oldEnv, _portA.getLatch());
+        _notifier.changedPortAInOut(oldInOut, _portA.getInOut());
+    }
+    
+    public void setPortBEnvironment(int value) {
+        int oldEnv = _portB.getEnvironment();
+        int oldInOut = _portB.getInOut();
+        _portB.setLatch(value);
+        _notifier.changedPortAEnvironment(oldEnv, _portB.getLatch());
+        _notifier.changedPortAInOut(oldInOut, _portB.getInOut());
+    }
+    
     public int getInstructionFromProgramMemory(int address) {
         address = BinaryNumberHelper.truncateToNBit(address, 13);
         Integer value = _programMemory.get(address);
