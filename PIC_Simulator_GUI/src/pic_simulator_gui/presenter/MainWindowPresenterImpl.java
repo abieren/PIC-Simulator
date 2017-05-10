@@ -9,6 +9,7 @@ import java.util.List;
 import javafx.collections.ObservableList;
 import pic_simulator.interfaces.Model;
 import pic_simulator.interfaces.ModelPresenter;
+import pic_simulator.utils.BinaryNumberHelper;
 import pic_simulator_gui.interfaces.MainWindowPresenter;
 import pic_simulator_gui.interfaces.MainWindowView;
 import pic_simulator_gui.view.main.StackRecord;
@@ -207,22 +208,7 @@ public class MainWindowPresenterImpl
     public void setRegister(int address, int value) {
         _model.setRegister(address, value);
     }
-
-    @Override
-    public void displayPortLatch(String port, int oldValue, int newValue) {
-        _view.displayPortLatch(port, oldValue, newValue);
-    }
-
-    @Override
-    public void displayPortOutput(String port, int oldValue, int newValue) {
-        _view.displayPortOutput(port, oldValue, newValue);
-    }
-
-    @Override
-    public void displayPortTris(String port, int oldValue, int newValue) {
-        _view.displayPortTris(port, oldValue, newValue);
-    }
-
+    
     @Override
     public void setPortTris(String port, int value) {
         _model.setPortTris(port, value);
@@ -244,7 +230,34 @@ public class MainWindowPresenterImpl
     }
 
     @Override
+    public void displayPortInOut(String port, int oldValue, int newValue) {
+        for (int i = 0; i < 8; i++) {
+            boolean b = BinaryNumberHelper.parseBoolean(BinaryNumberHelper.getBit(newValue, i));
+            _view.displayPortEnvironmentBit(port, i, b);
+        }
+    }
+
+    @Override
+    public void displayPortLatch(String port, int oldValue, int newValue) {
+        for (int i = 0; i < 8; i++) {
+            boolean b = BinaryNumberHelper.parseBoolean(BinaryNumberHelper.getBit(newValue, i));
+            _view.displayPortLatchBit(port, i, b);
+        }
+    }
+
+    @Override
+    public void displayPortTris(String port, int oldValue, int newValue) {
+        for (int i = 0; i < 8; i++) {
+            boolean b = BinaryNumberHelper.parseBoolean(BinaryNumberHelper.getBit(newValue, i));
+            _view.displayPortTrisBit(port, i, b);
+        }
+    }
+
+    @Override
     public void displayPortEnvironment(String port, int oldValue, int newValue) {
-        _view.displayPortEnvironment(port, oldValue, newValue);
+        for (int i = 0; i < 8; i++) {
+            boolean b = BinaryNumberHelper.parseBoolean(BinaryNumberHelper.getBit(newValue, i));
+            _view.displayPortEnvironmentBit(port, i, b);
+        }
     }
 }
