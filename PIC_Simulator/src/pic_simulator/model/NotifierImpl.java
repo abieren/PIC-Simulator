@@ -111,12 +111,12 @@ public class NotifierImpl implements Notifier {
 
     @Override
     public void changedPortAEnvironment(int oldValue, int newValue) {
-        _presenter.changedPortAEnvironment(oldValue, newValue);
+        _presenter.displayPortEnvironment("A", oldValue, newValue);
     }
 
     @Override
     public void changedPortBEnvironment(int oldValue, int newValue) {
-        _presenter.changedPortBEnvironment(oldValue, newValue);
+        _presenter.displayPortEnvironment("B", oldValue, newValue);
     }
     
 }
