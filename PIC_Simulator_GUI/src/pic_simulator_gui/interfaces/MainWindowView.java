@@ -63,5 +63,7 @@ public interface MainWindowView {
     public void displayPortLatch(String port, int oldValue, int newValue);
 
     public void displayPortTris(String port, int oldValue, int newValue);
+
+    public void displayPortEnvironment(String port, int oldValue, int newValue);
     
 }
