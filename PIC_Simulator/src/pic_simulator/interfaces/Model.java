@@ -47,6 +47,6 @@ public interface Model {
 
     public void setPortInOut(String port, int value);
 
-    public void setPortEnv(String port, int value);
+    public void setPortEnvironment(String port, int value);
     
 }
