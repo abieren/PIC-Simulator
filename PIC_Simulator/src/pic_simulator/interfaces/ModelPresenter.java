@@ -61,8 +61,6 @@ public interface ModelPresenter {
 
     public void displayPortTris(String port, int oldValue, int newValue);
 
-    public void changedPortAEnvironment(int oldValue, int newValue);
-
-    public void changedPortBEnvironment(int oldValue, int newValue);
+    public void displayPortEnvironment(String a, int oldValue, int newValue);
     
 }
