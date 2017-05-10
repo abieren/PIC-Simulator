@@ -23,7 +23,7 @@ public interface Notifier {
     
     public void changedPortALatch(int oldValue, int newValue);
 
-    public void changedPortAOutput(int oldValue, int newValue);
+    public void changedPortAInOut(int oldValue, int newValue);
 
     public void changedPortATris(int oldValue, int newValue);
 
@@ -31,7 +31,7 @@ public interface Notifier {
 
     public void changedPortBTris(int oldValue, int newValue);
 
-    public void changedPortBOutput(int oldValue, int newValue);
+    public void changedPortBInOut(int oldValue, int newValue);
 
     void changedRegister(int register, int oldValue, int newValue);
 
