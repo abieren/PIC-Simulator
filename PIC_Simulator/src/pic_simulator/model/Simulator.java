@@ -148,10 +148,10 @@ public class Simulator implements Model {
     public void setPortTris(String port, int value) {
         switch (port) {
             case "A":
-                _pic.setRegister(_pic.PORTA_REGISTER_BANK0, value, false);
+                _pic.setRegister(_pic.TRISA_REGISTER_BANK1, value, false);
                 break;
             case "B":
-                _pic.setRegister(_pic.PORTB_REGISTER_BANK0, value, false);
+                _pic.setRegister(_pic.TRISB_REGISTER_BANK1, value, false);
             default:
         }
     }
