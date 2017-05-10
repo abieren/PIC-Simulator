@@ -26,12 +26,16 @@ public interface Notifier {
     public void changedPortAInOut(int oldValue, int newValue);
 
     public void changedPortATris(int oldValue, int newValue);
+    
+    public void changedPortAEnvironment(int oldEnv, int latch);
 
     public void changedPortBLatch(int oldValue, int newValue);
 
     public void changedPortBTris(int oldValue, int newValue);
 
     public void changedPortBInOut(int oldValue, int newValue);
+    
+    public void changedPortBEnvironment(int oldEnv, int latch);
 
     void changedRegister(int register, int oldValue, int newValue);
 
