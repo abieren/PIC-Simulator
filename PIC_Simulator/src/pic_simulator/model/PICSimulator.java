@@ -192,23 +192,13 @@ public class PICSimulator {
         int addressBit8 = BinaryNumberHelper.getBit(address8bit, 7);
         if (addressBit8 == 0) {
             //handle special files that are only accessible on bank0
-            int oldLatch;               //helper variable to hold old latch of port
-            int oldOutput;              //helper variable to hold old output of port
             switch (address) {
                 case PORTA_REGISTER_BANK0:
-                    oldLatch = _portA.getLatch();
-                    oldOutput = _portA.getInOut();
-                    _portA.setLatch(value);
-                    _notifier.changedPortALatch(oldLatch, _portA.getLatch());
-                    _notifier.changedPortAInOut(oldOutput, _portA.getInOut());
+                    setPortALatch(value);
                     //everything handled exit function
                     return; 
                 case PORTB_REGISTER_BANK0:
-                    oldLatch = _portB.getLatch();
-                    oldOutput = _portB.getInOut();
-                    _portB.setLatch(value);
-                    _notifier.changedPortBLatch(oldLatch, _portB.getLatch());
-                    _notifier.changedPortBInOut(oldOutput, _portB.getInOut());
+                    setPortBLatch(value);
                     //everything handled exit function
                     return;
                 default:
@@ -216,26 +206,16 @@ public class PICSimulator {
             }
         } else {
             //handle special files that are only accessible on bank1
-            int oldTris;               //helper variable to hold old tris of port
-            int oldOutput;              //helper variable to hold old output of port
             switch (address) {
                 case OPTION_REGISTER_ADDRESS_BANK1:
                     _notifier.changedOPTIONRegister(getOPTIONRegister(), value);
                     break;
                 case TRISA_REGISTER_BANK1:
-                    oldOutput = _portA.getInOut();
-                    oldTris = _portA.getTris();
-                    _portA.setTris(value);
-                    _notifier.changedPortAInOut(oldOutput, _portA.getInOut());
-                    _notifier.changedPortATris(oldTris, _portA.getTris());
+                    setPortATris(value);
                     //everything handled exit function
                     return;
                 case TRISB_REGISTER_BANK1:
-                    oldOutput = _portB.getInOut();
-                    oldTris = _portB.getTris();
-                    _portB.setTris(value);
-                    _notifier.changedPortBInOut(oldOutput, _portB.getInOut());
-                    _notifier.changedPortBTris(oldTris, _portB.getTris());
+                    setPortBTris(value);
                     //everything handled exit function
                     return;
                 default:
@@ -250,6 +230,38 @@ public class PICSimulator {
             _notifier.changedRegister(register, getRegister(register, false), value);
             _registers.put(register, value);
         }
+    }
+    
+    public void setPortALatch(int value) {
+        int oldLatch = _portA.getLatch();
+        int oldInOut = _portA.getInOut();
+        _portA.setLatch(value);
+        _notifier.changedPortALatch(oldLatch, _portA.getLatch());
+        _notifier.changedPortAInOut(oldInOut, _portA.getInOut());
+    }
+    
+    public void setPortBLatch(int value) {
+        int oldLatch = _portB.getLatch();
+        int oldOutput = _portB.getInOut();
+        _portB.setLatch(value);
+        _notifier.changedPortBLatch(oldLatch, _portB.getLatch());
+        _notifier.changedPortBInOut(oldOutput, _portB.getInOut());
+    }
+    
+    public void setPortATris(int value){
+        int oldInOut = _portA.getInOut();
+        int oldTris = _portA.getTris();
+        _portA.setTris(value);
+        _notifier.changedPortAInOut(oldInOut, _portA.getInOut());
+        _notifier.changedPortATris(oldTris, _portA.getTris());
+    }
+    
+    public void setPortBTris(int value) {
+        int oldInOut = _portB.getInOut();
+        int oldTris = _portB.getTris();
+        _portB.setTris(value);
+        _notifier.changedPortBInOut(oldInOut, _portB.getInOut());
+        _notifier.changedPortBTris(oldTris, _portB.getTris());
     }
     
     public void setPortAEnvironment(int value) {
