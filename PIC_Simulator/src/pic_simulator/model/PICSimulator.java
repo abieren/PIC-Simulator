@@ -58,6 +58,8 @@ public class PICSimulator {
         _pcRegister = 0;
         _instructionRegsiter = 0;
         _wRegister = 0;
+        _portA = new Port();
+        _portB = new Port();
     }
     
     public int getPCRegister() {
@@ -119,10 +121,10 @@ public class PICSimulator {
             //handle special files that are accessible only on bank0
             switch (address8bit) {
                 case PORTA_REGISTER_BANK0:
-                    result = _portA.getOutput();
+                    result = _portA.getInOut();
                     break; 
                 case PORTB_REGISTER_BANK0:
-                    result = _portA.getOutput();
+                    result = _portA.getInOut();
                     break;
                 default:
                     break;
@@ -195,18 +197,18 @@ public class PICSimulator {
             switch (address) {
                 case PORTA_REGISTER_BANK0:
                     oldLatch = _portA.getLatch();
-                    oldOutput = _portA.getOutput();
+                    oldOutput = _portA.getInOut();
                     _portA.setLatch(value);
                     _notifier.changedPortALatch(oldLatch, _portA.getLatch());
-                    _notifier.changedPortAOutput(oldOutput, _portA.getOutput());
+                    _notifier.changedPortAInOut(oldOutput, _portA.getInOut());
                     //everything handled exit function
                     return; 
                 case PORTB_REGISTER_BANK0:
                     oldLatch = _portB.getLatch();
-                    oldOutput = _portB.getOutput();
+                    oldOutput = _portB.getInOut();
                     _portB.setLatch(value);
                     _notifier.changedPortBLatch(oldLatch, _portB.getLatch());
-                    _notifier.changedPortBOutput(oldOutput, _portB.getOutput());
+                    _notifier.changedPortBInOut(oldOutput, _portB.getInOut());
                     //everything handled exit function
                     return;
                 default:
@@ -221,18 +223,18 @@ public class PICSimulator {
                     _notifier.changedOPTIONRegister(getOPTIONRegister(), value);
                     break;
                 case TRISA_REGISTER_BANK1:
-                    oldOutput = _portA.getOutput();
+                    oldOutput = _portA.getInOut();
                     oldTris = _portA.getTris();
                     _portA.setTris(value);
-                    _notifier.changedPortAOutput(oldOutput, _portA.getOutput());
+                    _notifier.changedPortAInOut(oldOutput, _portA.getInOut());
                     _notifier.changedPortATris(oldTris, _portA.getTris());
                     //everything handled exit function
                     return;
                 case TRISB_REGISTER_BANK1:
-                    oldOutput = _portB.getOutput();
+                    oldOutput = _portB.getInOut();
                     oldTris = _portB.getTris();
                     _portB.setTris(value);
-                    _notifier.changedPortBOutput(oldOutput, _portB.getOutput());
+                    _notifier.changedPortBInOut(oldOutput, _portB.getInOut());
                     _notifier.changedPortBTris(oldTris, _portB.getTris());
                     //everything handled exit function
                     return;
