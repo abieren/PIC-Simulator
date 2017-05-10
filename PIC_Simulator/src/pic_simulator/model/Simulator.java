@@ -35,6 +35,11 @@ public class Simulator implements Model {
         _pic = new PICSimulator(_notifier);
     }
     
+    public void nextCycle() {
+        _runningTime = _runningTime + 1/_oscillatorFrequency;
+        _presenter.displayRunningTime(_runningTime);
+    }
+    
     @Override
     public void initialize() {
         _presenter.initializeView();
@@ -135,12 +140,42 @@ public class Simulator implements Model {
 
     @Override
     public void setRegister(int address, int value) {
-        _pic.setRegister(address, value);
+        _pic.setRegister(address, value, false);
     }
 
-    void nextCycle() {
-        _runningTime = _runningTime + 1/_oscillatorFrequency;
-        _presenter.displayRunningTime(_runningTime);
+    @Override
+    public void setPortTris(String port, int value) {
+        switch (port) {
+            case "A":
+                _pic.setRegister(_pic.PORTA_REGISTER_BANK0, value, false);
+                break;
+            case "B":
+                _pic.setRegister(_pic.PORTB_REGISTER_BANK0, value, false);
+            default:
+        }
     }
-    
+
+    @Override
+    public void setPortLatch(String port, int value) {
+        switch (port) {
+            case "A":
+                _pic.setRegister(_pic.PORTA_REGISTER_BANK0, value, false);
+                break;
+            case "B":
+                _pic.setRegister(_pic.PORTB_REGISTER_BANK0, value, false);
+            default:
+        }
+    }
+
+    @Override
+    public void setPortEnvironment(String port, int value) {
+        switch (port) {
+            case "A":
+                _pic.setPortAEnvironment(value);
+                break;
+            case "B":
+                _pic.setPortBEnvironment(value);
+            default:
+        }
+    }
 }
