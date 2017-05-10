@@ -86,7 +86,7 @@ public class NotifierImpl implements Notifier {
 
     @Override
     public void changedPortAInOut(int oldValue, int newValue) {
-        _presenter.displayPortOutput("A", oldValue, newValue);
+        _presenter.displayPortInOut("A", oldValue, newValue);
     }
 
     @Override
