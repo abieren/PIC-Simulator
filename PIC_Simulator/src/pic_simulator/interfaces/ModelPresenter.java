@@ -57,7 +57,7 @@ public interface ModelPresenter {
 
     public void displayPortLatch(String port, int oldValue, int newValue);
 
-    public void displayPortOutput(String port, int oldValue, int newValue);
+    public void displayPortInOut(String port, int oldValue, int newValue);
 
     public void displayPortTris(String port, int oldValue, int newValue);
 
