@@ -22,7 +22,7 @@ public class BinaryNumberHelper {
         return result;
     }
     
-    public boolean parseBoolean(int value) {
+    public static boolean parseBoolean(int value) {
         if (value == 0) return false;
         return true;
     };
