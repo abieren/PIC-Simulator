@@ -268,7 +268,7 @@ public class PICSimulator {
         int oldEnv = _portA.getEnvironment();
         int oldInOut = _portA.getInOut();
         _portA.setEnvironment(value);
-        _notifier.changedPortAEnvironment(oldEnv, _portA.getLatch());
+        _notifier.changedPortAEnvironment(oldEnv, _portA.getEnvironment());
         _notifier.changedPortAInOut(oldInOut, _portA.getInOut());
     }
     
@@ -276,7 +276,7 @@ public class PICSimulator {
         int oldEnv = _portB.getEnvironment();
         int oldInOut = _portB.getInOut();
         _portB.setEnvironment(value);
-        _notifier.changedPortBEnvironment(oldEnv, _portB.getLatch());
+        _notifier.changedPortBEnvironment(oldEnv, _portB.getEnvironment());
         _notifier.changedPortBInOut(oldInOut, _portB.getInOut());
     }
     
