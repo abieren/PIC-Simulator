@@ -657,10 +657,12 @@
                                     <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
                                     <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
                                     <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                     <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
                                     <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
                                     <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
                                     <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                                    <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                     <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
                                  </rowConstraints>
                                  <padding>
@@ -668,13 +670,15 @@
                                  </padding>
                                  <children>
                                     <Label maxHeight="20.0" maxWidth="80.0" minHeight="20.0" minWidth="80.0" prefHeight="20.0" prefWidth="80.0" style="-fx-background-color: rgb(200,200,200); -fx-font-weight: bold;" text="Port A" />
-                                    <Label maxHeight="20.0" maxWidth="80.0" minHeight="20.0" minWidth="80.0" prefHeight="20.0" prefWidth="80.0" style="-fx-background-color: rgb(200,200,200); -fx-font-weight: bold;" text="Port B" GridPane.rowIndex="4" />
+                                    <Label maxHeight="20.0" maxWidth="80.0" minHeight="20.0" minWidth="80.0" prefHeight="20.0" prefWidth="80.0" style="-fx-background-color: rgb(200,200,200); -fx-font-weight: bold;" text="Port B" GridPane.rowIndex="5" />
                                     <Label maxHeight="20.0" maxWidth="80.0" minHeight="20.0" minWidth="80.0" prefHeight="20.0" prefWidth="80.0" style="-fx-background-color: rgb(200,200,200); -fx-font-weight: bold; -fx-alignment: center;" text="Latch" GridPane.rowIndex="1" />
-                                    <Label maxHeight="20.0" maxWidth="80.0" minHeight="20.0" minWidth="80.0" prefHeight="20.0" prefWidth="80.0" style="-fx-background-color: rgb(200,200,200); -fx-font-weight: bold; -fx-alignment: center;" text="Latch" GridPane.rowIndex="5" />
+                                    <Label maxHeight="20.0" maxWidth="80.0" minHeight="20.0" minWidth="80.0" prefHeight="20.0" prefWidth="80.0" style="-fx-background-color: rgb(200,200,200); -fx-font-weight: bold; -fx-alignment: center;" text="Latch" GridPane.rowIndex="6" />
                                     <Label maxHeight="20.0" maxWidth="80.0" minHeight="20.0" minWidth="80.0" prefHeight="20.0" prefWidth="80.0" style="-fx-background-color: rgb(200,200,200); -fx-font-weight: bold; -fx-alignment: center;" text="Tris" GridPane.rowIndex="2" />
-                                    <Label maxHeight="20.0" maxWidth="80.0" minHeight="20.0" minWidth="80.0" prefHeight="20.0" prefWidth="80.0" style="-fx-background-color: rgb(200,200,200); -fx-font-weight: bold; -fx-alignment: center;" text="Tris" GridPane.rowIndex="6" />
-                                    <Label maxHeight="20.0" maxWidth="80.0" minHeight="20.0" minWidth="80.0" prefHeight="20.0" prefWidth="80.0" style="-fx-background-color: rgb(200,200,200); -fx-font-weight: bold; -fx-alignment: center;" text="Out / In" GridPane.rowIndex="3" />
-                                    <Label maxHeight="20.0" maxWidth="80.0" minHeight="20.0" minWidth="80.0" prefHeight="20.0" prefWidth="80.0" style="-fx-background-color: rgb(200,200,200); -fx-font-weight: bold; -fx-alignment: center;" text="Out / In" GridPane.rowIndex="7" />
+                                    <Label maxHeight="20.0" maxWidth="80.0" minHeight="20.0" minWidth="80.0" prefHeight="20.0" prefWidth="80.0" style="-fx-background-color: rgb(200,200,200); -fx-font-weight: bold; -fx-alignment: center;" text="Tris" GridPane.rowIndex="7" />
+                                    <Label maxHeight="20.0" maxWidth="80.0" minHeight="20.0" minWidth="80.0" prefHeight="20.0" prefWidth="80.0" style="-fx-background-color: rgb(200,200,200); -fx-font-weight: bold; -fx-alignment: center;" text="Out / In" GridPane.rowIndex="4" />
+                                    <Label maxHeight="20.0" maxWidth="80.0" minHeight="20.0" minWidth="80.0" prefHeight="20.0" prefWidth="80.0" style="-fx-background-color: rgb(200,200,200); -fx-font-weight: bold; -fx-alignment: center;" text="Out / In" GridPane.rowIndex="9" />
+                                    <Label maxHeight="20.0" maxWidth="80.0" minHeight="20.0" minWidth="80.0" prefHeight="20.0" prefWidth="80.0" style="-fx-background-color: rgb(200,200,200); -fx-font-weight: bold; -fx-alignment: center;" text="Env" GridPane.rowIndex="3" />
+                                    <Label maxHeight="20.0" maxWidth="80.0" minHeight="20.0" minWidth="80.0" prefHeight="20.0" prefWidth="80.0" style="-fx-background-color: rgb(200,200,200); -fx-font-weight: bold; -fx-alignment: center;" text="Env" GridPane.rowIndex="8" />
                                  </children>
                               </GridPane>
                            </children>
