@@ -232,5 +232,19 @@ public class MainWindowPresenterImpl
     public void setPortLatch(String port, int value) {
         _model.setPortLatch(port, value);
     }
-    
+
+    @Override
+    public void setPortInOut(String port, int value) {
+        
+    }
+
+    @Override
+    public void setPortEnv(String port, int value) {
+        _model.setPortEnvironment(port, value);
+    }
+
+    @Override
+    public void displayPortEnvironment(String port, int oldValue, int newValue) {
+        _view.displayPortEnvironment(port, oldValue, newValue);
+    }
 }
