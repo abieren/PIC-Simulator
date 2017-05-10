@@ -22,6 +22,11 @@ public class BinaryNumberHelper {
         return result;
     }
     
+    public boolean parseBoolean(int value) {
+        if (value == 0) return false;
+        return true;
+    };
+    
     public static int getBit(int value, int bit) {
         return (value >> bit) & 1;
     }
