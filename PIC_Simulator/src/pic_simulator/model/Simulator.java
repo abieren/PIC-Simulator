@@ -5,6 +5,7 @@
  */
 package pic_simulator.model;
 
+import java.util.Optional;
 import pic_simulator.interfaces.Model;
 import pic_simulator.interfaces.ModelPresenter;
 import pic_simulator.utils.FileParser;
@@ -176,6 +177,42 @@ public class Simulator implements Model {
             case "B":
                 _pic.setPortBEnvironment(value);
             default:
+        }
+    }
+
+    @Override
+    public Optional<Integer> getPortLatch(String port) {
+        switch (port) {
+            case "A":
+                return Optional.of(_pic._portA.getLatch());
+            case "B":
+                return Optional.of(_pic._portB.getLatch());
+            default:
+                return Optional.empty();
+        }
+    }
+
+    @Override
+    public Optional<Integer> getPortTris(String port) {
+        switch (port) {
+            case "A":
+                return Optional.of(_pic._portA.getTris());
+            case "B":
+                return Optional.of(_pic._portB.getTris());
+            default:
+                return Optional.empty();
+        }
+    }
+
+    @Override
+    public Optional<Integer> getPortEnvironment(String port) {
+        switch (port) {
+            case "A":
+                return Optional.of(_pic._portA.getEnvironment());
+            case "B":
+                return Optional.of(_pic._portB.getEnvironment());
+            default:
+                return Optional.empty();
         }
     }
 }
