@@ -238,14 +238,16 @@ public class PICSimulator {
         _portA.setLatch(value);
         _notifier.changedPortALatch(oldLatch, _portA.getLatch());
         _notifier.changedPortAInOut(oldInOut, _portA.getInOut());
+        _notifier.changedRegister(PORTA_REGISTER_BANK0, oldInOut, _portA.getInOut());
     }
     
     public void setPortBLatch(int value) {
         int oldLatch = _portB.getLatch();
-        int oldOutput = _portB.getInOut();
+        int oldInOut = _portB.getInOut();
         _portB.setLatch(value);
         _notifier.changedPortBLatch(oldLatch, _portB.getLatch());
-        _notifier.changedPortBInOut(oldOutput, _portB.getInOut());
+        _notifier.changedPortBInOut(oldInOut, _portB.getInOut());
+        _notifier.changedRegister(PORTB_REGISTER_BANK0, oldInOut, _portB.getInOut());
     }
     
     public void setPortATris(int value){
@@ -254,6 +256,8 @@ public class PICSimulator {
         _portA.setTris(value);
         _notifier.changedPortAInOut(oldInOut, _portA.getInOut());
         _notifier.changedPortATris(oldTris, _portA.getTris());
+        _notifier.changedRegister(PORTA_REGISTER_BANK0, oldInOut, _portA.getInOut());
+        _notifier.changedRegister(TRISA_REGISTER_BANK1, oldTris, _portA.getTris());
     }
     
     public void setPortBTris(int value) {
@@ -262,6 +266,8 @@ public class PICSimulator {
         _portB.setTris(value);
         _notifier.changedPortBInOut(oldInOut, _portB.getInOut());
         _notifier.changedPortBTris(oldTris, _portB.getTris());
+        _notifier.changedRegister(PORTB_REGISTER_BANK0, oldInOut, _portB.getInOut());
+        _notifier.changedRegister(TRISB_REGISTER_BANK1, oldTris, _portB.getTris());
     }
     
     public void setPortAEnvironment(int value) {
@@ -270,6 +276,7 @@ public class PICSimulator {
         _portA.setEnvironment(value);
         _notifier.changedPortAEnvironment(oldEnv, _portA.getEnvironment());
         _notifier.changedPortAInOut(oldInOut, _portA.getInOut());
+        _notifier.changedRegister(PORTA_REGISTER_BANK0, oldInOut, _portA.getInOut());
     }
     
     public void setPortBEnvironment(int value) {
@@ -278,6 +285,7 @@ public class PICSimulator {
         _portB.setEnvironment(value);
         _notifier.changedPortBEnvironment(oldEnv, _portB.getEnvironment());
         _notifier.changedPortBInOut(oldInOut, _portB.getInOut());
+        _notifier.changedRegister(PORTB_REGISTER_BANK0, oldInOut, _portB.getInOut());
     }
     
     public int getInstructionFromProgramMemory(int address) {
