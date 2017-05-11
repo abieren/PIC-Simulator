@@ -27,7 +27,7 @@ public interface Notifier {
 
     public void changedPortATris(int oldValue, int newValue);
     
-    public void changedPortAEnvironment(int oldEnv, int latch);
+    public void changedPortAEnvironment(int oldEnv, int newValue);
 
     public void changedPortBLatch(int oldValue, int newValue);
 
@@ -35,7 +35,7 @@ public interface Notifier {
 
     public void changedPortBInOut(int oldValue, int newValue);
     
-    public void changedPortBEnvironment(int oldEnv, int latch);
+    public void changedPortBEnvironment(int oldEnv, int newValue);
 
     void changedRegister(int register, int oldValue, int newValue);
 
