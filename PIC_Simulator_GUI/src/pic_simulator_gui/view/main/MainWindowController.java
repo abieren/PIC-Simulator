@@ -7,14 +7,14 @@ package pic_simulator_gui.view.main;
 
 import java.io.File;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -25,7 +25,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -131,11 +130,11 @@ public class MainWindowController
     @FXML
     private ListView lv_sourceCode;
     @FXML
-    private TableView tv_portMap;
-    @FXML
     private TableView tv_stack;
     @FXML
-    private GridPane gp_register_view_container;
+    private GridPane gp_port_view;
+    @FXML
+    private GridPane gp_register_view;
 
     //Stage that is used by the view of this controller
     private Stage _primaryStage;
@@ -150,6 +149,15 @@ public class MainWindowController
     ObservableList<PortMapRecord> _portMapRecords;
     //records of the stack view
     ObservableList<StackRecord> _stackRecords;
+    //maps for managing labels in port map view
+    Map<Integer, Label> _portALatchLabels;
+    Map<Integer, Label> _portATrisLabels;
+    Map<Integer, Label> _portAInOutLabels;
+    Map<Integer, Label> _portAEnvLabels;
+    Map<Integer, Label> _portBLatchLabels;
+    Map<Integer, Label> _portBTrisLabels;
+    Map<Integer, Label> _portBInOutLabels;
+    Map<Integer, Label> _portBEnvLabels;
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -168,43 +176,228 @@ public class MainWindowController
     }
     
     private void initializePortMapView() {
-        //initialize port map table view
-        _portMapColumns = new ArrayList<>(); //init,reset
-        _portMapColumns.add(new TableColumn<>());
-        _portMapColumns.add(new TableColumn<>("7"));
-        _portMapColumns.add(new TableColumn<>("6"));
-        _portMapColumns.add(new TableColumn<>("5"));
-        _portMapColumns.add(new TableColumn<>("4"));
-        _portMapColumns.add(new TableColumn<>("3"));
-        _portMapColumns.add(new TableColumn<>("2"));
-        _portMapColumns.add(new TableColumn<>("1"));
-        _portMapColumns.add(new TableColumn<>("0"));
-        _portMapColumns.get(0).setCellValueFactory(new PropertyValueFactory<>("description"));
-        _portMapColumns.get(1).setCellValueFactory(new PropertyValueFactory<>("bit7"));
-        _portMapColumns.get(2).setCellValueFactory(new PropertyValueFactory<>("bit6"));
-        _portMapColumns.get(3).setCellValueFactory(new PropertyValueFactory<>("bit5"));
-        _portMapColumns.get(4).setCellValueFactory(new PropertyValueFactory<>("bit4"));
-        _portMapColumns.get(5).setCellValueFactory(new PropertyValueFactory<>("bit3"));
-        _portMapColumns.get(6).setCellValueFactory(new PropertyValueFactory<>("bit2"));
-        _portMapColumns.get(7).setCellValueFactory(new PropertyValueFactory<>("bit1"));
-        _portMapColumns.get(8).setCellValueFactory(new PropertyValueFactory<>("bit0"));
-        tv_portMap.getColumns().clear(); //init,reset
-        tv_portMap.getColumns().addAll(_portMapColumns);
-        _portMapRecords = FXCollections.observableArrayList(); //init,reset
-        tv_portMap.setItems(_portMapRecords);
-        //set style
-        for (TableColumn column : _portMapColumns) {
-            column.setMinWidth(20);
-            column.setMaxWidth(20);
+        //reinitialize the grid panel
+        _portALatchLabels = new HashMap<>();
+        _portATrisLabels = new HashMap<>();
+        _portAInOutLabels = new HashMap<>();
+        _portAEnvLabels = new HashMap<>();
+        _portBLatchLabels = new HashMap<>();
+        _portBTrisLabels = new HashMap<>();
+        _portBInOutLabels = new HashMap<>();
+        _portBEnvLabels = new HashMap<>();
+        gp_register_view.getChildren().clear();
+        //genrate labels inside the grid
+        Label lb;
+        int id;
+        int position;
+        String cellStyle = "-fx-min-height: 20px; -fx-max-height: 20px; "
+                + "-fx-min-width: 20px; -fx-max-height: 20px; "
+                + "-fx-background-color: white; "
+                + "-fx-alignment: center;";
+        String propertyLegendStyle = "-fx-min-height: 20px; -fx-max-height: 20px; "
+                + "-fx-min-width: 80px; -fx-max-height: 80px; "
+                + "-fx-background-color: rgb(200,200,200); "
+                + "-fx-alignment: center;";
+        String portLegendStyle = "-fx-min-height: 20px; -fx-max-height: 20px; "
+                + "-fx-min-width: 80px; -fx-max-height: 80px; "
+                + "-fx-background-color: rgb(200,200,200); "
+                + "-fx-font-weight: bold;";
+        
+        //fill legend
+        int row = 0;
+        lb = new Label("Port A");
+        lb.setStyle(portLegendStyle);
+        gp_port_view.add(lb,0,row);
+        //fill port A headline
+        for (int i = 0; i < 8; i++) {
+            lb = new Label();
+            position = 7-i+1;
+            lb.setStyle(cellStyle);
+            gp_port_view.add(lb,position,row);
         }
-        _portMapColumns.get(0).setMinWidth(50);
-        _portMapColumns.get(0).setMaxWidth(50);
-        _portMapRecords.add(new PortMapRecord("RA Tris", "0", "0", "0", "0", "1", "1", "1", "1"));
+        //fill legend
+        row++;
+        lb = new Label("Latch");
+        lb.setStyle(propertyLegendStyle);
+        gp_port_view.add(lb,0,row);
+        //fill port A latch
+        for (int i = 0; i < 8; i++) {
+            lb = new Label("0");
+            id = i; 
+            position = 7-i+1;
+            lb.setStyle(cellStyle);
+            gp_port_view.add(lb,position,row);
+            lb.setId(Integer.toString(id));
+            lb.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent event) -> {
+                Label label = (Label)event.getSource();
+                int bit = Integer.parseInt(label.getId());
+                boolean bitValue = BinaryNumberHelper.parseBoolean(Integer.parseInt(label.getText()));
+                bitValue = !bitValue;
+                _presenter.setPortLatchBit("A", bit, bitValue);
+            });
+            _portALatchLabels.put(id, lb);
+        }
+        //fill legend
+        row++;
+        lb = new Label("Tris");
+        lb.setStyle(propertyLegendStyle);
+        gp_port_view.add(lb,0,row);
+        //fill port A tris
+        for (int i = 0; i < 8; i++) {
+            lb = new Label("0");
+            id = i; 
+            position = 7-i+1;
+            lb.setStyle(cellStyle);
+            gp_port_view.add(lb,position,row);
+            lb.setId(Integer.toString(id));
+            lb.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent event) -> {
+                Label label = (Label)event.getSource();
+                int bit = Integer.parseInt(label.getId());
+                boolean bitValue = true;
+                if (label.getText().equals("o")) bitValue = false;
+                bitValue = !bitValue;
+                _presenter.setPortTrisBit("A", bit, bitValue);
+            });
+            _portATrisLabels.put(id, lb);
+        }
+        //fill legend
+        row++;
+        lb = new Label("Env");
+        lb.setStyle(propertyLegendStyle);
+        gp_port_view.add(lb,0,row);
+        //fill port A environment
+        for (int i = 0; i < 8; i++) {
+            lb = new Label("0");
+            id = i; 
+            position = 7-i+1;
+            lb.setStyle(cellStyle);
+            gp_port_view.add(lb,position,row);
+            lb.setId(Integer.toString(id));
+            lb.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent event) -> {
+                Label label = (Label)event.getSource();
+                int bit = Integer.parseInt(label.getId());
+                boolean bitValue = BinaryNumberHelper.parseBoolean(Integer.parseInt(label.getText()));
+                bitValue = !bitValue;
+                _presenter.setPortEnvironmentBit("A", bit, bitValue);
+            });
+            _portAEnvLabels.put(id, lb);
+        }
+        //fill legend
+        row++;
+        lb = new Label("In/Out");
+        lb.setStyle(propertyLegendStyle);
+        gp_port_view.add(lb,0,row);
+        //fill port A in/out
+        for (int i = 0; i < 8; i++) {
+            lb = new Label("0");
+            id = i;
+            position = 7-i+1;
+            lb.setStyle(cellStyle);
+            gp_port_view.add(lb,position,row);
+            lb.setId(Integer.toString(id));
+            _portAInOutLabels.put(id, lb);
+        }
+        //fill legend
+        row++;
+        lb = new Label("Port B");
+        lb.setStyle(portLegendStyle);
+        gp_port_view.add(lb,0,row);
+        //fill port B headline
+        for (int i = 0; i < 8; i++) {
+            lb = new Label();
+            position = 7-i+1;
+            lb.setStyle(cellStyle);
+            gp_port_view.add(lb,position,row);
+        }
+        //fill legend
+        row++;
+        lb = new Label("Latch");
+        lb.setStyle(propertyLegendStyle);
+        gp_port_view.add(lb,0,row);
+        //fill port B latch
+        for (int i = 0; i < 8; i++) {
+            lb = new Label("0");
+            id = i; 
+            position = 7-i+1;
+            lb.setStyle(cellStyle);
+            gp_port_view.add(lb,position,row);
+            lb.setId(Integer.toString(id));
+            lb.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent event) -> {
+                Label label = (Label)event.getSource();
+                int bit = Integer.parseInt(label.getId());
+                
+                boolean bitValue = BinaryNumberHelper.parseBoolean(Integer.parseInt(label.getText()));
+                bitValue = !bitValue;
+                _presenter.setPortLatchBit("B", bit, bitValue);
+            });
+            _portBLatchLabels.put(id, lb);
+        }
+        //fill legend
+        row++;
+        lb = new Label("Tris");
+        lb.setStyle(propertyLegendStyle);
+        gp_port_view.add(lb,0,row);
+        //fill port B tris
+        for (int i = 0; i < 8; i++) {
+            lb = new Label("0");
+            id = i;
+            position = 7-i+1;
+            lb.setStyle(cellStyle);
+            gp_port_view.add(lb,position,row);
+            lb.setId(Integer.toString(id));
+            lb.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent event) -> {
+                Label label = (Label)event.getSource();
+                int bit = Integer.parseInt(label.getId());
+                boolean bitValue = true;
+                if (label.getText().equals("o")) bitValue = false;
+                bitValue = !bitValue;
+                _presenter.setPortTrisBit("B", bit, bitValue);
+            });
+            _portBTrisLabels.put(id, lb);
+        }
+        //fill legend
+        row++;
+        lb = new Label("Env");
+        lb.setStyle(propertyLegendStyle);
+        gp_port_view.add(lb,0,row);
+        //fill port B environment
+        for (int i = 0; i < 8; i++) {
+            lb = new Label("0");
+            id = i; 
+            position = 7-i+1;
+            lb.setStyle(cellStyle);
+            gp_port_view.add(lb,position,row);
+            lb.setId(Integer.toString(id));
+            lb.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent event) -> {
+                Label label = (Label)event.getSource();
+                int bit = Integer.parseInt(label.getId());
+                boolean bitValue = BinaryNumberHelper.parseBoolean(Integer.parseInt(label.getText()));
+                bitValue = !bitValue;
+                _presenter.setPortEnvironmentBit("B", bit, bitValue);
+            });
+            _portBEnvLabels.put(id, lb);
+        }
+        //fill legend
+        row++;
+        lb = new Label("In/Out");
+        lb.setStyle(propertyLegendStyle);
+        gp_port_view.add(lb,0,row);
+        //fill port B in/out
+        for (int i = 0; i < 8; i++) {
+            lb = new Label("0");
+            id = i; 
+            position = 7-i+1;
+            lb.setStyle(cellStyle);
+            gp_port_view.add(lb,position,row);
+            _portBInOutLabels.put(id, lb);
+        }
+        
+        _portALatchLabels.get(0).setText("X");
     }
     
     private void initializeRegisterMapView() {
         //reinitialize the grid panel
-        gp_register_view_container.getChildren().clear();
+        gp_register_view.getChildren().clear();
         //genrate labels inside the grid
         for (int row = 0; row < 17; row++) {
             for (int col = 0; col < 17; col++) {
@@ -216,19 +409,19 @@ public class MainWindowController
                 //fill upper table head and left table head
                 if (col == 0 && row == 0) {
                     //add empty label
-                    lb.setStyle("-fx-background-color: rgb(200,200,200); -fx-font-weight: bold;");
-                    gp_register_view_container.add(lb, col, row);
+                    lb.setStyle("-fx-background-color: rgb(200,200,200);");
+                    gp_register_view.add(lb, col, row);
                     continue;
                 }
                 if (row == 0 && col > 0) {
                     lb.setText(BinaryNumberHelper.formatToDisplayableHex(col-1, 1, false));
                     lb.setStyle("-fx-background-color: rgb(200,200,200); -fx-font-weight: bold; -fx-alignment: center;");
-                    gp_register_view_container.add(lb, col, row);
+                    gp_register_view.add(lb, col, row);
                     continue;
                 } else if (col == 0 && row > 0) {
                     lb.setText(BinaryNumberHelper.formatToDisplayableHex(row-1, 1, true));
                     lb.setStyle("-fx-background-color: rgb(200,200,200); -fx-font-weight: bold; -fx-alignment: center;");
-                    gp_register_view_container.add(lb, col, row);
+                    gp_register_view.add(lb, col, row);
                     continue;
                 }
                 lb.setStyle("-fx-background-color: white; -fx-alignment: center;");
@@ -241,7 +434,7 @@ public class MainWindowController
                     int address = Integer.parseInt(label.getId());
                     setRegisterValueDialog(address);
                 });
-                gp_register_view_container.add(lb, col, row);
+                gp_register_view.add(lb, col, row);
             }
         }
     }
@@ -408,6 +601,53 @@ public class MainWindowController
     public void removeBreakPointMarker(int line) {
         _sideBarAnnotations.set(line, "");
     }
+    
+    private void setRegisterValueDialog(int address) {
+        TextInputDialog dialog = new TextInputDialog("0");
+        dialog.setTitle("Set register value");
+        String register = BinaryNumberHelper.formatToDisplayableHex(address, 2, true);
+        dialog.setHeaderText("Set new value for register 0x" + register);
+        dialog.setContentText("Please enter new hex value:");
+
+        // Traditional way to get the response value.
+        Optional<String> result = dialog.showAndWait();
+        if (result.isPresent()){
+            try {
+                int newValue = Integer.parseInt(result.get(),16);
+                _presenter.setRegister(address, newValue);
+            } catch (NumberFormatException e) {
+                Alert alert = new Alert(AlertType.ERROR);
+                alert.setTitle("Invalid Number");
+                alert.setHeaderText("Invlaid Number");
+                alert.setContentText("\""+ result.get() +"\" is not a valid hex number!");
+                alert.showAndWait();
+            }
+            
+        }
+    }
+    
+    private Optional<Integer> showSetNewValueDialog() {
+        TextInputDialog dialog = new TextInputDialog("0");
+        dialog.setTitle("Set new value");
+        dialog.setHeaderText("Set new value");
+        dialog.setContentText("Please enter new hex value:");
+
+        // Traditional way to get the response value.
+        Optional<String> result = dialog.showAndWait();
+        if (result.isPresent()){
+            try {
+                int newValue = Integer.parseInt(result.get(),16);
+                return Optional.of(newValue);
+            } catch (NumberFormatException e) {
+                Alert alert = new Alert(AlertType.ERROR);
+                alert.setTitle("Invalid Number");
+                alert.setHeaderText("Invlaid Number");
+                alert.setContentText("\""+ result.get() +"\" is not a valid hex number!");
+                alert.showAndWait();
+            }
+        }
+        return Optional.empty();
+    }
 
     @Override
     public void displaySTATUSRegister(int value) {
@@ -572,7 +812,7 @@ public class MainWindowController
         int col = register%16;
         int nthChild = (row+1)*17+col+1;
         
-        ObservableList<Node> nodes = gp_register_view_container.getChildren();
+        ObservableList<Node> nodes = gp_register_view.getChildren();
         Label lb = (Label)nodes.get(nthChild);
         lb.setText(BinaryNumberHelper.formatToDisplayableHex(value, 2, true));
     }
@@ -604,32 +844,83 @@ public class MainWindowController
             //stack underflow is currently not displayed in view
         } else {
             _stackRecords.remove(1);
-        }
-        
+        } 
     }
 
-    private void setRegisterValueDialog(int address) {
-        TextInputDialog dialog = new TextInputDialog("0");
-        dialog.setTitle("Set register value");
-        String register = BinaryNumberHelper.formatToDisplayableHex(address, 2, true);
-        dialog.setHeaderText("Set new value for register 0x" + register);
-        dialog.setContentText("Please enter new hex value:");
-
-        // Traditional way to get the response value.
-        Optional<String> result = dialog.showAndWait();
-        if (result.isPresent()){
-            try {
-                int newValue = Integer.parseInt(result.get(),16);
-                _presenter.setRegister(address, newValue);
-            } catch (NumberFormatException e) {
-                Alert alert = new Alert(AlertType.ERROR);
-                alert.setTitle("Invalid Number");
-                alert.setHeaderText("Invlaid Number");
-                alert.setContentText("\""+ result.get() +"\" is not a valid hex number!");
-                alert.showAndWait();
-            }
-            
+    @Override
+    public void displayPortLatchBit(String port, int bit, boolean value) {
+        Label l;
+        switch (port) {
+            case "A":
+                l = _portALatchLabels.get(bit);
+                break;
+            case "B":
+                l = _portBLatchLabels.get(bit);
+                break;
+            default:
+                return;
         }
+        if (l == null) return;
+        String text = "0";
+        if (value == true) text = "1";
+        l.setText(text);
+    }
+
+    @Override
+    public void displayPortTrisBit(String port, int bit, boolean value) {
+        Label l;
+        switch (port) {
+            case "A":
+                l = _portATrisLabels.get(bit);
+                break;
+            case "B":
+                l = _portBTrisLabels.get(bit);
+                break;
+            default:
+                return;
+        }
+        if (l == null) return;
+        String text = "o";
+        if (value == true) text = "i";
+        l.setText(text);
+    }
+
+    @Override
+    public void displayPortInOutBit(String port, int bit, boolean value) {
+        Label l;
+        switch (port) {
+            case "A":
+                l = _portAInOutLabels.get(bit);
+                break;
+            case "B":
+                l = _portBInOutLabels.get(bit);
+                break;
+            default:
+                return;
+        }
+        if (l == null) return;
+        String text = "0";
+        if (value == true) text = "1";
+        l.setText(text);
+    }
+
+    @Override
+    public void displayPortEnvironmentBit(String port, int bit, boolean value) {
+        Label l;
+        switch (port) {
+            case "A":
+                l = _portAEnvLabels.get(bit);
+                break;
+            case "B":
+                l = _portBEnvLabels.get(bit);
+                break;
+            default:
+                return;
+        }
+        if (l == null) return;
+        String text = "0";
+        if (value == true) text = "1";
+        l.setText(text);
     }
     
 }

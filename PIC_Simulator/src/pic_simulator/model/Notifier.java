@@ -20,6 +20,22 @@ public interface Notifier {
     public void changedINTCONRegister(int oldValue, int newValue);
 
     public void changedOPTIONRegister(int oldValue, int newValue);
+    
+    public void changedPortALatch(int oldValue, int newValue);
+
+    public void changedPortAInOut(int oldValue, int newValue);
+
+    public void changedPortATris(int oldValue, int newValue);
+    
+    public void changedPortAEnvironment(int oldEnv, int newValue);
+
+    public void changedPortBLatch(int oldValue, int newValue);
+
+    public void changedPortBTris(int oldValue, int newValue);
+
+    public void changedPortBInOut(int oldValue, int newValue);
+    
+    public void changedPortBEnvironment(int oldEnv, int newValue);
 
     void changedRegister(int register, int oldValue, int newValue);
 

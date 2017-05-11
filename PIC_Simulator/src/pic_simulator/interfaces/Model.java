@@ -5,6 +5,8 @@
  */
 package pic_simulator.interfaces;
 
+import java.util.Optional;
+
 /**
  *
  * @author Alex
@@ -40,5 +42,17 @@ public interface Model {
     public void stepOver();
 
     public void setRegister(int address, int value);
+
+    public void setPortTris(String port, int value);
+    
+    public Optional<Integer> getPortTris(String port);
+
+    public void setPortLatch(String port, int value);
+    
+    public Optional<Integer> getPortLatch(String port);
+
+    public void setPortEnvironment(String port, int value);
+    
+    public Optional<Integer> getPortEnvironment(String port);
     
 }

@@ -12,9 +12,6 @@ import java.util.List;
  * @author Alex
  */
 public interface MainWindowView {
-
-    //public void setPortTrisBit(int port, int bit, boolean value);
-    //public void setPortValueBit(int port, int bit, boolean value);
     
     public void initializeView();
 
@@ -57,5 +54,13 @@ public interface MainWindowView {
     public void pushStack(int value, boolean isOverflow);
 
     public void popStack(int value, boolean isUnderflow);
+    
+    public void displayPortLatchBit(String port, int bit, boolean value);
+    
+    public void displayPortTrisBit(String port, int bit, boolean value);
+    
+    public void displayPortInOutBit(String port, int bit, boolean value);
+    
+    public void displayPortEnvironmentBit(String port, int bit, boolean value);
     
 }

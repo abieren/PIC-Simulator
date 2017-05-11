@@ -5,6 +5,7 @@
  */
 package pic_simulator.model;
 
+import java.util.Optional;
 import pic_simulator.interfaces.Model;
 import pic_simulator.interfaces.ModelPresenter;
 import pic_simulator.utils.FileParser;
@@ -33,6 +34,11 @@ public class Simulator implements Model {
         _presenter = presenter;
         _notifier = new NotifierImpl(_presenter, this);
         _pic = new PICSimulator(_notifier);
+    }
+    
+    public void nextCycle() {
+        _runningTime = _runningTime + 1/_oscillatorFrequency;
+        _presenter.displayRunningTime(_runningTime);
     }
     
     @Override
@@ -135,12 +141,78 @@ public class Simulator implements Model {
 
     @Override
     public void setRegister(int address, int value) {
-        _pic.setRegister(address, value);
+        _pic.setRegister(address, value, false);
     }
 
-    void nextCycle() {
-        _runningTime = _runningTime + 1/_oscillatorFrequency;
-        _presenter.displayRunningTime(_runningTime);
+    @Override
+    public void setPortTris(String port, int value) {
+        switch (port) {
+            case "A":
+                _pic.setRegister(_pic.TRISA_REGISTER_BANK1, value, false);
+                break;
+            case "B":
+                _pic.setRegister(_pic.TRISB_REGISTER_BANK1, value, false);
+            default:
+        }
     }
-    
+
+    @Override
+    public void setPortLatch(String port, int value) {
+        switch (port) {
+            case "A":
+                _pic.setRegister(_pic.PORTA_REGISTER_BANK0, value, false);
+                break;
+            case "B":
+                _pic.setRegister(_pic.PORTB_REGISTER_BANK0, value, false);
+            default:
+        }
+    }
+
+    @Override
+    public void setPortEnvironment(String port, int value) {
+        switch (port) {
+            case "A":
+                _pic.setPortAEnvironment(value);
+                break;
+            case "B":
+                _pic.setPortBEnvironment(value);
+            default:
+        }
+    }
+
+    @Override
+    public Optional<Integer> getPortLatch(String port) {
+        switch (port) {
+            case "A":
+                return Optional.of(_pic._portA.getLatch());
+            case "B":
+                return Optional.of(_pic._portB.getLatch());
+            default:
+                return Optional.empty();
+        }
+    }
+
+    @Override
+    public Optional<Integer> getPortTris(String port) {
+        switch (port) {
+            case "A":
+                return Optional.of(_pic._portA.getTris());
+            case "B":
+                return Optional.of(_pic._portB.getTris());
+            default:
+                return Optional.empty();
+        }
+    }
+
+    @Override
+    public Optional<Integer> getPortEnvironment(String port) {
+        switch (port) {
+            case "A":
+                return Optional.of(_pic._portA.getEnvironment());
+            case "B":
+                return Optional.of(_pic._portB.getEnvironment());
+            default:
+                return Optional.empty();
+        }
+    }
 }

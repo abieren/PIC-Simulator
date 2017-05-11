@@ -48,5 +48,19 @@ public interface MainWindowPresenter {
     public void setBreakOnInterrupt(boolean b);
 
     public void setRegister(int address, int value);
+
+    public void setPortTris(String port, int value);
+
+    public void setPortLatch(String port, int value);
+
+    public void setPortInOut(String port, int value);
+
+    public void setPortEnv(String port, int value);
+    
+    public void setPortLatchBit(String port, int bit, boolean value);
+    
+    public void setPortTrisBit(String port, int bit, boolean value);
+    
+    public void setPortEnvironmentBit(String port, int bit, boolean value);
     
 }

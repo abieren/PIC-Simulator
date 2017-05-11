@@ -3,18 +3,20 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Alex/Documents/Git%20Repos/PIC-Simulator/PIC_Simulator/src/pic_simulator/model/PICSimulator.java</file>
             <file>file:/C:/Users/Alex/Documents/Git%20Repos/PIC-Simulator/PIC_Simulator/src/pic_simulator/model/Instruction.java</file>
             <file>file:/C:/Users/Alex/Documents/Git%20Repos/PIC-Simulator/PIC_Simulator/src/pic_simulator/utils/FileParser.java</file>
-            <file>file:/C:/Users/Alex/Documents/Git%20Repos/PIC-Simulator/PIC_Simulator/src/pic_simulator/interfaces/ModelPresenter.java</file>
             <file>file:/C:/Users/Alex/Documents/Git%20Repos/PIC-Simulator/PIC_Simulator/src/pic_simulator/model/InstructionDecoder.java</file>
             <file>file:/C:/Users/Alex/Documents/Git%20Repos/PIC-Simulator/PIC_Simulator/src/pic_simulator/main.java</file>
             <file>file:/C:/Users/Alex/Documents/Git%20Repos/PIC-Simulator/PIC_Simulator/src/pic_simulator/model/Simulator.java</file>
+            <file>file:/C:/Users/Alex/Documents/Git%20Repos/PIC-Simulator/PIC_Simulator/src/pic_simulator/model/Notifier.java</file>
+            <file>file:/C:/Users/Alex/Documents/Git%20Repos/PIC-Simulator/PIC_Simulator/src/pic_simulator/model/RegisterAddressDecoder.java</file>
+            <file>file:/C:/Users/Alex/Documents/Git%20Repos/PIC-Simulator/PIC_Simulator/src/pic_simulator/utils/BinaryNumberHelper.java</file>
+            <file>file:/C:/Users/Alex/Documents/Git%20Repos/PIC-Simulator/PIC_Simulator/src/pic_simulator/model/PICSimulator.java</file>
+            <file>file:/C:/Users/Alex/Documents/Git%20Repos/PIC-Simulator/PIC_Simulator/src/pic_simulator/interfaces/ModelPresenter.java</file>
             <file>file:/C:/Users/Alex/Documents/Git%20Repos/PIC-Simulator/PIC_Simulator/src/pic_simulator/model/NotifierImpl.java</file>
             <file>file:/C:/Users/Alex/Documents/Git%20Repos/PIC-Simulator/PIC_Simulator/src/pic_simulator/interfaces/Model.java</file>
-            <file>file:/C:/Users/Alex/Documents/Git%20Repos/PIC-Simulator/PIC_Simulator/src/pic_simulator/model/Notifier.java</file>
+            <file>file:/C:/Users/Alex/Documents/Git%20Repos/PIC-Simulator/PIC_Simulator/src/pic_simulator/model/Port.java</file>
             <file>file:/C:/Users/Alex/Documents/Git%20Repos/PIC-Simulator/PIC_Simulator/src/pic_simulator/utils/ParseResult.java</file>
-            <file>file:/C:/Users/Alex/Documents/Git%20Repos/PIC-Simulator/PIC_Simulator/src/pic_simulator/utils/BinaryNumberHelper.java</file>
         </group>
     </open-files>
 </project-private>
