@@ -24,6 +24,9 @@ public class MainWindowPresenterImpl
     //records of the stack view
     ObservableList<StackRecord> _stackRecords;
     
+    //port values
+    private int _portALatch;
+    
     @Override
     public void setModel(Model model) {
         _model = model;
@@ -233,7 +236,7 @@ public class MainWindowPresenterImpl
     public void displayPortInOut(String port, int oldValue, int newValue) {
         for (int i = 0; i < 8; i++) {
             boolean b = BinaryNumberHelper.parseBoolean(BinaryNumberHelper.getBit(newValue, i));
-            _view.displayPortEnvironmentBit(port, i, b);
+            _view.displayPortInOutBit(port, i, b);
         }
     }
 
@@ -241,6 +244,7 @@ public class MainWindowPresenterImpl
     public void displayPortLatch(String port, int oldValue, int newValue) {
         for (int i = 0; i < 8; i++) {
             boolean b = BinaryNumberHelper.parseBoolean(BinaryNumberHelper.getBit(newValue, i));
+            
             _view.displayPortLatchBit(port, i, b);
         }
     }
@@ -259,5 +263,35 @@ public class MainWindowPresenterImpl
             boolean b = BinaryNumberHelper.parseBoolean(BinaryNumberHelper.getBit(newValue, i));
             _view.displayPortEnvironmentBit(port, i, b);
         }
+    }
+
+    @Override
+    public void setPortLatchBit(String port, int bit, boolean value) {
+        Integer newLatch = _model.getPortLatch(port).orElse(null);
+        if (newLatch == null) return;
+        int b = 1;
+        if (value == false) b=0;
+        newLatch = BinaryNumberHelper.setBit(newLatch, bit, b);
+        _model.setPortLatch(port, newLatch);
+    }
+
+    @Override
+    public void setPortTrisBit(String port, int bit, boolean value) {
+        Integer newTris = _model.getPortTris(port).orElse(null);
+        if (newTris == null) return;
+        int b = 1;
+        if (value == false) b=0;
+        newTris = BinaryNumberHelper.setBit(newTris, bit, b);
+        _model.setPortTris(port, newTris);
+    }
+    
+    @Override
+    public void setPortEnvironmentBit(String port, int bit, boolean value) {
+        Integer newTris = _model.getPortEnvironment(port).orElse(null);
+        if (newTris == null) return;
+        int b = 1;
+        if (value == false) b=0;
+        newTris = BinaryNumberHelper.setBit(newTris, bit, b);
+        _model.setPortEnvironment(port, newTris);
     }
 }
