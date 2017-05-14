@@ -5,6 +5,7 @@
  */
 package pic_simulator.model;
 
+import pic_simulator.interfaces.Notifier;
 import pic_simulator.interfaces.ModelPresenter;
 
 
