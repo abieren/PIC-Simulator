@@ -73,16 +73,163 @@ public class PICSimulator {
         _timer0Module.clear();
     }
     
-    public void resetByWatchdog() {
+    public void resetByWakeup(boolean isInterrupt) {
+        // W Register unchanged
+        //PC not increased because already done after fetching instruction
+        // INDF not physical register ignore
+        // TMR0 unchanged
+        // PORTA unchanged
+        // PORTB unchanged
+        // EEDATA unchanged
+        // EEADR unchanged
+        
+        // Switch to Bank1
+        setSTATUSbitRP0(1);
+        // INDF not physical register ignore
+        // OPTION_REG unchanged
+        // TRISA unchanged
+        // TRISB unchanged
+        // EECON1 only bit4 is changed
+        // Helper variable
+        int value;
+        value = getRegister(0x88, false);
+        value = BinaryNumberHelper.setBit(value, 4, 0);
+        setRegister(0x88, value, false);
+        // EECON2
+        setRegister(0x89, 0, false);
+        
+        // Both Bank used Registers
+        // PCL
+        if (isInterrupt == true) {
+            // interrupt is handled in handleinterupt function            
+        } else {
+            // incrementing PC value isn't nessecary its done after fetching instruction
+        }
+        // STATUS
+        if (isInterrupt == true) {
+            value = getSTATUSRegister();
+            // only bit 7 to 3 are changed
+            value = BinaryNumberHelper.setBit(value, 3, 0);
+            value = BinaryNumberHelper.setBit(value, 4, 1);
+            setSTATUSRegister(value);
+        } else {
+            value = getSTATUSRegister();
+            // only bit 7 to 3 are changed
+            value = BinaryNumberHelper.setBit(value, 3, 1);
+            value = BinaryNumberHelper.setBit(value, 4, 0);
+            setSTATUSRegister(value);
+        }
+        // FSR unchanged
+        // PCLATH unchanged
+        // INTCON changed by wakeup reset (one or more bits changed by wakeup)
+    
         
     }
     
     public void resetByPower() {
-        
+        // W Register
+        setWRegister(0);
+        //reset PC
+        setPCRegister(0);
+        //bank 0
+        // INDF not physical register ignore
+        // TMR0
+        setRegister(0x01, 0, false);
+        // PORTA
+        setRegister(0x05, 0, false);
+        // PORTB
+        setRegister(0x06, 0, false);
+        // EEDATA
+        setRegister(0x08, 0, false);
+        // EEADR
+        setRegister(0x09, 0, false);
+        //bank1
+        // INDF not physical register ignore
+        // OPTION_REG
+        setRegister(0x81, 0b11111111, false);
+        // TRISA
+        setRegister(0x85, 0b00011111, false);
+        // TRISB
+        setRegister(0x86, 0b11111111, false);
+        // EECON1
+        setRegister(0x88, 0b00000000, false);
+        // EECON2
+        setRegister(0x89, 0, false);
+        // Both Bank used Registers
+        // PCL
+        setRegister(0x02, 0, false);
+        // STATUS
+        setSTATUSRegister(0b00011000);
+        // FSR
+        setRegister(0x04, 0, false);
+        // PCLATH
+        setRegister(0x0A, 0, false);
+        // INTCON
+        setRegister(0x0B, 0, false);        
     }
     
-    public void resetByMCLR() {
-        
+    public void resetByMCLR(boolean isSleep, boolean isWatchdog) {
+        // W Register unchanged
+        //reset PC
+        setPCRegister(0);
+        // INDF not physical register ignore
+        // TMR0 unchanged
+        // PORTA unchanged
+        // PORTB unchanged
+        // EEDATA unchanged
+        // EEADR unchanged
+        //Bank1
+        setSTATUSbitRP0(1);
+        // INDF not physical register ignore
+        // OPTION_REG
+        setRegister(0x81, 0b11111111, false);
+        // TRISA
+        setRegister(0x85, 0b00011111, false);
+        // TRISB
+        setRegister(0x86, 0b11111111, false);
+        // EECON1 3rd Bit is change on write error not handled now
+        setRegister(0x88, 0, false);
+        // EECON2
+        setRegister(0x89, 0, false);
+        // Both Bank used Registers
+        // PCL
+        setRegister(0x02, 0, false);
+        // STATUS different conditions
+        if (isSleep == true) {
+            // if sleeping
+            int value = getSTATUSRegister();
+            // only bit 7 to 3 are changed
+            value = BinaryNumberHelper.setBit(value, 3, 0);
+            value = BinaryNumberHelper.setBit(value, 4, 1);
+            value = BinaryNumberHelper.setBit(value, 5, 0);
+            value = BinaryNumberHelper.setBit(value, 6, 0);
+            value = BinaryNumberHelper.setBit(value, 7, 0);
+            setSTATUSRegister(value);
+        } 
+        else if (isSleep == false && isWatchdog == true) {
+            // If not sleeping and the watchdog timer triggers MCLR is used this way
+            int value = getSTATUSRegister();
+            // only bit 7 to 3 are changed
+            value = BinaryNumberHelper.setBit(value, 3, 1);
+            value = BinaryNumberHelper.setBit(value, 4, 0);
+            value = BinaryNumberHelper.setBit(value, 5, 0);
+            value = BinaryNumberHelper.setBit(value, 6, 0);
+            value = BinaryNumberHelper.setBit(value, 7, 0);
+            setSTATUSRegister(value);
+        } else if (isSleep == false && isWatchdog == false) {
+            // If not sleeping and the watchdog timer is not triggered MCLR is used this way
+            int value = getSTATUSRegister();
+            // only bit 7 to 5 are changed
+            value = BinaryNumberHelper.setBit(value, 5, 0);
+            value = BinaryNumberHelper.setBit(value, 6, 0);
+            value = BinaryNumberHelper.setBit(value, 7, 0);
+            setSTATUSRegister(value);
+        }
+        // FSR unchanged
+        // PCLATH
+        setRegister(0x0A, 0, false);
+        // INTCON only bit0 is unchanged, other bits=0
+        setRegister(0x0B, 0+BinaryNumberHelper.getBit(getRegister(0x0B, false), 0), false);
     }
     
     public int getPCRegister() {
@@ -564,7 +711,7 @@ public class PICSimulator {
         }
         if (_watchdogTimer.hasTriggered()) {
             //invoke reset
-            resetByWatchdog();
+            resetByWakeup(false); //wakeup by watchdog, not by interrupt
         }
         _notifier.nextCycle();
     }
