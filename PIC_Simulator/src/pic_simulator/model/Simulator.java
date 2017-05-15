@@ -7,6 +7,9 @@ package pic_simulator.model;
 
 import pic_simulator.interfaces.Notifier;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.application.Platform;
 import pic_simulator.interfaces.Model;
 import pic_simulator.interfaces.ModelPresenter;
 import pic_simulator.utils.FileParser;
@@ -62,12 +65,12 @@ public class Simulator implements Model {
     
     @Override
     public void resetPIC() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        _pic.resetByMCLR(false, false);
     }
 
     @Override
     public void powerResetPIC() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        _pic.resetByPower();
     }
 
     @Override
@@ -118,6 +121,7 @@ public class Simulator implements Model {
     public void setLSTFile(String filePath) {
         //reset the simulator before loading new file
         initialize();
+        powerResetPIC();
         _lstFilePath = filePath;
         ParseResult pr = FileParser.parse(filePath);
         _parseResult = pr;
@@ -137,6 +141,29 @@ public class Simulator implements Model {
     @Override
     public void setAutomaticSteppingMode(boolean b) {
         _automaticSteppingMode = b;
+        if (_automaticSteppingMode) {
+            System.out.println("AUTOMATIC==============");
+            //start timer
+            Thread t1 = new Thread() {
+                public void run() {
+                    while (_automaticSteppingMode) {
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                // Update UI here.
+                                stepOver();
+                            }
+                        });
+                        try {
+                            Thread.sleep(_automaticSteppingInterval);
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(Simulator.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                }
+            };
+            t1.start();
+        }
     }
 
     @Override
