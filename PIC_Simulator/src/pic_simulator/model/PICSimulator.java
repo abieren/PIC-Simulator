@@ -5,10 +5,13 @@
  */
 package pic_simulator.model;
 
+import pic_simulator.interfaces.Notifier;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
+import pic_simulator.interfaces.Timer;
+import pic_simulator.interfaces.Watchdog;
 import pic_simulator.utils.BinaryNumberHelper;
 
 /**
@@ -29,6 +32,9 @@ public class PICSimulator {
     public int _wRegister;
     public Port _portA;
     public Port _portB;
+    public Watchdog _watchdogTimer;
+    public Timer _timer0Module;
+    public double _oscillatorFrequency;
     
     //constants of PIC
     public final int MAX_STACK_SIZE = 8;
@@ -40,12 +46,13 @@ public class PICSimulator {
     public final int FSR_ADDRESS_BANK0 = 0x4;
     public final int INTCON_REGISTER_ADDRESS_BANK0 = 0x0B;
     public final int OPTION_REGISTER_ADDRESS_BANK1 = 0x81;
-    public final int INTERRUPT_VECTOR_BANK0 = 0x4;
+    public final int INTERRUPT_VECTOR_PROGRAM_MEMORY = 0x4;
     public final int EECON1_REGISTER_BANK1 = 0x88;
     public final int PORTA_REGISTER_BANK0 = 0x05;
     public final int PORTB_REGISTER_BANK0 = 0x06;
     public final int TRISA_REGISTER_BANK1 = 0x85;
     public final int TRISB_REGISTER_BANK1 = 0x86;
+    public final int TMR0_REGISTER_BANK0 = 0x01;
     
     public PICSimulator(Notifier notifier) {
         _notifier = notifier;
@@ -60,6 +67,22 @@ public class PICSimulator {
         _wRegister = 0;
         _portA = new Port();
         _portB = new Port();
+        _watchdogTimer = new WatchdogImpl();
+        _watchdogTimer.clear();
+        _timer0Module = new TimerImpl();
+        _timer0Module.clear();
+    }
+    
+    public void resetByWatchdog() {
+        
+    }
+    
+    public void resetByPower() {
+        
+    }
+    
+    public void resetByMCLR() {
+        
     }
     
     public int getPCRegister() {
@@ -120,12 +143,15 @@ public class PICSimulator {
         if (addressBit8 == 0) {
             //handle special files that are accessible only on bank0
             switch (address8bit) {
+                case TMR0_REGISTER_BANK0:
+                    result = _timer0Module.getTimerCount();
+                    return result;
                 case PORTA_REGISTER_BANK0:
                     result = _portA.getInOut();
-                    break; 
+                    return result; 
                 case PORTB_REGISTER_BANK0:
                     result = _portA.getInOut();
-                    break;
+                    return result;
                 default:
                     break;
             }
@@ -134,10 +160,10 @@ public class PICSimulator {
             switch (address8bit) {
                 case TRISA_REGISTER_BANK1:
                     result = _portA.getTris();
-                    break; 
+                    return result; 
                 case TRISB_REGISTER_BANK1:
                     result = _portA.getTris();
-                    break;
+                    return result;
                 default:
                     break;
             }
@@ -193,6 +219,10 @@ public class PICSimulator {
         if (addressBit8 == 0) {
             //handle special files that are only accessible on bank0
             switch (address) {
+                case TMR0_REGISTER_BANK0:
+                    setTMR0(value);
+                    //everything handled exit function
+                    return;
                 case PORTA_REGISTER_BANK0:
                     setPortALatch(value);
                     //everything handled exit function
@@ -232,6 +262,12 @@ public class PICSimulator {
         }
     }
     
+    public void setTMR0(int value) {
+        int oldValue = _timer0Module.getTimerCount();
+        _timer0Module.setTimerCount(value);
+        _notifier.changedRegister(TMR0_REGISTER_BANK0, oldValue, value);
+    }
+    
     public void setPortALatch(int value) {
         int oldLatch = _portA.getLatch();
         int oldInOut = _portA.getInOut();
@@ -248,6 +284,18 @@ public class PICSimulator {
         _notifier.changedPortBLatch(oldLatch, _portB.getLatch());
         _notifier.changedPortBInOut(oldInOut, _portB.getInOut());
         _notifier.changedRegister(PORTB_REGISTER_BANK0, oldInOut, _portB.getInOut());
+    }
+    
+    public void setOscillatorFrequency(double MHz) {
+        _oscillatorFrequency = MHz;
+    }
+    
+    public double getOscillatorFrequency() {
+        return _oscillatorFrequency;
+    }
+    
+    public double getInstructionFrequency() {
+        return getOscillatorFrequency()/4;
     }
     
     public void setPortATris(int value){
@@ -329,8 +377,12 @@ public class PICSimulator {
     
     public void makeStep() {
         handleInterrupts();
-        fetchNextInstruction();
-        decodeAndExecuteInstruction(getInstructionRegsiter());
+        if (isSleeping()) {
+            nextCycle();
+        } else {
+            fetchNextInstruction();
+            decodeAndExecuteInstruction(getInstructionRegsiter());   
+        }
     }
     
     public void fetchNextInstruction() {
@@ -493,7 +545,7 @@ public class PICSimulator {
         if (isInterrupt) {
              setINTCONbitGIE(0);
              pushStack(getPCRegister());
-             CALL(INTERRUPT_VECTOR_BANK0);      
+             CALL(INTERRUPT_VECTOR_PROGRAM_MEMORY);      
          }
     }
     
@@ -503,9 +555,28 @@ public class PICSimulator {
     }
     
     public void nextCycle() {
+        double timePast = 1/getInstructionFrequency(); //milliseconds
+        _watchdogTimer.notifyTimeAdvanced(timePast);
+        _timer0Module.notifyCycle();
+        if (_timer0Module.hasTriggered()) {
+            //set timer0 trigger flag
+            setINTCONbitT0IF(true);
+        }
+        if (_watchdogTimer.hasTriggered()) {
+            //invoke reset
+            resetByWatchdog();
+        }
         _notifier.nextCycle();
     }
     
+    /* helpper functions*/
+    public boolean isSleeping() {
+        if (getSTATUSbitPD() == 0 && getSTATUSbitTO() == 1) {
+            return true;
+        } else {
+            return false;
+        }
+    }
     
     /* Carry and Digit Carry Helpers*/
     
@@ -678,7 +749,7 @@ public class PICSimulator {
         return BinaryNumberHelper.getBit(getINTCONRegister(), 3);
     }
     
-    public void setINTCONbitT0IF(int b) {
+    public void setINTCONbitT0IF(boolean b) {
         int value = getINTCONRegister();
         value = BinaryNumberHelper.setBit(value, 2, b);
         setINTCONRegister(value);
@@ -1222,6 +1293,10 @@ public class PICSimulator {
     }
     
     public void SLEEP() {
+        //status affected: TO, PD
+        setSTATUSbitTO(1);
+        setSTATUSbitPD(0);
+        
         nextCycle();
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
