@@ -5,6 +5,7 @@
  */
 package pic_simulator.model;
 
+import pic_simulator.interfaces.Notifier;
 import java.util.Optional;
 import pic_simulator.interfaces.Model;
 import pic_simulator.interfaces.ModelPresenter;
@@ -25,7 +26,6 @@ public class Simulator implements Model {
     
     private boolean _automaticSteppingMode;
     private int _automaticSteppingInterval;     //interval in ms
-    private double _oscillatorFrequency;        //frequency in mega hz
     private double _runningTime;                   //running time in micro seconds
     private boolean _breakOnWatchdogTrigger;
     private boolean _breakOnInterrupt;
@@ -37,7 +37,7 @@ public class Simulator implements Model {
     }
     
     public void nextCycle() {
-        _runningTime = _runningTime + 1/_oscillatorFrequency;
+        _runningTime = _runningTime + 1/_pic.getOscillatorFrequency();
         _presenter.displayRunningTime(_runningTime);
     }
     
@@ -50,8 +50,8 @@ public class Simulator implements Model {
         _presenter.displayAutomaticSteppingMode(_automaticSteppingMode);
         _automaticSteppingInterval = 1500;
         _presenter.displayAutomaticSteppingIntervall(_automaticSteppingInterval);
-        _oscillatorFrequency = 4.0;
-        _presenter.displayOscillatorFrequency(_oscillatorFrequency);
+        _pic.setOscillatorFrequency(4.0);
+        _presenter.displayOscillatorFrequency(_pic.getOscillatorFrequency());
         _runningTime = 0;
         _presenter.displayRunningTime(_runningTime);
         _breakOnWatchdogTrigger = true;
@@ -95,7 +95,7 @@ public class Simulator implements Model {
 
     @Override
     public void setOscillatorFrequency(double f) {
-        _oscillatorFrequency = f;
+        _pic.setOscillatorFrequency(f);
     }
 
     @Override
