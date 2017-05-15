@@ -33,8 +33,7 @@
                   </Menu>
                   <Menu mnemonicParsing="false" text="Help">
                     <items>
-                      <MenuItem mnemonicParsing="false" text="PIC Simulator Help" />
-                        <MenuItem mnemonicParsing="false" text="About PIC Simulator" />
+                      <MenuItem mnemonicParsing="false" onAction="#menu_openPDF_onClicked" text="PIC Simulator Help" />
                     </items>
                   </Menu>
                </menus>
