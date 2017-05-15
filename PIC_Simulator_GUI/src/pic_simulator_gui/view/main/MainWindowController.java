@@ -5,7 +5,9 @@
  */
 package pic_simulator_gui.view.main;
 
+import java.awt.Desktop;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
@@ -550,6 +552,22 @@ public class MainWindowController
         boolean value = cb_breakOnInterrupt.isSelected();
         _presenter.setBreakOnInterrupt(value);
     }
+    
+    @FXML
+    private void menu_openPDF_onClicked() {
+        openPDF();
+    }
+    
+    private void openPDF() {
+        if (Desktop.isDesktopSupported()) {
+            try {
+                File myFile = new File("./manual.pdf");
+                Desktop.getDesktop().open(myFile);
+            } catch (IOException ex) {
+                // no application registered for PDFs
+            }
+        }
+    }
 
     @FXML
     private void menu_openProgram_onClicked() {
@@ -565,6 +583,7 @@ public class MainWindowController
         if (file != null) {
             String filePath = file.getAbsolutePath();
             _presenter.setLSTFile(filePath);
+            _primaryStage.setTitle("PIC SIMULATOR - " + filePath);
         }
     }
 
