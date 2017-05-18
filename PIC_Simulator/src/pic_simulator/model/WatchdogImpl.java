@@ -30,6 +30,10 @@ public class WatchdogImpl implements Watchdog {
         }
         clear();
     }
+
+    public WatchdogImpl() {
+        updateTimeToTrigger();
+    }
     
     @Override
     public void enable() {
