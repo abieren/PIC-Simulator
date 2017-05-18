@@ -37,22 +37,22 @@ public class PICSimulator {
     public double _oscillatorFrequency;
     
     //constants of PIC
-    public final int MAX_STACK_SIZE = 8;
-    public final int DEFAULT_INSTRUCTION_VALUE = 0;
-    public final int DEFAULT_REGSITER_VALUE = 0;
-    public final int STATUS_REGISTER_ADDRESS_BANK0 = 0x03;
-    public final int PCLATH_REGISTER_ADDRESS_BANK0 = 0x0A;
-    public final int INDF_REGISTER_BANK0 = 0x0;
-    public final int FSR_ADDRESS_BANK0 = 0x4;
-    public final int INTCON_REGISTER_ADDRESS_BANK0 = 0x0B;
-    public final int OPTION_REGISTER_ADDRESS_BANK1 = 0x81;
-    public final int INTERRUPT_VECTOR_PROGRAM_MEMORY = 0x4;
-    public final int EECON1_REGISTER_BANK1 = 0x88;
-    public final int PORTA_REGISTER_BANK0 = 0x05;
-    public final int PORTB_REGISTER_BANK0 = 0x06;
-    public final int TRISA_REGISTER_BANK1 = 0x85;
-    public final int TRISB_REGISTER_BANK1 = 0x86;
-    public final int TMR0_REGISTER_BANK0 = 0x01;
+    public static final int MAX_STACK_SIZE = 8;
+    public static final int DEFAULT_INSTRUCTION_VALUE = 0;
+    public static final int DEFAULT_REGSITER_VALUE = 0;
+    public static final int STATUS_REGISTER_ADDRESS_BANK0 = 0x03;
+    public static final int PCLATH_REGISTER_ADDRESS_BANK0 = 0x0A;
+    public static final int INDF_REGISTER_BANK0 = 0x0;
+    public static final int FSR_ADDRESS_BANK0 = 0x4;
+    public static final int INTCON_REGISTER_ADDRESS_BANK0 = 0x0B;
+    public static final int OPTION_REGISTER_ADDRESS_BANK1 = 0x81;
+    public static final int INTERRUPT_VECTOR_PROGRAM_MEMORY = 0x4;
+    public static final int EECON1_REGISTER_BANK1 = 0x88;
+    public static final int PORTA_REGISTER_BANK0 = 0x05;
+    public static final int PORTB_REGISTER_BANK0 = 0x06;
+    public static final int TRISA_REGISTER_BANK1 = 0x85;
+    public static final int TRISB_REGISTER_BANK1 = 0x86;
+    public static final int TMR0_REGISTER_BANK0 = 0x01;
     
     public PICSimulator(Notifier notifier) {
         _notifier = notifier;
@@ -69,7 +69,7 @@ public class PICSimulator {
         _portB = new Port();
         _watchdogTimer = new WatchdogImpl();
         _watchdogTimer.clear();
-        _timer0Module = new TimerImpl();
+        _timer0Module = new TimerImpl(_notifier);
         _timer0Module.clear();
     }
     
@@ -385,8 +385,9 @@ public class PICSimulator {
             //handle special files that are only accessible on bank1
             switch (address) {
                 case OPTION_REGISTER_ADDRESS_BANK1:
-                    _notifier.changedOPTIONRegister(getOPTIONRegister(), value);
-                    break;
+                    setOPTIONRegister(value);
+                    //everything handled exit funtion
+                    return;
                 case TRISA_REGISTER_BANK1:
                     setPortATris(value);
                     //everything handled exit function
@@ -711,6 +712,7 @@ public class PICSimulator {
         }
         if (_watchdogTimer.hasTriggered()) {
             //invoke reset
+            _watchdogTimer.clear();
             resetByWakeup(false); //wakeup by watchdog, not by interrupt
         }
         _notifier.nextCycle();
@@ -932,7 +934,18 @@ public class PICSimulator {
     }
     
     public void setOPTIONRegister(int value) {
-        setRegister(OPTION_REGISTER_ADDRESS_BANK1, value, false);
+        _registers.put(OPTION_REGISTER_ADDRESS_BANK1, value);
+        _notifier.changedOPTIONRegister(getOPTIONRegister(), value);
+        //update timer
+        _timer0Module.setPrescalerAssignment(getOPTIONbitPSA());
+        _timer0Module.setPrescalerRate(
+                getOPTIONbitPS0(), getOPTIONbitPS1(), getOPTIONbitPS2());
+        _timer0Module.setWorkingMode(!getOPTIONbitT0CS());
+        _timer0Module.setIncrementingEdgeMode(getOPTIONbitT0SE());
+        //update watchdog
+        _watchdogTimer.setPostscalerAssignment(getOPTIONbitPSA());
+        _watchdogTimer.setPostscalerRate(
+                getOPTIONbitPS0(), getOPTIONbitPS1(), getOPTIONbitPS2());
     }
     
     public void setOPTIONbitPS0(int b) {
@@ -941,8 +954,8 @@ public class PICSimulator {
         setOPTIONRegister(value);
     }
     
-    public int getOPTIONbitPS0() {
-        return BinaryNumberHelper.getBit(getINTCONRegister(), 0);
+    public boolean getOPTIONbitPS0() {
+        return BinaryNumberHelper.getBitBoolean(getOPTIONRegister(), 0);
     }
     
     public void setOPTIONbitPS1(int b) {
@@ -951,8 +964,8 @@ public class PICSimulator {
         setOPTIONRegister(value);
     }
     
-    public int getOPTIONbitPS1() {
-        return BinaryNumberHelper.getBit(getINTCONRegister(), 1);
+    public boolean getOPTIONbitPS1() {
+        return BinaryNumberHelper.getBitBoolean(getOPTIONRegister(), 1);
     }
     
     public void setOPTIONbitPS2(int b) {
@@ -961,8 +974,8 @@ public class PICSimulator {
         setOPTIONRegister(value);
     }
     
-    public int getOPTIONbitPS2() {
-        return BinaryNumberHelper.getBit(getINTCONRegister(), 2);
+    public boolean getOPTIONbitPS2() {
+        return BinaryNumberHelper.getBitBoolean(getOPTIONRegister(), 2);
     }
     
     public void setOPTIONbitPSA(int b) {
@@ -971,8 +984,8 @@ public class PICSimulator {
         setOPTIONRegister(value);
     }
     
-    public int getOPTIONbitPSA() {
-        return BinaryNumberHelper.getBit(getINTCONRegister(), 3);
+    public boolean getOPTIONbitPSA() {
+        return BinaryNumberHelper.getBitBoolean(getOPTIONRegister(), 3);
     }
     
     public void setOPTIONbitT0SE(int b) {
@@ -981,8 +994,8 @@ public class PICSimulator {
         setOPTIONRegister(value);
     }
     
-    public int getOPTIONbitT0SE() {
-        return BinaryNumberHelper.getBit(getINTCONRegister(), 4);
+    public boolean getOPTIONbitT0SE() {
+        return BinaryNumberHelper.getBitBoolean(getOPTIONRegister(), 4);
     }
     
     public void setOPTIONbitT0CS(int b) {
@@ -991,8 +1004,8 @@ public class PICSimulator {
         setOPTIONRegister(value);
     }
     
-    public int getOPTIONbitT0CS() {
-        return BinaryNumberHelper.getBit(getINTCONRegister(), 5);
+    public boolean getOPTIONbitT0CS() {
+        return BinaryNumberHelper.getBitBoolean(getOPTIONRegister(), 5);
     }
     
     public void setOPTIONbitINTEDG(int b) {
@@ -1002,7 +1015,7 @@ public class PICSimulator {
     }
     
     public int getOPTIONbitINTEDG() {
-        return BinaryNumberHelper.getBit(getINTCONRegister(), 6);
+        return BinaryNumberHelper.getBit(getOPTIONRegister(), 6);
     }
     
     public void setOPTIONbitRBPU(int b) {
@@ -1012,7 +1025,7 @@ public class PICSimulator {
     }
     
     public int getOPTIONbitRBPU() {
-        return BinaryNumberHelper.getBit(getINTCONRegister(), 7);
+        return BinaryNumberHelper.getBit(getOPTIONRegister(), 7);
     }
     
     /*EECON1 REGISTER*/
