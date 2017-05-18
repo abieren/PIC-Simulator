@@ -434,8 +434,8 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                            </rowConstraints>
                            <children>
-                              <Label text="IRP" />
-                              <Label text="RP1" GridPane.columnIndex="1" />
+                              <Label text="RBPU" />
+                              <Label text="IntEdg" GridPane.columnIndex="1" />
                               <Label text="T0CS" GridPane.columnIndex="2" />
                               <Label text="T0SE" GridPane.columnIndex="3" />
                               <Label text="PSA" GridPane.columnIndex="4" />
