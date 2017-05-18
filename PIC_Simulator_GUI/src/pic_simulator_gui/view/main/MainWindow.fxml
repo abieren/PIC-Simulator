@@ -33,8 +33,7 @@
                   </Menu>
                   <Menu mnemonicParsing="false" text="Help">
                     <items>
-                      <MenuItem mnemonicParsing="false" text="PIC Simulator Help" />
-                        <MenuItem mnemonicParsing="false" text="About PIC Simulator" />
+                      <MenuItem mnemonicParsing="false" onAction="#menu_openPDF_onClicked" text="PIC Simulator Help" />
                     </items>
                   </Menu>
                </menus>
@@ -435,8 +434,8 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                            </rowConstraints>
                            <children>
-                              <Label text="IRP" />
-                              <Label text="RP1" GridPane.columnIndex="1" />
+                              <Label text="RBPU" />
+                              <Label text="IntEdg" GridPane.columnIndex="1" />
                               <Label text="T0CS" GridPane.columnIndex="2" />
                               <Label text="T0SE" GridPane.columnIndex="3" />
                               <Label text="PSA" GridPane.columnIndex="4" />
@@ -520,14 +519,14 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                            </rowConstraints>
                            <children>
-                              <Label text="RBPU" />
-                              <Label text="IntEdg" GridPane.columnIndex="1" />
-                              <Label text="RP0" GridPane.columnIndex="2" />
-                              <Label text="TO" GridPane.columnIndex="3" />
-                              <Label text="PD" GridPane.columnIndex="4" />
-                              <Label text="Z" GridPane.columnIndex="5" />
-                              <Label text="DC" GridPane.columnIndex="6" />
-                              <Label text="C" GridPane.columnIndex="7" />
+                              <Label text="GIE" />
+                              <Label text="EEIE" GridPane.columnIndex="1" />
+                              <Label text="T0IE" GridPane.columnIndex="2" />
+                              <Label text="INTE" GridPane.columnIndex="3" />
+                              <Label text="RBIE" GridPane.columnIndex="4" />
+                              <Label text="T0IF" GridPane.columnIndex="5" />
+                              <Label text="INTF" GridPane.columnIndex="6" />
+                              <Label text="RBIF" GridPane.columnIndex="7" />
                               <Label fx:id="lb_intconRegBit7" text="0" GridPane.rowIndex="1" />
                               <Label fx:id="lb_intconRegBit6" text="0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                               <Label fx:id="lb_intconRegBit5" text="0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
@@ -567,7 +566,7 @@
                   </GridPane>
                   <GridPane hgap="10.0" minHeight="398.0" style="-fx-background-color: rgb(255,255,255);">
                      <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="250.0" minWidth="102.0" prefWidth="102.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="250.0" minWidth="250.0" prefWidth="250.0" />
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="358.0" minWidth="358.0" prefWidth="358.0" />
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" />
                      </columnConstraints>

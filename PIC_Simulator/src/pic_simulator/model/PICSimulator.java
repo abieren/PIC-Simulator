@@ -5,10 +5,13 @@
  */
 package pic_simulator.model;
 
+import pic_simulator.interfaces.Notifier;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
+import pic_simulator.interfaces.Timer;
+import pic_simulator.interfaces.Watchdog;
 import pic_simulator.utils.BinaryNumberHelper;
 
 /**
@@ -29,23 +32,27 @@ public class PICSimulator {
     public int _wRegister;
     public Port _portA;
     public Port _portB;
+    public Watchdog _watchdogTimer;
+    public Timer _timer0Module;
+    public double _oscillatorFrequency;
     
     //constants of PIC
-    public final int MAX_STACK_SIZE = 8;
-    public final int DEFAULT_INSTRUCTION_VALUE = 0;
-    public final int DEFAULT_REGSITER_VALUE = 0;
-    public final int STATUS_REGISTER_ADDRESS_BANK0 = 0x03;
-    public final int PCLATH_REGISTER_ADDRESS_BANK0 = 0x0A;
-    public final int INDF_REGISTER_BANK0 = 0x0;
-    public final int FSR_ADDRESS_BANK0 = 0x4;
-    public final int INTCON_REGISTER_ADDRESS_BANK0 = 0x0B;
-    public final int OPTION_REGISTER_ADDRESS_BANK1 = 0x81;
-    public final int INTERRUPT_VECTOR_BANK0 = 0x4;
-    public final int EECON1_REGISTER_BANK1 = 0x88;
-    public final int PORTA_REGISTER_BANK0 = 0x05;
-    public final int PORTB_REGISTER_BANK0 = 0x06;
-    public final int TRISA_REGISTER_BANK1 = 0x85;
-    public final int TRISB_REGISTER_BANK1 = 0x86;
+    public static final int MAX_STACK_SIZE = 8;
+    public static final int DEFAULT_INSTRUCTION_VALUE = 0;
+    public static final int DEFAULT_REGSITER_VALUE = 0;
+    public static final int STATUS_REGISTER_ADDRESS_BANK0 = 0x03;
+    public static final int PCLATH_REGISTER_ADDRESS_BANK0 = 0x0A;
+    public static final int INDF_REGISTER_BANK0 = 0x0;
+    public static final int FSR_ADDRESS_BANK0 = 0x4;
+    public static final int INTCON_REGISTER_ADDRESS_BANK0 = 0x0B;
+    public static final int OPTION_REGISTER_ADDRESS_BANK1 = 0x81;
+    public static final int INTERRUPT_VECTOR_PROGRAM_MEMORY = 0x4;
+    public static final int EECON1_REGISTER_BANK1 = 0x88;
+    public static final int PORTA_REGISTER_BANK0 = 0x05;
+    public static final int PORTB_REGISTER_BANK0 = 0x06;
+    public static final int TRISA_REGISTER_BANK1 = 0x85;
+    public static final int TRISB_REGISTER_BANK1 = 0x86;
+    public static final int TMR0_REGISTER_BANK0 = 0x01;
     
     public PICSimulator(Notifier notifier) {
         _notifier = notifier;
@@ -60,6 +67,169 @@ public class PICSimulator {
         _wRegister = 0;
         _portA = new Port();
         _portB = new Port();
+        _watchdogTimer = new WatchdogImpl();
+        _watchdogTimer.clear();
+        _timer0Module = new TimerImpl(_notifier);
+        _timer0Module.clear();
+    }
+    
+    public void resetByWakeup(boolean isInterrupt) {
+        // W Register unchanged
+        //PC not increased because already done after fetching instruction
+        // INDF not physical register ignore
+        // TMR0 unchanged
+        // PORTA unchanged
+        // PORTB unchanged
+        // EEDATA unchanged
+        // EEADR unchanged
+        
+        // Switch to Bank1
+        setSTATUSbitRP0(1);
+        // INDF not physical register ignore
+        // OPTION_REG unchanged
+        // TRISA unchanged
+        // TRISB unchanged
+        // EECON1 only bit4 is changed
+        // Helper variable
+        int value;
+        value = getRegister(0x88, false);
+        value = BinaryNumberHelper.setBit(value, 4, 0);
+        setRegister(0x88, value, false);
+        // EECON2
+        setRegister(0x89, 0, false);
+        
+        // Both Bank used Registers
+        // PCL
+        if (isInterrupt == true) {
+            // interrupt is handled in handleinterupt function            
+        } else {
+            // incrementing PC value isn't nessecary its done after fetching instruction
+        }
+        // STATUS
+        if (isInterrupt == true) {
+            value = getSTATUSRegister();
+            // only bit 7 to 3 are changed
+            value = BinaryNumberHelper.setBit(value, 3, 0);
+            value = BinaryNumberHelper.setBit(value, 4, 1);
+            setSTATUSRegister(value);
+        } else {
+            value = getSTATUSRegister();
+            // only bit 7 to 3 are changed
+            value = BinaryNumberHelper.setBit(value, 3, 1);
+            value = BinaryNumberHelper.setBit(value, 4, 0);
+            setSTATUSRegister(value);
+        }
+        // FSR unchanged
+        // PCLATH unchanged
+        // INTCON changed by wakeup reset (one or more bits changed by wakeup)
+    
+        
+    }
+    
+    public void resetByPower() {
+        // W Register
+        setWRegister(0);
+        //reset PC
+        setPCRegister(0);
+        //bank 0
+        // INDF not physical register ignore
+        // TMR0
+        setRegister(0x01, 0, false);
+        // PORTA
+        setRegister(0x05, 0, false);
+        // PORTB
+        setRegister(0x06, 0, false);
+        // EEDATA
+        setRegister(0x08, 0, false);
+        // EEADR
+        setRegister(0x09, 0, false);
+        //bank1
+        // INDF not physical register ignore
+        // OPTION_REG
+        setRegister(0x81, 0b11111111, false);
+        // TRISA
+        setRegister(0x85, 0b00011111, false);
+        // TRISB
+        setRegister(0x86, 0b11111111, false);
+        // EECON1
+        setRegister(0x88, 0b00000000, false);
+        // EECON2
+        setRegister(0x89, 0, false);
+        // Both Bank used Registers
+        // PCL
+        setRegister(0x02, 0, false);
+        // STATUS
+        setSTATUSRegister(0b00011000);
+        // FSR
+        setRegister(0x04, 0, false);
+        // PCLATH
+        setRegister(0x0A, 0, false);
+        // INTCON
+        setRegister(0x0B, 0, false);        
+    }
+    
+    public void resetByMCLR(boolean isSleep, boolean isWatchdog) {
+        // W Register unchanged
+        //reset PC
+        setPCRegister(0);
+        // INDF not physical register ignore
+        // TMR0 unchanged
+        // PORTA unchanged
+        // PORTB unchanged
+        // EEDATA unchanged
+        // EEADR unchanged
+        //Bank1
+        setSTATUSbitRP0(1);
+        // INDF not physical register ignore
+        // OPTION_REG
+        setRegister(0x81, 0b11111111, false);
+        // TRISA
+        setRegister(0x85, 0b00011111, false);
+        // TRISB
+        setRegister(0x86, 0b11111111, false);
+        // EECON1 3rd Bit is change on write error not handled now
+        setRegister(0x88, 0, false);
+        // EECON2
+        setRegister(0x89, 0, false);
+        // Both Bank used Registers
+        // PCL
+        setRegister(0x02, 0, false);
+        // STATUS different conditions
+        if (isSleep == true) {
+            // if sleeping
+            int value = getSTATUSRegister();
+            // only bit 7 to 3 are changed
+            value = BinaryNumberHelper.setBit(value, 3, 0);
+            value = BinaryNumberHelper.setBit(value, 4, 1);
+            value = BinaryNumberHelper.setBit(value, 5, 0);
+            value = BinaryNumberHelper.setBit(value, 6, 0);
+            value = BinaryNumberHelper.setBit(value, 7, 0);
+            setSTATUSRegister(value);
+        } 
+        else if (isSleep == false && isWatchdog == true) {
+            // If not sleeping and the watchdog timer triggers MCLR is used this way
+            int value = getSTATUSRegister();
+            // only bit 7 to 3 are changed
+            value = BinaryNumberHelper.setBit(value, 3, 1);
+            value = BinaryNumberHelper.setBit(value, 4, 0);
+            value = BinaryNumberHelper.setBit(value, 5, 0);
+            value = BinaryNumberHelper.setBit(value, 6, 0);
+            value = BinaryNumberHelper.setBit(value, 7, 0);
+            setSTATUSRegister(value);
+        } else if (isSleep == false && isWatchdog == false) {
+            // If not sleeping and the watchdog timer is not triggered MCLR is used this way
+            int value = getSTATUSRegister();
+            // only bit 7 to 5 are changed
+            value = BinaryNumberHelper.setBit(value, 5, 0);
+            value = BinaryNumberHelper.setBit(value, 6, 0);
+            value = BinaryNumberHelper.setBit(value, 7, 0);
+            setSTATUSRegister(value);
+        }
+        // FSR unchanged
+        // PCLATH
+        setRegister(0x0A, 0, false);
+        // INTCON only bit0 is unchanged, other bits=0
+        setRegister(0x0B, 0+BinaryNumberHelper.getBit(getRegister(0x0B, false), 0), false);
     }
     
     public int getPCRegister() {
@@ -120,12 +290,15 @@ public class PICSimulator {
         if (addressBit8 == 0) {
             //handle special files that are accessible only on bank0
             switch (address8bit) {
+                case TMR0_REGISTER_BANK0:
+                    result = _timer0Module.getTimerCount();
+                    return result;
                 case PORTA_REGISTER_BANK0:
                     result = _portA.getInOut();
-                    break; 
+                    return result; 
                 case PORTB_REGISTER_BANK0:
                     result = _portA.getInOut();
-                    break;
+                    return result;
                 default:
                     break;
             }
@@ -134,10 +307,10 @@ public class PICSimulator {
             switch (address8bit) {
                 case TRISA_REGISTER_BANK1:
                     result = _portA.getTris();
-                    break; 
+                    return result; 
                 case TRISB_REGISTER_BANK1:
                     result = _portA.getTris();
-                    break;
+                    return result;
                 default:
                     break;
             }
@@ -193,6 +366,10 @@ public class PICSimulator {
         if (addressBit8 == 0) {
             //handle special files that are only accessible on bank0
             switch (address) {
+                case TMR0_REGISTER_BANK0:
+                    setTMR0(value);
+                    //everything handled exit function
+                    return;
                 case PORTA_REGISTER_BANK0:
                     setPortALatch(value);
                     //everything handled exit function
@@ -208,8 +385,9 @@ public class PICSimulator {
             //handle special files that are only accessible on bank1
             switch (address) {
                 case OPTION_REGISTER_ADDRESS_BANK1:
-                    _notifier.changedOPTIONRegister(getOPTIONRegister(), value);
-                    break;
+                    setOPTIONRegister(value);
+                    //everything handled exit funtion
+                    return;
                 case TRISA_REGISTER_BANK1:
                     setPortATris(value);
                     //everything handled exit function
@@ -232,6 +410,12 @@ public class PICSimulator {
         }
     }
     
+    public void setTMR0(int value) {
+        int oldValue = _timer0Module.getTimerCount();
+        _timer0Module.setTimerCount(value);
+        _notifier.changedRegister(TMR0_REGISTER_BANK0, oldValue, value);
+    }
+    
     public void setPortALatch(int value) {
         int oldLatch = _portA.getLatch();
         int oldInOut = _portA.getInOut();
@@ -248,6 +432,18 @@ public class PICSimulator {
         _notifier.changedPortBLatch(oldLatch, _portB.getLatch());
         _notifier.changedPortBInOut(oldInOut, _portB.getInOut());
         _notifier.changedRegister(PORTB_REGISTER_BANK0, oldInOut, _portB.getInOut());
+    }
+    
+    public void setOscillatorFrequency(double MHz) {
+        _oscillatorFrequency = MHz;
+    }
+    
+    public double getOscillatorFrequency() {
+        return _oscillatorFrequency;
+    }
+    
+    public double getInstructionFrequency() {
+        return getOscillatorFrequency()/4;
     }
     
     public void setPortATris(int value){
@@ -329,8 +525,12 @@ public class PICSimulator {
     
     public void makeStep() {
         handleInterrupts();
-        fetchNextInstruction();
-        decodeAndExecuteInstruction(getInstructionRegsiter());
+        if (isSleeping()) {
+            nextCycle();
+        } else {
+            fetchNextInstruction();
+            decodeAndExecuteInstruction(getInstructionRegsiter());   
+        }
     }
     
     public void fetchNextInstruction() {
@@ -493,7 +693,7 @@ public class PICSimulator {
         if (isInterrupt) {
              setINTCONbitGIE(0);
              pushStack(getPCRegister());
-             CALL(INTERRUPT_VECTOR_BANK0);      
+             CALL(INTERRUPT_VECTOR_PROGRAM_MEMORY);      
          }
     }
     
@@ -503,9 +703,29 @@ public class PICSimulator {
     }
     
     public void nextCycle() {
+        double timePast = 1/getInstructionFrequency(); //milliseconds
+        _watchdogTimer.notifyTimeAdvanced(timePast);
+        _timer0Module.notifyCycle();
+        if (_timer0Module.hasTriggered()) {
+            //set timer0 trigger flag
+            setINTCONbitT0IF(true);
+        }
+        if (_watchdogTimer.hasTriggered()) {
+            //invoke reset
+            _watchdogTimer.clear();
+            resetByWakeup(false); //wakeup by watchdog, not by interrupt
+        }
         _notifier.nextCycle();
     }
     
+    /* helpper functions*/
+    public boolean isSleeping() {
+        if (getSTATUSbitPD() == 0 && getSTATUSbitTO() == 1) {
+            return true;
+        } else {
+            return false;
+        }
+    }
     
     /* Carry and Digit Carry Helpers*/
     
@@ -678,7 +898,7 @@ public class PICSimulator {
         return BinaryNumberHelper.getBit(getINTCONRegister(), 3);
     }
     
-    public void setINTCONbitT0IF(int b) {
+    public void setINTCONbitT0IF(boolean b) {
         int value = getINTCONRegister();
         value = BinaryNumberHelper.setBit(value, 2, b);
         setINTCONRegister(value);
@@ -714,7 +934,18 @@ public class PICSimulator {
     }
     
     public void setOPTIONRegister(int value) {
-        setRegister(OPTION_REGISTER_ADDRESS_BANK1, value, false);
+        _registers.put(OPTION_REGISTER_ADDRESS_BANK1, value);
+        _notifier.changedOPTIONRegister(getOPTIONRegister(), value);
+        //update timer
+        _timer0Module.setPrescalerAssignment(getOPTIONbitPSA());
+        _timer0Module.setPrescalerRate(
+                getOPTIONbitPS0(), getOPTIONbitPS1(), getOPTIONbitPS2());
+        _timer0Module.setWorkingMode(!getOPTIONbitT0CS());
+        _timer0Module.setIncrementingEdgeMode(getOPTIONbitT0SE());
+        //update watchdog
+        _watchdogTimer.setPostscalerAssignment(getOPTIONbitPSA());
+        _watchdogTimer.setPostscalerRate(
+                getOPTIONbitPS0(), getOPTIONbitPS1(), getOPTIONbitPS2());
     }
     
     public void setOPTIONbitPS0(int b) {
@@ -723,8 +954,8 @@ public class PICSimulator {
         setOPTIONRegister(value);
     }
     
-    public int getOPTIONbitPS0() {
-        return BinaryNumberHelper.getBit(getINTCONRegister(), 0);
+    public boolean getOPTIONbitPS0() {
+        return BinaryNumberHelper.getBitBoolean(getOPTIONRegister(), 0);
     }
     
     public void setOPTIONbitPS1(int b) {
@@ -733,8 +964,8 @@ public class PICSimulator {
         setOPTIONRegister(value);
     }
     
-    public int getOPTIONbitPS1() {
-        return BinaryNumberHelper.getBit(getINTCONRegister(), 1);
+    public boolean getOPTIONbitPS1() {
+        return BinaryNumberHelper.getBitBoolean(getOPTIONRegister(), 1);
     }
     
     public void setOPTIONbitPS2(int b) {
@@ -743,8 +974,8 @@ public class PICSimulator {
         setOPTIONRegister(value);
     }
     
-    public int getOPTIONbitPS2() {
-        return BinaryNumberHelper.getBit(getINTCONRegister(), 2);
+    public boolean getOPTIONbitPS2() {
+        return BinaryNumberHelper.getBitBoolean(getOPTIONRegister(), 2);
     }
     
     public void setOPTIONbitPSA(int b) {
@@ -753,8 +984,8 @@ public class PICSimulator {
         setOPTIONRegister(value);
     }
     
-    public int getOPTIONbitPSA() {
-        return BinaryNumberHelper.getBit(getINTCONRegister(), 3);
+    public boolean getOPTIONbitPSA() {
+        return BinaryNumberHelper.getBitBoolean(getOPTIONRegister(), 3);
     }
     
     public void setOPTIONbitT0SE(int b) {
@@ -763,8 +994,8 @@ public class PICSimulator {
         setOPTIONRegister(value);
     }
     
-    public int getOPTIONbitT0SE() {
-        return BinaryNumberHelper.getBit(getINTCONRegister(), 4);
+    public boolean getOPTIONbitT0SE() {
+        return BinaryNumberHelper.getBitBoolean(getOPTIONRegister(), 4);
     }
     
     public void setOPTIONbitT0CS(int b) {
@@ -773,8 +1004,8 @@ public class PICSimulator {
         setOPTIONRegister(value);
     }
     
-    public int getOPTIONbitT0CS() {
-        return BinaryNumberHelper.getBit(getINTCONRegister(), 5);
+    public boolean getOPTIONbitT0CS() {
+        return BinaryNumberHelper.getBitBoolean(getOPTIONRegister(), 5);
     }
     
     public void setOPTIONbitINTEDG(int b) {
@@ -784,7 +1015,7 @@ public class PICSimulator {
     }
     
     public int getOPTIONbitINTEDG() {
-        return BinaryNumberHelper.getBit(getINTCONRegister(), 6);
+        return BinaryNumberHelper.getBit(getOPTIONRegister(), 6);
     }
     
     public void setOPTIONbitRBPU(int b) {
@@ -794,7 +1025,7 @@ public class PICSimulator {
     }
     
     public int getOPTIONbitRBPU() {
-        return BinaryNumberHelper.getBit(getINTCONRegister(), 7);
+        return BinaryNumberHelper.getBit(getOPTIONRegister(), 7);
     }
     
     /*EECON1 REGISTER*/
@@ -1222,6 +1453,10 @@ public class PICSimulator {
     }
     
     public void SLEEP() {
+        //status affected: TO, PD
+        setSTATUSbitTO(1);
+        setSTATUSbitPD(0);
+        
         nextCycle();
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }

@@ -53,6 +53,14 @@ public class BinaryNumberHelper {
         }
     }
     
+    public static int setBit(int value, int bit, boolean b) {
+        if (b == true) {
+            return setBitsToZero(value, bit);
+        } else {
+            return setBitsToOne(value, bit);
+        }
+    }
+    
     public static int setBitsToZero(int value, Integer... bits) {
         for (Integer bit : bits) {
             value = value & (~(1 << bit));
