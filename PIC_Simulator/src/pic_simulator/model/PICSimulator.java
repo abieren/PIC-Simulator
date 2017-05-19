@@ -385,7 +385,8 @@ public class PICSimulator {
             }
         } else {
             //handle special files that are only accessible on bank1
-            switch (address) {
+            // use 8 bit address here
+            switch (address8bit) {
                 case OPTION_REGISTER_ADDRESS_BANK1:
                     setOPTIONRegister(value);
                     //everything handled exit funtion
@@ -415,6 +416,7 @@ public class PICSimulator {
     public void setTMR0(int value) {
         int oldValue = _timer0Module.getTimerCount();
         _timer0Module.setTimerCount(value);
+//        _registers.put(0x01, value); do this here ?
         _notifier.changedRegister(TMR0_REGISTER_BANK0, oldValue, value);
     }
     
@@ -440,6 +442,7 @@ public class PICSimulator {
         _oscillatorFrequency = MHz;
     }
     
+    // returns e.g 4.0 means 4 MHz
     public double getOscillatorFrequency() {
         return _oscillatorFrequency;
     }
@@ -705,17 +708,21 @@ public class PICSimulator {
     }
     
     public void nextCycle() {
-        double timePast = 1/getInstructionFrequency(); //milliseconds
+        double timePast = (1/getInstructionFrequency()) /1000 ; // WRONG was (1/MHz) = microseconds -> divide by 1000 for milliseconds
         _watchdogTimer.notifyTimeAdvanced(timePast);
         _timer0Module.notifyCycle();
         if (_timer0Module.hasTriggered()) {
             //set timer0 trigger flag
             setINTCONbitT0IF(true);
         }
-        if (_watchdogTimer.hasTriggered()) {
+        if (_watchdogTimer.hasTriggered() && isSleeping()) {
             //invoke reset
             _watchdogTimer.clear();
             resetByWakeup(false); //wakeup by watchdog, not by interrupt
+        } 
+        if (_watchdogTimer.hasTriggered() && !isSleeping()) {
+            // hangup while normal operation
+            resetByMCLR(false, true);
         }
         _notifier.nextCycle();
     }

@@ -23,7 +23,7 @@ public class WatchdogImpl implements Watchdog {
     private boolean _hasTriggered = false;
     
     private void updateTimeToTrigger() {
-        if (_postscalerAssigned) {
+        if (!_postscalerAssigned) {
             _timeToTrigger = WD_MIN_TRIGGER_TIME;
         } else {
             _timeToTrigger = WD_MIN_TRIGGER_TIME * _postscalerRate;

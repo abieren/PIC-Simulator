@@ -117,7 +117,7 @@ public class TimerImpl implements Timer {
     public void setTimerCount(int value) {
         value = BinaryNumberHelper.truncateToNBit(value, 8);
         _timerCount = value;
-        clear();
+        //clear(); this will overrite _timerCount ....
     }
 
     @Override
