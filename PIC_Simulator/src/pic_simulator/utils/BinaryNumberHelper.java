@@ -31,6 +31,11 @@ public class BinaryNumberHelper {
         return (value >> bit) & 1;
     }
     
+    public static boolean getBitBoolean(int value, int bit) {
+        if (getBit(value, bit) == 0) return false;
+        return true;
+    }
+    
     public static int truncateToNBit(int value, int nBits) {
         int mask = (1 << nBits) -1;
         return value & mask;
@@ -55,9 +60,9 @@ public class BinaryNumberHelper {
     
     public static int setBit(int value, int bit, boolean b) {
         if (b == true) {
-            return setBitsToZero(value, bit);
-        } else {
             return setBitsToOne(value, bit);
+        } else {
+            return setBitsToZero(value, bit);
         }
     }
     
