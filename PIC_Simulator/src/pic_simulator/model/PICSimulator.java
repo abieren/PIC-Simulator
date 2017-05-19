@@ -272,7 +272,8 @@ public class PICSimulator {
         switch (address7bit) {
             case INDF_REGISTER_BANK0:
                 int fsrValue = getRegister(FSR_ADDRESS_BANK0, false);
-                result = _registers.get(fsrValue);
+                useBankSelect = false;
+                address8bit = fsrValue; // return Address of fsr get value later
                 break;
             default:
                 break;
@@ -340,6 +341,7 @@ public class PICSimulator {
                 //use pointer in fsr when address is 0x0
                 int fsrValue = getRegister(FSR_ADDRESS_BANK0, false);
                 address8bit = fsrValue;
+                useBankSelect = false; // Dont remove FSR later
                 break;
             case FSR_ADDRESS_BANK0:
                 _notifier.changedFSRRegister(getRegister(FSR_ADDRESS_BANK0, false), value);
@@ -559,7 +561,7 @@ public class PICSimulator {
                 ANDWF(f, d);
                 break;
             case CLRF:
-                CLRF(instruction);
+                CLRF(f);
                 break;
             case CLRW:
                 CLRW();
@@ -586,7 +588,7 @@ public class PICSimulator {
                 MOVF(f, d);
                 break;
             case MOVWF:
-                MOVWF(instruction);
+                MOVWF(f);
                 break;
             case NOP:
                 NOP();
@@ -1081,6 +1083,8 @@ public class PICSimulator {
         int result = getWRegister() & getRegister(f, true);
         if (result == 0) {
             setSTATUSbitZ(1);
+        } else {
+            setSTATUSbitZ(0);
         }
         if (d == 0) {
             setWRegister(result);
@@ -1088,7 +1092,7 @@ public class PICSimulator {
             setRegister(f, result, true);
         }
         nextCycle();
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     public void CLRF(int f) {
@@ -1116,7 +1120,7 @@ public class PICSimulator {
             setRegister(f, result, true);
         }
         nextCycle();
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     public void DECF(int f, int d) {
@@ -1464,16 +1468,16 @@ public class PICSimulator {
     public void SUBLW(int k) {
         int result = k - getWRegister();
         if (isBorrow(k, getWRegister())) {
-            setSTATUSbitC(0); //borrow is low active
+            setSTATUSbitC(1); //borrow is low active
         }
         else {
-            setSTATUSbitC(1); 
+            setSTATUSbitC(0); 
         }
         if (isDigitBorrow(k, getWRegister())) {
-            setSTATUSbitDC(0); //borrow is low active
+            setSTATUSbitDC(1); //borrow is low active
         } 
         else {
-            setSTATUSbitDC(1);
+            setSTATUSbitDC(0);
         }
         if (result == 0) {
             setSTATUSbitZ(1);
