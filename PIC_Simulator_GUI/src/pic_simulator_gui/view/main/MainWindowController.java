@@ -137,6 +137,8 @@ public class MainWindowController
     private GridPane gp_port_view;
     @FXML
     private GridPane gp_register_view;
+    @FXML
+    private GridPane gp_eeprom_view;
 
     //Stage that is used by the view of this controller
     private Stage _primaryStage;
@@ -160,6 +162,8 @@ public class MainWindowController
     Map<Integer, Label> _portBTrisLabels;
     Map<Integer, Label> _portBInOutLabels;
     Map<Integer, Label> _portBEnvLabels;
+    //map for managing labels in eeprom view
+    Map<Integer, Label> _eepromLabels;
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -434,7 +438,7 @@ public class MainWindowController
                 lb.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent event) -> {
                     Label label = (Label)event.getSource();
                     int address = Integer.parseInt(label.getId());
-                    setRegisterValueDialog(address);
+                    setNewValueDialog(address);
                 });
                 gp_register_view.add(lb, col, row);
             }
@@ -452,6 +456,62 @@ public class MainWindowController
         tv_stack.setItems(_stackRecords);
         _stackRecords.add(new StackRecord("top"));
         _stackRecords.add(new StackRecord("bottom"));
+    }
+    
+    private void initializeEEPROMView() {
+        //reinitialize the grid panel
+        gp_eeprom_view.getChildren().clear();
+        _eepromLabels  = new HashMap<>();
+        
+        String styleEmptyLabel = "-fx-background-color: rgb(200,200,200);";
+        String styleTableHead = "-fx-background-color: rgb(200,200,200); -fx-font-weight: bold; -fx-alignment: center;";
+        String styleEepromValue = "-fx-background-color: white; -fx-alignment: center;";
+        
+        //genrate labels inside the grid
+        int maxRow = 8;
+        int maxCol = 8;
+        for (int row = 0; row < maxRow+1; row++) {
+            for (int col = 0; col < maxCol+1; col++) {
+                Label lb = new Label();
+                lb.setMinHeight(20);
+                lb.setMaxWidth(20);
+                lb.setMinHeight(20);
+                lb.setMaxHeight(20);
+                //fill upper table head and left table head
+                if (col == 0 && row == 0) {
+                    //add empty label
+                    lb.setStyle(styleEmptyLabel);
+                    gp_eeprom_view.add(lb, col, row);
+                    continue;
+                }
+                if (row == 0 && col > 0) {
+                    lb.setText(BinaryNumberHelper.formatToDisplayableHex(col-1, 1, false));
+                    lb.setStyle(styleTableHead);
+                    gp_eeprom_view.add(lb, col, row);
+                    continue;
+                } else if (col == 0 && row > 0) {
+                    lb.setText(BinaryNumberHelper.formatToDisplayableHex((row-1)*0x08, 2, true));
+                    lb.setStyle(styleTableHead);
+                    gp_eeprom_view.add(lb, col, row);
+                    continue;
+                }
+                //fill in eeprom register labels
+                lb.setStyle(styleEepromValue);
+                lb.setText(BinaryNumberHelper.formatToDisplayableHex(0, 2, true));
+                //use id to get the address which the label displays
+                int id = (row-1)*maxRow+(col-1);
+                lb.setId(Integer.toString(id));
+                //add onclick handler to change value of the register
+                lb.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent event) -> {
+                    Label label = (Label)event.getSource();
+                    int address = Integer.parseInt(label.getId());
+                    setNewValueDialog(address);
+                });
+                
+                gp_eeprom_view.add(lb, col, row);
+                _eepromLabels.put(id, lb);
+            }
+        }
     }
 
     @FXML
@@ -621,7 +681,7 @@ public class MainWindowController
         _sideBarAnnotations.set(line, "");
     }
     
-    private void setRegisterValueDialog(int address) {
+    private void setNewValueDialog(int address) {
         TextInputDialog dialog = new TextInputDialog("0");
         dialog.setTitle("Set register value");
         String register = BinaryNumberHelper.formatToDisplayableHex(address, 2, true);
@@ -798,6 +858,7 @@ public class MainWindowController
         initializePortMapView();
         initializeRegisterMapView();
         initializeStackView();
+        initializeEEPROMView();
     }
 
     @Override
