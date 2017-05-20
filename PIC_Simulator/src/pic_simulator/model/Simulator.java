@@ -29,7 +29,7 @@ public class Simulator implements Model {
     
     private boolean _automaticSteppingMode;
     private int _automaticSteppingInterval;     //interval in ms
-    private double _runningTime;                   //running time in micro seconds
+    
     private boolean _breakOnWatchdogTrigger;
     private boolean _breakOnInterrupt;
 
@@ -37,11 +37,6 @@ public class Simulator implements Model {
         _presenter = presenter;
         _notifier = new NotifierImpl(_presenter, this);
         _pic = new PICSimulator(_notifier);
-    }
-    
-    public void nextCycle() {
-        _runningTime = _runningTime + 1/_pic.getOscillatorFrequency();
-        _presenter.displayRunningTime(_runningTime);
     }
     
     @Override
@@ -55,8 +50,7 @@ public class Simulator implements Model {
         _presenter.displayAutomaticSteppingIntervall(_automaticSteppingInterval);
         _pic.setOscillatorFrequency(4.0);
         _presenter.displayOscillatorFrequency(_pic.getOscillatorFrequency());
-        _runningTime = 0;
-        _presenter.displayRunningTime(_runningTime);
+        _presenter.displayRunningTime(_pic._runningTime);
         _breakOnWatchdogTrigger = true;
         _presenter.displayBreakOnWatchdogTrigger(_breakOnWatchdogTrigger);
         _breakOnInterrupt = true;
@@ -103,8 +97,8 @@ public class Simulator implements Model {
 
     @Override
     public void resetRunningTimeStopWatch() {
-        _runningTime = 0;
-        _presenter.displayRunningTime(_runningTime);
+        _pic._runningTime = 0;
+        _presenter.displayRunningTime(_pic._runningTime);
     }
 
     @Override
