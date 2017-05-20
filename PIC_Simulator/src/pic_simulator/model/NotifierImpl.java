@@ -41,11 +41,6 @@ public class NotifierImpl implements Notifier {
     }
 
     @Override
-    public void nextCycle() {
-        _simulator.nextCycle();
-    }
-
-    @Override
     public void popStack(int value, boolean isUnderflow) {
         _presenter.popStack(value, isUnderflow);
     }
@@ -118,6 +113,11 @@ public class NotifierImpl implements Notifier {
     @Override
     public void changedPortBEnvironment(int oldValue, int newValue) {
         _presenter.displayPortEnvironment("B", oldValue, newValue);
+    }
+
+    @Override
+    public void changedRunningTime(double oldValue, double newValue) {
+        _presenter.displayRunningTime(newValue);
     }
     
 }
