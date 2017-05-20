@@ -35,6 +35,7 @@ public class PICSimulator {
     public Watchdog _watchdogTimer;
     public Timer _timer0Module;
     public double _oscillatorFrequency;
+    public double _runningTime;                   //running time in micro seconds
     
     //constants of PIC
     public static final int MAX_STACK_SIZE = 8;
@@ -48,6 +49,7 @@ public class PICSimulator {
     public static final int OPTION_REGISTER_ADDRESS_BANK1 = 0x81;
     public static final int INTERRUPT_VECTOR_PROGRAM_MEMORY = 0x4;
     public static final int EECON1_REGISTER_BANK1 = 0x88;
+    public static final int EECON2_REGISTER_BANK1 = 0x89;
     public static final int PORTA_REGISTER_BANK0 = 0x05;
     public static final int PORTB_REGISTER_BANK0 = 0x06;
     public static final int TRISA_REGISTER_BANK1 = 0x85;
@@ -71,9 +73,10 @@ public class PICSimulator {
         _watchdogTimer.clear();
         _timer0Module = new TimerImpl(_notifier);
         _timer0Module.clear();
+        _runningTime = 0;
     }
     
-    public void resetByWakeup(boolean isInterrupt) {
+    public void wakeUp(boolean isInterrupt) {
         // W Register unchanged
         //PC not increased because already done after fetching instruction
         // INDF not physical register ignore
@@ -83,21 +86,14 @@ public class PICSimulator {
         // EEDATA unchanged
         // EEADR unchanged
         
-        // Switch to Bank1
-        setSTATUSbitRP0(1);
         // INDF not physical register ignore
         // OPTION_REG unchanged
         // TRISA unchanged
         // TRISB unchanged
-        // EECON1 only bit4 is changed
-        // Helper variable
-        int value;
-        value = getRegister(0x88, false);
-        value = BinaryNumberHelper.setBit(value, 4, 0);
-        setRegister(0x88, value, false);
-        // EECON2
-        setRegister(0x89, 0, false);
-        
+        // EECON1 bit4 is 0
+        setEECON1bitEEIF(0);
+        // EECON2 is 0
+        setRegister(EECON2_REGISTER_BANK1, 0, false);
         // Both Bank used Registers
         // PCL
         if (isInterrupt == true) {
@@ -107,17 +103,11 @@ public class PICSimulator {
         }
         // STATUS
         if (isInterrupt == true) {
-            value = getSTATUSRegister();
-            // only bit 7 to 3 are changed
-            value = BinaryNumberHelper.setBit(value, 3, 0);
-            value = BinaryNumberHelper.setBit(value, 4, 1);
-            setSTATUSRegister(value);
+            setSTATUSbitPD(0);
+            setSTATUSbitTO(1);
         } else {
-            value = getSTATUSRegister();
-            // only bit 7 to 3 are changed
-            value = BinaryNumberHelper.setBit(value, 3, 1);
-            value = BinaryNumberHelper.setBit(value, 4, 0);
-            setSTATUSRegister(value);
+            setSTATUSbitPD(0);
+            setSTATUSbitTO(0);
         }
         // FSR unchanged
         // PCLATH unchanged
@@ -708,8 +698,9 @@ public class PICSimulator {
     }
     
     public void nextCycle() {
-        double timePast = (1/getInstructionFrequency()) /1000 ; // WRONG was (1/MHz) = microseconds -> divide by 1000 for milliseconds
-        _watchdogTimer.notifyTimeAdvanced(timePast);
+        double timePastMicroSeconds = (1/getInstructionFrequency());
+        double timePastMilliSeconds = timePastMicroSeconds / 1000 ; // WRONG was (1/MHz) = microseconds -> divide by 1000 for milliseconds
+        _watchdogTimer.notifyTimeAdvanced(timePastMilliSeconds);
         _timer0Module.notifyCycle();
         if (_timer0Module.hasTriggered()) {
             //set timer0 trigger flag
@@ -718,13 +709,15 @@ public class PICSimulator {
         if (_watchdogTimer.hasTriggered() && isSleeping()) {
             //invoke reset
             _watchdogTimer.clear();
-            resetByWakeup(false); //wakeup by watchdog, not by interrupt
+            wakeUp(false); //wakeup by watchdog, not by interrupt
         } 
         if (_watchdogTimer.hasTriggered() && !isSleeping()) {
             // hangup while normal operation
             resetByMCLR(false, true);
         }
-        _notifier.nextCycle();
+        double oldRunningTime = _runningTime;
+        _runningTime = _runningTime + timePastMicroSeconds;
+        _notifier.changedRunningTime(oldRunningTime, _runningTime);
     }
     
     /* helpper functions*/
@@ -1467,9 +1460,9 @@ public class PICSimulator {
         //status affected: TO, PD
         setSTATUSbitTO(1);
         setSTATUSbitPD(0);
-        
+        //reset watchdog and postscaler count before sleeping
+        _watchdogTimer.clear();
         nextCycle();
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     public void SUBLW(int k) {
