@@ -39,8 +39,6 @@ public interface Notifier {
 
     void changedRegister(int register, int oldValue, int newValue);
 
-    void nextCycle();
-
     public void popStack(int popedValue, boolean isUnderflow);
 
     public void pushStack(int pushedValue, boolean isOverflow);
@@ -50,5 +48,7 @@ public interface Notifier {
     public void changedSTATUSRegister(int statusRegister, int value);
 
     public void changedFSRRegister(int register, int value);
+
+    public void changedRunningTime(double oldValue, double newValue);
     
 }
