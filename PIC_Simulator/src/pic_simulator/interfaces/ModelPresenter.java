@@ -27,10 +27,6 @@ public interface ModelPresenter {
 
     public void displayOscillatorFrequency(double megaHz);
 
-    public void displayBreakOnWatchdogTrigger(boolean b);
-
-    public void displayBreakOnInterrupt(boolean b);
-
     public void displayWRegister(int value);
 
     public void displayFSRRegister(int value);

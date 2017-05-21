@@ -52,9 +52,7 @@ public class Simulator implements Model {
         _presenter.displayOscillatorFrequency(_pic.getOscillatorFrequency());
         _presenter.displayRunningTime(_pic._runningTime);
         _breakOnWatchdogTrigger = true;
-        _presenter.displayBreakOnWatchdogTrigger(_breakOnWatchdogTrigger);
         _breakOnInterrupt = true;
-        _presenter.displayBreakOnInterrupt(_breakOnInterrupt);
     }
     
     @Override
