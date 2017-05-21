@@ -5,6 +5,8 @@
  */
 package pic_simulator.model;
 
+import pic_simulator.utils.BinaryNumberHelper;
+
 /**
  *
  * @author Alex
@@ -12,18 +14,22 @@ package pic_simulator.model;
 public class Port {
     
     private int _latch;  //saves state internal pin latches
-    private int _inout; //saves input/ouput state of pins
     private int _tris;   //saves tris state that determines which pins are output or input pins
     private int _environment; //saves the state of the environment that tries to set the port
+    private int _inout; //saves input/ouput state of pins
+    private int _flanks; //saves whether a flank on a pin has been detected
     
     private void updateOutput() {
         //output of pins depend on the tris bits
         //tris=0 means pin is output, tris=1 means bit is input
         //create mask that results the right output if it is combined with latch
         //during an AND operation
+        int oldInOut = _inout;
         _inout = 0;
         _inout = _inout | (~_tris) & _latch;
         _inout = _inout | _tris & _environment;
+        //xor old in-out value with new in-out value to determine flanks
+        _flanks = oldInOut ^ _inout;
     }
 
     public Port() {
@@ -67,6 +73,24 @@ public class Port {
     
     public int getInOut() {
         return _inout;
+    }
+    
+    /**
+     * 
+     * @param pin specifies which pin to retrieve
+     * @return -1 for falling flank, 0 for no flank, 1 for rising flank
+     */
+    public int getFlank(int pin) {
+        boolean flankBit = BinaryNumberHelper.getBitBoolean(_flanks, pin);
+        boolean pinBit = BinaryNumberHelper.getBitBoolean(_inout, pin);
+        if (flankBit == false) return 0;
+        if (pinBit = false) {
+            //falling flank
+            return -1;
+        } else {
+            //rising flank
+            return 1;
+        }
     }
     
 }

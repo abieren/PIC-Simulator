@@ -523,6 +523,7 @@ public class PICSimulator {
     }
     
     public void makeStep() {
+        inspectPortFlanks();
         handleInterrupts();
         if (isSleeping()) {
             nextCycle();
@@ -667,7 +668,25 @@ public class PICSimulator {
         }
     }
     
-     private void handleInterrupts() {
+    private void inspectPortFlanks() {
+        //check interrupt at pins RB7:RB4
+        if (_portB.getFlank(4) != 0 ||
+                _portB.getFlank(5) != 0 ||
+                _portB.getFlank(6) != 0 ||
+                _portB.getFlank(7) != 0) {
+            //set interrupt flag
+            setINTCONbitRBIF(1);
+        }
+        //check interrupt RB0/INT pin
+        int mustBeRisingEdge = getOPTIONbitINTEDG();
+        if (_portB.getFlank(0)==1 && mustBeRisingEdge==1 ||
+                _portB.getFlank(0)==-1 & mustBeRisingEdge==0){
+            //set interrupt flag
+            setINTCONbitINTF(1);
+        }
+    }
+    
+    private void handleInterrupts() {
         //see PIC Doc Figure 6-10
         //check GIE
         if (getINTCONbitGIE() == 0) return;
