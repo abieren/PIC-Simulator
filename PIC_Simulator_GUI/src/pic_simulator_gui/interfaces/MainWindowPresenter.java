@@ -43,10 +43,6 @@ public interface MainWindowPresenter {
 
     public void resetRunningTimeStopWatch();
 
-    public void setBreakOnWatchdogTriggered(boolean b);
-
-    public void setBreakOnInterrupt(boolean b);
-
     public void setRegister(int address, int value);
 
     public void setPortTris(String port, int value);

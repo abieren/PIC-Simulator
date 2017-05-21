@@ -52,10 +52,6 @@ public class MainWindowController
     @FXML
     private Label lb_oscillatorFrequency;
     @FXML
-    private CheckBox cb_breakOnWatchdogTrigger;
-    @FXML
-    private CheckBox cb_breakOnInterrupt;
-    @FXML
     private Label lb_runningTime;
     @FXML
     private Label lb_wRegHexValue;
@@ -600,18 +596,6 @@ public class MainWindowController
             }
         }
     }
-
-    @FXML
-    private void cb_breakOnWatchdogTrigger_onClicked() {
-        boolean value = cb_breakOnWatchdogTrigger.isSelected();
-        _presenter.setBreakOnWatchdogTriggered(value);
-    }
-    
-    @FXML
-    private void cb_breakOnInterrupt_onClicked() {
-        boolean value = cb_breakOnInterrupt.isSelected();
-        _presenter.setBreakOnInterrupt(value);
-    }
     
     @FXML
     private void menu_openPDF_onClicked() {
@@ -874,16 +858,6 @@ public class MainWindowController
     @Override
     public void displayOscillatorFrequency(double megaHz) {
         lb_oscillatorFrequency.setText(Double.toString(megaHz));
-    }
-
-    @Override
-    public void displayBreakOnWatchdogTrigger(boolean b) {
-        cb_breakOnWatchdogTrigger.selectedProperty().set(b);
-    }
-
-    @Override
-    public void displayBreakOnInterrupt(boolean b) {
-        cb_breakOnInterrupt.selectedProperty().set(b);
     }
 
     @Override

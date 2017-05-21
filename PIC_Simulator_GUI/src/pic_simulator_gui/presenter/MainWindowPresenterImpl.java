@@ -91,16 +91,6 @@ public class MainWindowPresenterImpl
     public void resetRunningTimeStopWatch() {
         _model.resetRunningTimeStopWatch();
     }
-
-    @Override
-    public void setBreakOnWatchdogTriggered(boolean b) {
-        _model.setBreakOnWatchdogTrigger(b);
-    }
-
-    @Override
-    public void setBreakOnInterrupt(boolean b) {
-        _model.setBreakOnInterrupt(b);
-    }
     
     @Override
     public void setLSTFile(String filePath) {
@@ -165,16 +155,6 @@ public class MainWindowPresenterImpl
     @Override
     public void displayOscillatorFrequency(double megaHz) {
         _view.displayOscillatorFrequency(megaHz);
-    }
-
-    @Override
-    public void displayBreakOnWatchdogTrigger(boolean b) {
-        _view.displayBreakOnWatchdogTrigger(b);
-    }
-
-    @Override
-    public void displayBreakOnInterrupt(boolean b) {
-        _view.displayBreakOnInterrupt(b);
     }
 
     @Override

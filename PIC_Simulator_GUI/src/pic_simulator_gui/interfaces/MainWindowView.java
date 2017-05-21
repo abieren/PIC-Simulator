@@ -43,10 +43,6 @@ public interface MainWindowView {
 
     public void displayOscillatorFrequency(double megaHz);
 
-    public void displayBreakOnWatchdogTrigger(boolean b);
-
-    public void displayBreakOnInterrupt(boolean b);
-
     public void displayRegister(int register, int value);
 
     public void displayStack(List<Integer> stack);
