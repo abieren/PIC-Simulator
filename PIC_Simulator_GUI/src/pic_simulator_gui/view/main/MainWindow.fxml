@@ -8,7 +8,6 @@
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.Separator?>
-<?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -39,7 +38,7 @@
             </MenuBar>
          </top>
          <left>
-            <VBox maxWidth="300.0" spacing="10.0" style="-fx-background-color: rgb(255,255,255);">
+            <VBox maxWidth="320.0" spacing="10.0" style="-fx-background-color: rgb(255,255,255);">
                <children>
                   <VBox spacing="5.0" style="-fx-background-color: rgb(230,230,230); -fx-border-color: rgb(180,180,180);">
                      <children>
@@ -521,8 +520,8 @@
             </VBox>
          </left>
          <center>
-            <SplitPane dividerPositions="0.5" orientation="VERTICAL" BorderPane.alignment="CENTER">
-               <items>
+            <BorderPane BorderPane.alignment="CENTER">
+               <center>
                   <GridPane>
                      <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="25.0" minWidth="25.0" prefWidth="25.0" />
@@ -536,7 +535,9 @@
                         <ListView fx:id="lv_sourceCode" GridPane.columnIndex="1" />
                      </children>
                   </GridPane>
-                  <GridPane hgap="10.0" minHeight="398.0" style="-fx-background-color: rgb(255,255,255);">
+               </center>
+               <bottom>
+                  <GridPane hgap="10.0" maxHeight="398.0" minHeight="398.0" prefHeight="398.0" style="-fx-background-color: rgb(255,255,255);" BorderPane.alignment="CENTER">
                      <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="250.0" minWidth="250.0" prefWidth="250.0" />
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="358.0" minWidth="358.0" prefWidth="358.0" />
@@ -684,8 +685,8 @@
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                      </padding>
                   </GridPane>
-               </items>
-            </SplitPane>
+               </bottom>
+            </BorderPane>
          </center>
          <bottom>
             <AnchorPane BorderPane.alignment="CENTER">
