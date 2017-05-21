@@ -2,7 +2,6 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Menu?>
@@ -40,9 +39,9 @@
             </MenuBar>
          </top>
          <left>
-            <AnchorPane prefWidth="350.0" style="-fx-background-color: rgb(255,255,255);" BorderPane.alignment="CENTER">
+            <VBox maxWidth="300.0" spacing="10.0" style="-fx-background-color: rgb(255,255,255);">
                <children>
-                  <VBox layoutY="20.0" spacing="5.0" style="-fx-background-color: rgb(230,230,230); -fx-border-color: rgb(180,180,180);" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <VBox spacing="5.0" style="-fx-background-color: rgb(230,230,230); -fx-border-color: rgb(180,180,180);">
                      <children>
                         <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="Control Board">
                            <font>
@@ -73,19 +72,6 @@
                            <children>
                               <Button alignment="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#bt_ignoreStep_onClicked" text="Ignore" GridPane.columnIndex="1" />
                               <Button alignment="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#bt_stepOver_onClicked" text="Step Over" />
-                           </children>
-                        </GridPane>
-                        <GridPane hgap="10.0" prefHeight="25.0" prefWidth="213.0">
-                           <columnConstraints>
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" percentWidth="50.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" percentWidth="50.0" />
-                           </columnConstraints>
-                           <rowConstraints>
-                              <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                           </rowConstraints>
-                           <children>
-                              <Button alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#bt_stepIn_onClicked" text="Step in" />
-                              <Button alignment="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#bt_stepOut_onClicked" prefHeight="25.0" prefWidth="74.0" text="Step out" GridPane.columnIndex="1" />
                            </children>
                         </GridPane>
                         <ToggleButton fx:id="bt_automaticSteppingMode" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#bt_automaticSteppingMode_onClicked" prefHeight="25.0" prefWidth="162.0" text="Automatic Stepping Mode" />
@@ -121,7 +107,7 @@
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </padding>
                   </VBox>
-                  <VBox layoutX="10.0" layoutY="192.0" spacing="5.0" style="-fx-background-color: rgb(230,230,230); -fx-border-color: rgb(180,180,180);" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="192.0">
+                  <VBox spacing="5.0" style="-fx-background-color: rgb(230,230,230); -fx-border-color: rgb(180,180,180);">
                      <children>
                         <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="Crystal Oscillator Frequenzy">
                            <font>
@@ -159,36 +145,36 @@
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </padding>
                   </VBox>
-                  <VBox layoutX="14.0" layoutY="264.0" spacing="5.0" style="-fx-background-color: rgb(230,230,230); -fx-border-color: rgb(180,180,180);" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="264.0">
+                  <VBox spacing="5.0" style="-fx-background-color: rgb(230,230,230); -fx-border-color: rgb(180,180,180);">
                      <children>
-                        <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="Running Time Stop Watch">
+                        <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="Running Time Watch">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
                         <GridPane hgap="10.0">
                            <columnConstraints>
-                              <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="80.0" minWidth="10.0" percentWidth="50.0" prefWidth="80.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="67.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="33.0" prefWidth="100.0" />
                            </columnConstraints>
                            <rowConstraints>
                               <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                            </rowConstraints>
                            <children>
-                              <Button alignment="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#bt_resetRunningTimeStopWatch" text="Reset" GridPane.columnIndex="1" />
                               <GridPane>
                                  <columnConstraints>
                                     <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" />
-                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="20.0" minWidth="20.0" prefWidth="20.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="30.0" minWidth="30.0" prefWidth="30.0" />
                                  </columnConstraints>
                                  <rowConstraints>
                                     <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                                  </rowConstraints>
                                  <children>
-                                    <Label fx:id="lb_runningTime" alignment="CENTER_RIGHT" text="5200" />
                                     <Label alignment="CENTER_RIGHT" text=" µs" GridPane.columnIndex="1" />
+                                    <Label fx:id="lb_runningTime" alignment="CENTER_RIGHT" text="5200" />
                                  </children>
                               </GridPane>
+                              <Button alignment="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#bt_resetRunningTimeStopWatch" text="Reset" GridPane.columnIndex="1" />
                            </children>
                         </GridPane>
                      </children>
@@ -196,21 +182,7 @@
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </padding>
                   </VBox>
-                  <VBox layoutX="10.0" layoutY="336.0" spacing="5.0" style="-fx-background-color: rgb(230,230,230); -fx-border-color: rgb(180,180,180);" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="336.0">
-                     <children>
-                        <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="Special Breakpoints">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <CheckBox fx:id="cb_breakOnWatchdogTrigger" mnemonicParsing="false" onMouseClicked="#cb_breakOnWatchdogTrigger_onClicked" text="break on watchdog trigger" />
-                        <CheckBox fx:id="cb_breakOnInterrupt" mnemonicParsing="false" onMouseClicked="#cb_breakOnInterrupt_onClicked" text="break on interrupt" />
-                     </children>
-                     <padding>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                     </padding>
-                  </VBox>
-                  <VBox layoutX="10.0" layoutY="422.0" spacing="5.0" style="-fx-background-color: rgb(230,230,230); -fx-border-color: rgb(180,180,180);" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="422.0">
+                  <VBox spacing="5.0" style="-fx-background-color: rgb(230,230,230); -fx-border-color: rgb(180,180,180);">
                      <children>
                         <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="Special Function Registers">
                            <font>
@@ -546,7 +518,7 @@
                <padding>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </padding>
-            </AnchorPane>
+            </VBox>
          </left>
          <center>
             <SplitPane dividerPositions="0.5" orientation="VERTICAL" BorderPane.alignment="CENTER">
