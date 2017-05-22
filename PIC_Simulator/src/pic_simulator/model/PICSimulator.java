@@ -124,6 +124,8 @@ public class PICSimulator {
     }
     
     public void resetByPower() {
+        //clear stack
+        _stack.clear();
         // W Register
         setWRegister(0);
         //reset PC
@@ -166,6 +168,8 @@ public class PICSimulator {
     }
     
     public void resetByMCLR(boolean isSleep, boolean isWatchdog) {
+        //clear stack
+        _stack.clear();
         // W Register unchanged
         //reset PC
         setPCRegister(0);
