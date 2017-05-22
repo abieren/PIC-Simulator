@@ -559,7 +559,8 @@ public class PICSimulator {
     
     public void makeStep() {
         inspectPortFlanks();
-        handleInterrupts();
+        boolean hasInterrupt = handleInterrupts();
+        if (hasInterrupt) return;
         if (isSleeping()) {
             nextCycle();
         } else {
@@ -721,10 +722,10 @@ public class PICSimulator {
         }
     }
     
-    private void handleInterrupts() {
+    private boolean handleInterrupts() {
         //see PIC Doc Figure 6-10
         //check GIE
-        if (getINTCONbitGIE() == 0) return;
+        if (getINTCONbitGIE() == 0) return false;
         //check interrupt conditions
         boolean isInterrupt = false;
         if(getINTCONbitT0IF() == 1 && getINTCONbitT0IE() == 1) {
@@ -745,9 +746,10 @@ public class PICSimulator {
         //call interrupt vector when one interrrupt condition is true
         if (isInterrupt) {
              setINTCONbitGIE(0);
-             pushStack(getPCRegister());
+             //pushStack(getPCRegister()); no need to push pc, this is handled by CALL
              CALL(INTERRUPT_VECTOR_PROGRAM_MEMORY);      
-         }
+        }
+        return isInterrupt;
     }
     
     public void skipNextInstructionWithNOP() {
