@@ -7,6 +7,7 @@ package pic_simulator.model;
 
 import pic_simulator.interfaces.Notifier;
 import pic_simulator.interfaces.ModelPresenter;
+import pic_simulator.utils.BinaryNumberHelper;
 
 
 public class NotifierImpl implements Notifier {
@@ -27,6 +28,7 @@ public class NotifierImpl implements Notifier {
     @Override
     public void changedPCRegister(int oldValue, int newValue) {
         _presenter.displayPCRegsiter(newValue);
+        _presenter.displayPCLRegister(BinaryNumberHelper.extractBits(newValue, 0, 7));
     }
 
     @Override
@@ -123,6 +125,11 @@ public class NotifierImpl implements Notifier {
     @Override
     public void changedEEPROM(int address, int value) {
         _presenter.displayEEPROM(address, value);
+    }
+
+    @Override
+    public void changedPCLATH(int value) {
+        _presenter.displayPCLATHRegsiter(value);
     }
     
 }

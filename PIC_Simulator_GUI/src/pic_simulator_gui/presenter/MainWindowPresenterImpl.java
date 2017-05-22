@@ -313,4 +313,9 @@ public class MainWindowPresenterImpl
     public void displaySynchronizePortsWithRS232(boolean b) {
         _view.displaySynchronizePortsWithRS232(b);
     }
+
+    @Override
+    public void setEEPROM(int address, int value) {
+        _model.setEEPROM(address, value);
+    }
 }

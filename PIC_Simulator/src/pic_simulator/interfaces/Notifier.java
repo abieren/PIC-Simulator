@@ -52,5 +52,7 @@ public interface Notifier {
     public void changedRunningTime(double oldValue, double newValue);
 
     public void changedEEPROM(int address, int value);
+
+    public void changedPCLATH(int value);
     
 }

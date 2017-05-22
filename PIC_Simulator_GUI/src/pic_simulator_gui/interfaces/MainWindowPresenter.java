@@ -64,5 +64,7 @@ public interface MainWindowPresenter {
     public void removeBreakpoint(int address);
 
     public void setSynchronizePortsWithRS232(boolean b);
+
+    public void setEEPROM(int address, int value);
     
 }

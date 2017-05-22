@@ -30,7 +30,7 @@ public class EEPROM {
         return BinaryNumberHelper.truncateToNBit(address, 6);
     }
     
-    public void setRegsiter(int address, int value) {
+    public void setRegister(int address, int value) {
         address = shrinkAddress(address);
         value = BinaryNumberHelper.truncateToNBit(value, 8);
         _registers.put(address, value);
@@ -41,7 +41,7 @@ public class EEPROM {
         address = shrinkAddress(address);
         Integer result = _registers.get(address);
         if (result == null) {
-            setRegsiter(address, DEFAULT_VALUE);
+            setRegister(address, DEFAULT_VALUE);
             return DEFAULT_VALUE;
         }
         return result;

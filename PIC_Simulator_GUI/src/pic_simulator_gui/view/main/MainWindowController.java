@@ -444,7 +444,7 @@ public class MainWindowController
                 lb.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent event) -> {
                     Label label = (Label)event.getSource();
                     int address = Integer.parseInt(label.getId());
-                    setNewValueDialog(address);
+                    setNewRegisterValueDialog(address);
                 });
                 gp_register_view.add(lb, col, row);
             }
@@ -511,7 +511,9 @@ public class MainWindowController
                 lb.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent event) -> {
                     Label label = (Label)event.getSource();
                     int address = Integer.parseInt(label.getId());
-                    setNewValueDialog(address);
+                    Optional<Integer> value = showSetNewValueDialog();
+                    if (!value.isPresent()) return;
+                    _presenter.setEEPROM(address, value.get());
                 });
                 
                 gp_eeprom_view.add(lb, col, row);
@@ -673,7 +675,7 @@ public class MainWindowController
         _presenter.setOscillatorFrequency(value);
     }
     
-    private void setNewValueDialog(int address) {
+    private void setNewRegisterValueDialog(int address) {
         TextInputDialog dialog = new TextInputDialog("0");
         dialog.setTitle("Set register value");
         String register = BinaryNumberHelper.formatToDisplayableHex(address, 2, true);

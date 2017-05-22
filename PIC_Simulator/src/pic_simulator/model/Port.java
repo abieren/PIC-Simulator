@@ -84,7 +84,7 @@ public class Port {
         boolean flankBit = BinaryNumberHelper.getBitBoolean(_flanks, pin);
         boolean pinBit = BinaryNumberHelper.getBitBoolean(_inout, pin);
         if (flankBit == false) return 0;
-        if (pinBit = false) {
+        if (pinBit == false) {
             //falling flank
             return -1;
         } else {

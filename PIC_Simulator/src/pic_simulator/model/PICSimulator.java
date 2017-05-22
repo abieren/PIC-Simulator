@@ -363,6 +363,9 @@ public class PICSimulator {
                 pc = pc + value;
                 setPCRegister(pc);
                 break;
+            case PCLATH_REGISTER_ADDRESS_BANK0:
+                _notifier.changedPCLATH(value);
+                break;
             default:
                 break;
         }
@@ -1094,7 +1097,7 @@ public class PICSimulator {
             if (BinaryNumberHelper.getBitBoolean(value, 1)) {
                 int data = _registers.get(EEDATA_REGISTER_BANK0);
                 int adr = _registers.get(EEADR_REGISTER_BANK0);
-                _eeprom.setRegsiter(adr, data);
+                _eeprom.setRegister(adr, data);
                 // after write set bit WR bit to 0
                 value = BinaryNumberHelper.setBit(value, 1, 0);
                 value = BinaryNumberHelper.setBit(value, 4, 1);

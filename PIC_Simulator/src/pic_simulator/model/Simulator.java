@@ -284,4 +284,9 @@ public class Simulator implements Model {
         _pic.setSynchronizePortsWithRS232(b);
         _presenter.displaySynchronizePortsWithRS232(b);
     }
+
+    @Override
+    public void setEEPROM(int address, int value) {
+        _pic._eeprom.setRegister(address, value);
+    }
 }
