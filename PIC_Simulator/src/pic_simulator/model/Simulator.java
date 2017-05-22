@@ -29,7 +29,7 @@ public class Simulator implements Model {
     private String _lstFilePath;
     private ParseResult _parseResult;
     
-    private boolean _automaticSteppingMode;
+    private Boolean _automaticSteppingMode;
     private int _automaticSteppingInterval;     //interval in ms
     
     private Set<Integer> _breakpoints;
@@ -61,14 +61,22 @@ public class Simulator implements Model {
         
     }
     
+    private void displayCurrentCodeLine() {
+        int pc = _pic.getPCRegister();
+        int line = _parseResult.addressToLineNumber.get(pc);
+        _presenter.displayExecutedCodeLine(line);
+    }
+    
     @Override
     public void resetPIC() {
         _pic.resetByMCLR(false, false);
+        displayCurrentCodeLine();
     }
 
     @Override
     public void powerResetPIC() {
         _pic.resetByPower();
+        displayCurrentCodeLine();
     }
 
     @Override
@@ -83,15 +91,15 @@ public class Simulator implements Model {
     
     @Override
     public void stepOver() {
-        int pc = _pic.getPCRegister();
-        int line = _parseResult.addressToLineNumber.get(pc);
-        _presenter.displayExecutedCodeLine(line);
         //check in automatic stepping mode if breakpoint is reached
-        if (_automaticSteppingMode && _breakpoints.contains(_pic.getPCRegister())) {
-            setAutomaticSteppingMode(false);
-            return; //abort method to halt at the breakpoint
+        synchronized (_automaticSteppingMode) {
+            if (_automaticSteppingMode && _breakpoints.contains(_pic.getPCRegister())) {
+                setAutomaticSteppingMode(false);
+                return; //abort method to halt at the breakpoint
+            }
+            _pic.makeStep();
         }
-        _pic.makeStep();
+        displayCurrentCodeLine();
     }
     
     @Override
@@ -129,7 +137,11 @@ public class Simulator implements Model {
         initialize();
         powerResetPIC();
         programPIC();
+        //display current code line
         _presenter.displayCodeLines(pr);
+        int pc = _pic.getPCRegister();
+        int line = _parseResult.addressToLineNumber.get(pc);
+        _presenter.displayExecutedCodeLine(line);
     }
     
     private void programPIC() {
@@ -154,7 +166,12 @@ public class Simulator implements Model {
             //start timer
             Thread t1 = new Thread() {
                 public void run() {
-                    while (_automaticSteppingMode) {
+                    while (true) {
+                        synchronized (_automaticSteppingMode) {
+                            if (_automaticSteppingMode == false) {
+                                break;
+                            }
+                        }
                         Platform.runLater(new Runnable() {
                             @Override
                             public void run() {
@@ -167,8 +184,9 @@ public class Simulator implements Model {
                         } catch (InterruptedException ex) {
                             Logger.getLogger(Simulator.class.getName()).log(Level.SEVERE, null, ex);
                         }
+                        }
                     }
-                }
+                
             };
             t1.start();
         }
