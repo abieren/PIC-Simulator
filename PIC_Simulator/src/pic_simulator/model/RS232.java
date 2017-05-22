@@ -61,12 +61,12 @@ public class RS232 {
         int portbtris = b.getTris();
         int portbtrisupper = BinaryNumberHelper.extractBits(portbtris, 4, 7) + 32 + 16;
         int portbtrislower = BinaryNumberHelper.extractBits(portbtris, 0, 3) + 32 + 16;
-        int portainout = a.getInOut();
-        int portaenvupper = BinaryNumberHelper.extractBits(portainout, 4, 7) + 32 + 16;
-        int portaenvlower = BinaryNumberHelper.extractBits(portainout, 0, 3) + 32 + 16;
-        int portbinout = b.getInOut();
-        int portbenvupper = BinaryNumberHelper.extractBits(portbinout, 4, 7) + 32 + 16;
-        int portbenvlower = BinaryNumberHelper.extractBits(portbinout, 0, 3) + 32 + 16;
+        int portaenv = a.getEnvironment();
+        int portaenvupper = BinaryNumberHelper.extractBits(portaenv, 4, 7) + 32 + 16;
+        int portaenvlower = BinaryNumberHelper.extractBits(portaenv, 0, 3) + 32 + 16;
+        int portbenv = b.getEnvironment();
+        int portbenvupper = BinaryNumberHelper.extractBits(portbenv, 4, 7) + 32 + 16;
+        int portbenvlower = BinaryNumberHelper.extractBits(portbenv, 0, 3) + 32 + 16;
         
         hexstring = Integer.toHexString(portatrisupper) + Integer.toHexString(portatrislower) + Integer.toHexString(portaenvupper) + Integer.toHexString(portaenvlower) +Integer.toHexString(portbtrisupper) +Integer.toHexString(portbtrislower) +Integer.toHexString(portbenvupper) +Integer.toHexString(portbenvlower) + "0D";
 
