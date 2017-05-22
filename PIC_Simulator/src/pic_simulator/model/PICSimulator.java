@@ -36,6 +36,7 @@ public class PICSimulator {
     public Timer _timer0Module;
     public double _oscillatorFrequency;
     public double _runningTime;                   //running time in micro seconds
+    private boolean _syncPortsWithRS232;
     
     //constants of PIC
     public static final int MAX_STACK_SIZE = 8;
@@ -457,7 +458,9 @@ public class PICSimulator {
         int oldInOut = _portA.getInOut();
         int oldTris = _portA.getTris();
         _portA.setTris(value);
-        RS232.updatePorts(_portA, _portB);
+        if (_syncPortsWithRS232) {
+            RS232.updatePorts(_portA, _portB);
+        }
         _notifier.changedPortAInOut(oldInOut, _portA.getInOut());
         _notifier.changedPortATris(oldTris, _portA.getTris());
         _notifier.changedRegister(PORTA_REGISTER_BANK0, oldInOut, _portA.getInOut());
@@ -468,7 +471,9 @@ public class PICSimulator {
         int oldInOut = _portB.getInOut();
         int oldTris = _portB.getTris();
         _portB.setTris(value);
-        RS232.updatePorts(_portA, _portB);
+        if (_syncPortsWithRS232) {
+            RS232.updatePorts(_portA, _portB);
+        }
         _notifier.changedPortBInOut(oldInOut, _portB.getInOut());
         _notifier.changedPortBTris(oldTris, _portB.getTris());
         _notifier.changedRegister(PORTB_REGISTER_BANK0, oldInOut, _portB.getInOut());
@@ -479,7 +484,9 @@ public class PICSimulator {
         int oldEnv = _portA.getEnvironment();
         int oldInOut = _portA.getInOut();
         _portA.setEnvironment(value);
-        RS232.updatePorts(_portA, _portB);
+        if (_syncPortsWithRS232) {
+            RS232.updatePorts(_portA, _portB);
+        }
         _notifier.changedPortAEnvironment(oldEnv, _portA.getEnvironment());
         _notifier.changedPortAInOut(oldInOut, _portA.getInOut());
         _notifier.changedRegister(PORTA_REGISTER_BANK0, oldInOut, _portA.getInOut());
@@ -489,7 +496,9 @@ public class PICSimulator {
         int oldEnv = _portB.getEnvironment();
         int oldInOut = _portB.getInOut();
         _portB.setEnvironment(value);
-        RS232.updatePorts(_portA, _portB);
+        if (_syncPortsWithRS232) {
+            RS232.updatePorts(_portA, _portB);
+        }
         _notifier.changedPortBEnvironment(oldEnv, _portB.getEnvironment());
         _notifier.changedPortBInOut(oldInOut, _portB.getInOut());
         _notifier.changedRegister(PORTB_REGISTER_BANK0, oldInOut, _portB.getInOut());
@@ -1532,6 +1541,10 @@ public class PICSimulator {
         }
         setWRegister(result);
         nextCycle();
+    }
+
+    void setSynchronizePortsWithRS232(boolean b) {
+        _syncPortsWithRS232 = b;
     }
     
 }

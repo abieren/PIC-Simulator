@@ -58,5 +58,7 @@ public interface Model {
     public void addBreakpoint(int address);
 
     public void removeBreakpoint(int address);
+
+    public void setSynchronizePortsWithRS232(boolean b);
     
 }

@@ -298,4 +298,14 @@ public class MainWindowPresenterImpl
     public void removeBreakpoint(int address) {
         _model.removeBreakpoint(address);
     }
+
+    @Override
+    public void setSynchronizePortsWithRS232(boolean b) {
+        _model.setSynchronizePortsWithRS232(b);
+    }
+
+    @Override
+    public void displaySynchronizePortsWithRS232(boolean b) {
+        _view.displaySynchronizePortsWithRS232(b);
+    }
 }

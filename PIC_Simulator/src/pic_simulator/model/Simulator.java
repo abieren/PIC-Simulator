@@ -57,6 +57,7 @@ public class Simulator implements Model {
         _breakpoints = new HashSet<>();
         _breakOnWatchdogTrigger = true;
         _breakOnInterrupt = true;
+        setSynchronizePortsWithRS232(false);
         
     }
     
@@ -258,5 +259,11 @@ public class Simulator implements Model {
     @Override
     public void removeBreakpoint(int address) {
         _breakpoints.remove(address);
+    }
+
+    @Override
+    public void setSynchronizePortsWithRS232(boolean b) {
+        _pic.setSynchronizePortsWithRS232(b);
+        _presenter.displaySynchronizePortsWithRS232(b);
     }
 }

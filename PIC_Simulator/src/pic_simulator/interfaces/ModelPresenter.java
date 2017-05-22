@@ -61,5 +61,7 @@ public interface ModelPresenter {
     public void displayPortEnvironment(String port, int oldValue, int newValue);
 
     public void displayCodeLines(ParseResult parseResult);
+
+    public void displaySynchronizePortsWithRS232(boolean b);
     
 }

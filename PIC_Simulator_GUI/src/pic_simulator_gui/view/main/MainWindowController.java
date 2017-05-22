@@ -133,6 +133,8 @@ public class MainWindowController
     private GridPane gp_register_view;
     @FXML
     private GridPane gp_eeprom_view;
+    @FXML
+    private CheckBox cb_synchronizePorts;
 
     //Stage that is used by the view of this controller
     private Stage _primaryStage;
@@ -538,6 +540,12 @@ public class MainWindowController
         _presenter.ignoreStep();
     }
 
+    @FXML
+    private void cb_synchronizePorts_onClicked() {
+        boolean isChecked = cb_synchronizePorts.selectedProperty().get();
+        _presenter.setSynchronizePortsWithRS232(isChecked);
+    }
+    
     @FXML
     private void bt_stepIn_onClicked() {
         _presenter.stepIn();
@@ -997,6 +1005,11 @@ public class MainWindowController
         String text = "0";
         if (value == true) text = "1";
         l.setText(text);
+    }
+
+    @Override
+    public void displaySynchronizePortsWithRS232(boolean b) {
+        cb_synchronizePorts.setSelected(b);
     }
     
 }
