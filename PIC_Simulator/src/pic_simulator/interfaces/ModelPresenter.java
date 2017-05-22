@@ -62,6 +62,8 @@ public interface ModelPresenter {
 
     public void displayCodeLines(ParseResult parseResult);
 
+    public void displaySynchronizePortsWithRS232(boolean b);
+
     public void displayEEPROM(int address, int value);
     
 }
