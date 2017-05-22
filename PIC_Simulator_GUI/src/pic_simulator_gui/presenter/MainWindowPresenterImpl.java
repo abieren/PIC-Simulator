@@ -298,11 +298,7 @@ public class MainWindowPresenterImpl
     public void removeBreakpoint(int address) {
         _model.removeBreakpoint(address);
     }
-<<<<<<< .mine
 
-=======
-
->>>>>>> .theirs
     @Override
     public void setSynchronizePortsWithRS232(boolean b) {
         _model.setSynchronizePortsWithRS232(b);
@@ -311,17 +307,10 @@ public class MainWindowPresenterImpl
     public void displayEEPROM(int address, int value) {
         _view.displayEEPROM(address,value);
     }
-<<<<<<< .mine
 
-
-
-
-
-=======
 
     @Override
     public void displaySynchronizePortsWithRS232(boolean b) {
         _view.displaySynchronizePortsWithRS232(b);
     }
->>>>>>> .theirs
 }

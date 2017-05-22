@@ -1006,11 +1006,7 @@ public class MainWindowController
         if (value == true) text = "1";
         l.setText(text);
     }
-<<<<<<< .mine
 
-=======
-
->>>>>>> .theirs
     @Override
     public void displaySynchronizePortsWithRS232(boolean b) {
         cb_synchronizePorts.setSelected(b);
