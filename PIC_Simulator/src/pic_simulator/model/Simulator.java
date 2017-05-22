@@ -5,8 +5,10 @@
  */
 package pic_simulator.model;
 
+import java.util.HashSet;
 import pic_simulator.interfaces.Notifier;
 import java.util.Optional;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
@@ -30,6 +32,7 @@ public class Simulator implements Model {
     private boolean _automaticSteppingMode;
     private int _automaticSteppingInterval;     //interval in ms
     
+    private Set<Integer> _breakpoints;
     private boolean _breakOnWatchdogTrigger;
     private boolean _breakOnInterrupt;
 
@@ -51,8 +54,10 @@ public class Simulator implements Model {
         _pic.setOscillatorFrequency(4.0);
         _presenter.displayOscillatorFrequency(_pic.getOscillatorFrequency());
         _presenter.displayRunningTime(_pic._runningTime);
+        _breakpoints = new HashSet<>();
         _breakOnWatchdogTrigger = true;
         _breakOnInterrupt = true;
+        
     }
     
     @Override
@@ -80,6 +85,11 @@ public class Simulator implements Model {
         int pc = _pic.getPCRegister();
         int line = _parseResult.addressToLineNumber.get(pc);
         _presenter.displayExecutedCodeLine(line);
+        //check in automatic stepping mode if breakpoint is reached
+        if (_automaticSteppingMode && _breakpoints.contains(_pic.getPCRegister())) {
+            setAutomaticSteppingMode(false);
+            return; //abort method to halt at the breakpoint
+        }
         _pic.makeStep();
     }
     
@@ -111,16 +121,20 @@ public class Simulator implements Model {
 
     @Override
     public void setLSTFile(String filePath) {
-        //reset the simulator before loading new file
-        initialize();
-        powerResetPIC();
         _lstFilePath = filePath;
         ParseResult pr = FileParser.parse(filePath);
         _parseResult = pr;
-        for (int i = 0; i < pr.fileLines.size(); i++) {
-            _presenter.addCodeLine(pr.address.get(i), pr.instruction.get(i), pr.sourceCode.get(i));
-            if (pr.address.get(i) != null) {
-                _pic.setInstructionToProgramMemory(pr.address.get(i), pr.instruction.get(i));
+        //reset the simulator before loading new file
+        initialize();
+        powerResetPIC();
+        programPIC();
+        _presenter.displayCodeLines(pr);
+    }
+    
+    private void programPIC() {
+         for (int i = 0; i < _parseResult.fileLines.size(); i++) {
+            if (_parseResult.address.get(i) != null) {
+                _pic.setInstructionToProgramMemory(_parseResult.address.get(i), _parseResult.instruction.get(i));
             }
         }
     }
@@ -133,6 +147,7 @@ public class Simulator implements Model {
     @Override
     public void setAutomaticSteppingMode(boolean b) {
         _automaticSteppingMode = b;
+        _presenter.displayAutomaticSteppingMode(b);
         if (_automaticSteppingMode) {
             System.out.println("AUTOMATIC==============");
             //start timer
@@ -233,5 +248,15 @@ public class Simulator implements Model {
             default:
                 return Optional.empty();
         }
+    }
+
+    @Override
+    public void addBreakpoint(int address) {
+        _breakpoints.add(address);
+    }
+
+    @Override
+    public void removeBreakpoint(int address) {
+        _breakpoints.remove(address);
     }
 }

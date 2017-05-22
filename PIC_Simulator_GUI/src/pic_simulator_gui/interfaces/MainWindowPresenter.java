@@ -59,4 +59,8 @@ public interface MainWindowPresenter {
     
     public void setPortEnvironmentBit(String port, int bit, boolean value);
     
+    public void addBreakpoint(int address);
+    
+    public void removeBreakpoint(int address);
+    
 }

@@ -55,6 +55,8 @@ public class PICSimulator {
     public static final int TRISA_REGISTER_BANK1 = 0x85;
     public static final int TRISB_REGISTER_BANK1 = 0x86;
     public static final int TMR0_REGISTER_BANK0 = 0x01;
+    public static final int PCL_REGISTER_ADDRESS_BANK0 = 0x02;
+    
     
     public PICSimulator(Notifier notifier) {
         _notifier = notifier;
@@ -265,6 +267,9 @@ public class PICSimulator {
                 useBankSelect = false;
                 address8bit = fsrValue; // return Address of fsr get value later
                 break;
+            case PCL_REGISTER_ADDRESS_BANK0:
+                result = BinaryNumberHelper.extractBits(getPCRegister(), 0, 7); 
+                return result;
             default:
                 break;
         }
@@ -341,6 +346,13 @@ public class PICSimulator {
                 break;
             case INTCON_REGISTER_ADDRESS_BANK0:
                 _notifier.changedINTCONRegister(getINTCONRegister(), value);
+                break;
+            case PCL_REGISTER_ADDRESS_BANK0:
+                int pc = getPCRegister();
+                pc = BinaryNumberHelper.extractBits(pc, 8, 12);
+                pc = pc << 8;
+                pc = pc + value;
+                setPCRegister(pc);
                 break;
             default:
                 break;

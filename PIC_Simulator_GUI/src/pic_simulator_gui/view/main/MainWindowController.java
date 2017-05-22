@@ -124,9 +124,7 @@ public class MainWindowController
     @FXML
     private Label lb_intconRegBit7;
     @FXML
-    private ListView lv_sideBar;
-    @FXML
-    private ListView lv_sourceCode;
+    private TableView tv_sourceCode;
     @FXML
     private TableView tv_stack;
     @FXML
@@ -141,8 +139,7 @@ public class MainWindowController
     //presenter of the view managed by this controller
     private MainWindowPresenter _presenter;
     //lists to add the code lines and breakpoints for the list views
-    ObservableList<String> _sideBarAnnotations;
-    ObservableList<String> _sourceCode = FXCollections.observableArrayList();
+    ObservableList<SourceCodeLineContainer> _sourceCode;
     //table columns of the port map
     List<TableColumn> _portMapColumns;
     //records of the port map
@@ -171,10 +168,23 @@ public class MainWindowController
     }
 
     private void initializeCodeView() {
-        _sideBarAnnotations = FXCollections.observableArrayList();
+        //reset collections
         _sourceCode = FXCollections.observableArrayList();
-        lv_sideBar.setItems(_sideBarAnnotations);
-        lv_sourceCode.setItems(_sourceCode);
+        //reset table view
+        tv_sourceCode.getColumns().clear();
+        //build table view
+        TableColumn checkboxCol = new TableColumn("Breakpoint");
+        checkboxCol.setStyle("-fx-alignment: center;");
+        checkboxCol.setCellValueFactory(
+                new PropertyValueFactory<SourceCodeLineContainer, String>("checkbox"));
+        TableColumn codelineCol = new TableColumn("Source Code");
+        codelineCol.setStyle("-fx-min-width: 500px;");
+        codelineCol.setCellValueFactory(
+                new PropertyValueFactory<SourceCodeLineContainer, String>("codeline"));
+        tv_sourceCode.getColumns().addAll(checkboxCol, codelineCol);
+        tv_sourceCode.setItems(_sourceCode);
+        Label placeholder = new Label("Please open a program.");
+        tv_sourceCode.setPlaceholder(placeholder);
     }
     
     private void initializePortMapView() {
@@ -393,8 +403,6 @@ public class MainWindowController
             gp_port_view.add(lb,position,row);
             _portBInOutLabels.put(id, lb);
         }
-        
-        _portALatchLabels.get(0).setText("X");
     }
     
     private void initializeRegisterMapView() {
@@ -656,14 +664,6 @@ public class MainWindowController
         }
         _presenter.setOscillatorFrequency(value);
     }
-
-    public void placeBreakPointMarker(int line) {
-        _sideBarAnnotations.set(line, "X");
-    }
-
-    public void removeBreakPointMarker(int line) {
-        _sideBarAnnotations.set(line, "");
-    }
     
     private void setNewValueDialog(int address) {
         TextInputDialog dialog = new TextInputDialog("0");
@@ -812,7 +812,7 @@ public class MainWindowController
     }
     
     @Override
-    public void addCodeLine(Integer address, Integer instruction, String sourceCode) {
+    public void addCodeLine(Integer address, Integer instruction, String sourceCode, boolean breakpointSetable) {
         String addressStr;
         String instructionStr;
         if (address == null) {
@@ -825,14 +825,36 @@ public class MainWindowController
         } else {
             instructionStr = String.format("%04X", instruction);
         }
-        _sideBarAnnotations.add("");
-        _sourceCode.add(addressStr + "  " + instructionStr + "    " + sourceCode);
+        String codeline = addressStr + "  " + instructionStr + "    " + sourceCode;
+        
+        CheckBox checkbox = null;
+        if (breakpointSetable) {
+            int id = address; //determine id by program address
+            checkbox = new CheckBox();
+            checkbox.setId(Integer.toString(id));
+            checkbox.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent event) -> {
+                CheckBox cb = (CheckBox)event.getSource();
+                breakpointCheckbox_onClicked(cb);
+            });
+            checkbox.setSelected(false);
+        }
+        SourceCodeLineContainer newItem = new SourceCodeLineContainer(codeline, checkbox);
+        _sourceCode.add(newItem);
+    }
+    
+    private void breakpointCheckbox_onClicked(CheckBox checkbox) {
+        //retrive breakpoint address by checkbox id
+        Integer address = Integer.parseInt(checkbox.getId());
+        if (checkbox.selectedProperty().get()) {
+            _presenter.addBreakpoint(address);
+        } else {
+            _presenter.removeBreakpoint(address);
+        }
     }
 
     @Override
     public void displayExecutedCodeLine(int line) {
-        lv_sideBar.getSelectionModel().select(line-1);
-        lv_sourceCode.getSelectionModel().select(line-1);
+        tv_sourceCode.getSelectionModel().select(line-1);
     }
 
     @Override

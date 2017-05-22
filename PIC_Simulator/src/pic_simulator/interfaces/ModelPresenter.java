@@ -6,6 +6,7 @@
 package pic_simulator.interfaces;
 
 import java.util.List;
+import pic_simulator.utils.ParseResult;
 
 /**
  *
@@ -15,7 +16,7 @@ public interface ModelPresenter {
     
     public void initializeView();
     
-    public void addCodeLine(Integer address, Integer instruction, String sourceCode);
+    public void addCodeLine(Integer address, Integer instruction, String sourceCode, boolean breakpointSetable);
     
     public void displayExecutedCodeLine(int line);
 
@@ -57,6 +58,8 @@ public interface ModelPresenter {
 
     public void displayPortTris(String port, int oldValue, int newValue);
 
-    public void displayPortEnvironment(String a, int oldValue, int newValue);
+    public void displayPortEnvironment(String port, int oldValue, int newValue);
+
+    public void displayCodeLines(ParseResult parseResult);
     
 }

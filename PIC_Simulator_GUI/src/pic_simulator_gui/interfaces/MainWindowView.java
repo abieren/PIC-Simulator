@@ -15,7 +15,7 @@ public interface MainWindowView {
     
     public void initializeView();
 
-    public void addCodeLine(Integer address, Integer instruction, String sourceCode);
+    public void addCodeLine(Integer address, Integer instruction, String sourceCode, boolean breakpointSetable);
 
     public void displayExecutedCodeLine(int line);
 

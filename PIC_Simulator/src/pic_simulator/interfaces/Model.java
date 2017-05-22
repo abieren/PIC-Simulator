@@ -54,5 +54,9 @@ public interface Model {
     public void setPortEnvironment(String port, int value);
     
     public Optional<Integer> getPortEnvironment(String port);
+
+    public void addBreakpoint(int address);
+
+    public void removeBreakpoint(int address);
     
 }

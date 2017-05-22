@@ -10,6 +10,7 @@ import javafx.collections.ObservableList;
 import pic_simulator.interfaces.Model;
 import pic_simulator.interfaces.ModelPresenter;
 import pic_simulator.utils.BinaryNumberHelper;
+import pic_simulator.utils.ParseResult;
 import pic_simulator_gui.interfaces.MainWindowPresenter;
 import pic_simulator_gui.interfaces.MainWindowView;
 import pic_simulator_gui.view.main.StackRecord;
@@ -158,8 +159,8 @@ public class MainWindowPresenterImpl
     }
 
     @Override
-    public void addCodeLine(Integer address, Integer instruction, String sourceCode) {
-        _view.addCodeLine(address, instruction, sourceCode);
+    public void addCodeLine(Integer address, Integer instruction, String sourceCode, boolean breakpointSetable) {
+        _view.addCodeLine(address, instruction, sourceCode, breakpointSetable);
     }
 
     @Override
@@ -273,5 +274,28 @@ public class MainWindowPresenterImpl
         if (value == false) b=0;
         newTris = BinaryNumberHelper.setBit(newTris, bit, b);
         _model.setPortEnvironment(port, newTris);
+    }
+
+    @Override
+    public void displayCodeLines(ParseResult parseResult) {
+        boolean breakpointSetable;
+        for (int i = 0; i < parseResult.fileLines.size(); i++) {
+            if (parseResult.instruction.get(i) == null) {
+                breakpointSetable = false;
+            } else {
+                breakpointSetable = true;
+            }
+            _view.addCodeLine(parseResult.address.get(i), parseResult.instruction.get(i), parseResult.sourceCode.get(i), breakpointSetable);
+        }
+    }
+
+    @Override
+    public void addBreakpoint(int address) {
+        _model.addBreakpoint(address);
+    }
+
+    @Override
+    public void removeBreakpoint(int address) {
+        _model.removeBreakpoint(address);
     }
 }
