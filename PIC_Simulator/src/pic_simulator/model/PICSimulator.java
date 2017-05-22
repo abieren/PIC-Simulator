@@ -34,6 +34,7 @@ public class PICSimulator {
     public Port _portB;
     public Watchdog _watchdogTimer;
     public Timer _timer0Module;
+    public EEPROM _eeprom;
     public double _oscillatorFrequency;
     public double _runningTime;                   //running time in micro seconds
     
@@ -48,6 +49,8 @@ public class PICSimulator {
     public static final int INTCON_REGISTER_ADDRESS_BANK0 = 0x0B;
     public static final int OPTION_REGISTER_ADDRESS_BANK1 = 0x81;
     public static final int INTERRUPT_VECTOR_PROGRAM_MEMORY = 0x4;
+    public static final int EEADR_REGISTER_BANK0 = 0x9;
+    public static final int EEDATA_REGISTER_BANK0 = 0x8;
     public static final int EECON1_REGISTER_BANK1 = 0x88;
     public static final int EECON2_REGISTER_BANK1 = 0x89;
     public static final int PORTA_REGISTER_BANK0 = 0x05;
@@ -71,6 +74,7 @@ public class PICSimulator {
         _wRegister = 0;
         _portA = new Port();
         _portB = new Port();
+        _eeprom = new EEPROM(_notifier);
         _watchdogTimer = new WatchdogImpl();
         _watchdogTimer.clear();
         _timer0Module = new TimerImpl(_notifier);
@@ -400,6 +404,9 @@ public class PICSimulator {
                 case TRISB_REGISTER_BANK1:
                     setPortBTris(value);
                     //everything handled exit function
+                    return;
+                case EECON1_REGISTER_BANK1:
+                    setEECON1Register(value);
                     return;
                 default:
                     break;
@@ -1068,7 +1075,30 @@ public class PICSimulator {
     /*EECON1 REGISTER*/
     public void setEECON1Register(int value) {
         value = BinaryNumberHelper.truncateToNBit(value, 5);
-        setRegister(EECON1_REGISTER_BANK1, value, false);
+        _registers.put(EECON1_REGISTER_BANK1, value);
+        // check if write bit was set
+        if (BinaryNumberHelper.getBitBoolean(value, 2)) {
+            if (BinaryNumberHelper.getBitBoolean(value, 1)) {
+                int data = _registers.get(EEDATA_REGISTER_BANK0);
+                int adr = _registers.get(EEADR_REGISTER_BANK0);
+                _eeprom.setRegsiter(adr, data);
+                // after write set bit WR bit to 0
+                value = BinaryNumberHelper.setBit(value, 1, 0);
+                value = BinaryNumberHelper.setBit(value, 4, 1);
+                _registers.put(EECON1_REGISTER_BANK1, value);
+            }
+        }
+        // check if we want to read
+        if (BinaryNumberHelper.getBitBoolean(value, 0)) {
+            int adr = _registers.get(EEADR_REGISTER_BANK0);
+            int oldvalue = _registers.get(EEDATA_REGISTER_BANK0);
+            int data = _eeprom.getRegsiter(adr);
+            
+            _registers.put(EEDATA_REGISTER_BANK0, data);
+            _notifier.changedRegister(EEDATA_REGISTER_BANK0, oldvalue, data);
+            value = BinaryNumberHelper.setBit(value, 0, 0);
+            _registers.put(EECON1_REGISTER_BANK1, value);
+        }
     }
     
     public int getEECON1Register() {

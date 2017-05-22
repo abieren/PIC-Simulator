@@ -998,5 +998,11 @@ public class MainWindowController
         if (value == true) text = "1";
         l.setText(text);
     }
+
+    @Override
+    public void displayEEPROM(int address, int value) {
+        Label update = (Label) _eepromLabels.get(address);
+        update.setText(BinaryNumberHelper.formatToDisplayableHex(value, 2, true));
+    }
     
 }

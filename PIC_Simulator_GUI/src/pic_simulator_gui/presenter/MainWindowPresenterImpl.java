@@ -298,4 +298,9 @@ public class MainWindowPresenterImpl
     public void removeBreakpoint(int address) {
         _model.removeBreakpoint(address);
     }
+
+    @Override
+    public void displayEEPROM(int address, int value) {
+        _view.displayEEPROM(address,value);
+    }
 }
