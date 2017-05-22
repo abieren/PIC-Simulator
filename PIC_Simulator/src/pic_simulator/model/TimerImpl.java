@@ -7,6 +7,7 @@ package pic_simulator.model;
 
 import pic_simulator.interfaces.Notifier;
 import pic_simulator.interfaces.Timer;
+import static pic_simulator.model.PICSimulator.TMR0_REGISTER_BANK0;
 import pic_simulator.utils.BinaryNumberHelper;
 
 /**
@@ -25,17 +26,15 @@ public class TimerImpl implements Timer {
     private int _prescalerCount = 0;
     private int _timerCount = 0;
     private boolean _hasTriggered = false;
-    private Notifier _notifier = null;
     
     private void incrementTimerCount() {
         int oldValue = _timerCount;
         _timerCount++;
-        int overflow = _timerCount / TIMER_OVERFLOW_LIMIT;
-        _timerCount = _timerCount & TIMER_OVERFLOW_LIMIT;
+        int overflow = _timerCount / (TIMER_OVERFLOW_LIMIT+1);
+        _timerCount = _timerCount % (TIMER_OVERFLOW_LIMIT+1);
         if (overflow > 0) {
             _hasTriggered = true;
         }
-        _notifier.changedRegister(PICSimulator.TMR0_REGISTER_BANK0, oldValue, _timerCount);
     }
     
     private void incrementPrescalerCount() {
@@ -45,20 +44,17 @@ public class TimerImpl implements Timer {
             overflow = _prescalerCount/_prescalerRate;
             _prescalerCount = _prescalerCount % _prescalerRate;
         } else {
-            overflow = _prescalerCount/PRESCALER_RATE_WITHOUT_PRESCALER_ASSIGNED;
+            overflow = _prescalerCount/PRESCALER_RATE_WITHOUT_PRESCALER_ASSIGNED+1;
             _prescalerCount = _prescalerCount % _prescalerRate;
         }
         if (overflow > 0) {
             incrementTimerCount();
         }
     }
-
-    public TimerImpl(Notifier notifier) {
-        _notifier = notifier;
-    }
     
     @Override
     public void clear() {
+        _hasTriggered = false;
         _prescalerCount = 0;
         _timerCount = 0;
     }
@@ -114,9 +110,11 @@ public class TimerImpl implements Timer {
     }
 
     @Override
-    public void setTimerCount(int value) {
+    public void setTimerCount(int value, boolean doClear) {
         value = BinaryNumberHelper.truncateToNBit(value, 8);
-        clear();
+        if (doClear) {
+            clear();
+        }
         _timerCount = value;
     }
 

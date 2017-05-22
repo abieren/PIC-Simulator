@@ -20,7 +20,7 @@ public interface Timer {
     public void notifyEdge(boolean isFallingEdge);
     public void notifyCycle();
     
-    public void setTimerCount(int value);
+    public void setTimerCount(int value, boolean doClear);
     public int getTimerCount();
     
 }

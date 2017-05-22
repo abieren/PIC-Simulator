@@ -78,7 +78,7 @@ public class PICSimulator {
         _eeprom = new EEPROM(_notifier);
         _watchdogTimer = new WatchdogImpl();
         _watchdogTimer.clear();
-        _timer0Module = new TimerImpl(_notifier);
+        _timer0Module = new TimerImpl();
         _timer0Module.clear();
         _runningTime = 0;
     }
@@ -383,7 +383,7 @@ public class PICSimulator {
             //handle special files that are only accessible on bank0
             switch (address) {
                 case TMR0_REGISTER_BANK0:
-                    setTMR0(value);
+                    setTMR0(value, true);
                     //everything handled exit function
                     return;
                 case PORTA_REGISTER_BANK0:
@@ -430,10 +430,9 @@ public class PICSimulator {
         }
     }
     
-    public void setTMR0(int value) {
+    public void setTMR0(int value, boolean doClear) {
         int oldValue = _timer0Module.getTimerCount();
-        _timer0Module.setTimerCount(value);
-//        _registers.put(0x01, value); do this here ?
+        _timer0Module.setTimerCount(value, doClear);
         _notifier.changedRegister(TMR0_REGISTER_BANK0, oldValue, value);
     }
     
@@ -760,11 +759,17 @@ public class PICSimulator {
     public void nextCycle() {
         double timePastMicroSeconds = (1/getInstructionFrequency());
         double timePastMilliSeconds = timePastMicroSeconds / 1000 ; // WRONG was (1/MHz) = microseconds -> divide by 1000 for milliseconds
+        //increment timers
         _watchdogTimer.notifyTimeAdvanced(timePastMilliSeconds);
         _timer0Module.notifyCycle();
+        //refresh timer0
+        setTMR0(_timer0Module.getTimerCount(), false);
+        //check if timer0 has triggered
         if (_timer0Module.hasTriggered()) {
             //set timer0 trigger flag
             setINTCONbitT0IF(true);
+            //dont forget to clear watchdog again to avoid odd behavior
+            _timer0Module.clear();
         }
         if (_watchdogTimer.hasTriggered() && isSleeping()) {
             //invoke reset
