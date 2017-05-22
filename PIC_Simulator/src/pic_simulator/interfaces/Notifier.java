@@ -50,5 +50,7 @@ public interface Notifier {
     public void changedFSRRegister(int register, int value);
 
     public void changedRunningTime(double oldValue, double newValue);
+
+    public void changedEEPROM(int address, int value);
     
 }

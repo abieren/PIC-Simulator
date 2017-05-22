@@ -303,6 +303,11 @@ public class MainWindowPresenterImpl
     public void setSynchronizePortsWithRS232(boolean b) {
         _model.setSynchronizePortsWithRS232(b);
     }
+    @Override
+    public void displayEEPROM(int address, int value) {
+        _view.displayEEPROM(address,value);
+    }
+
 
     @Override
     public void displaySynchronizePortsWithRS232(boolean b) {

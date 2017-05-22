@@ -7,6 +7,7 @@ package pic_simulator.model;
 
 import java.util.HashMap;
 import java.util.Map;
+import pic_simulator.interfaces.Notifier;
 import pic_simulator.utils.BinaryNumberHelper;
 
 /**
@@ -18,6 +19,12 @@ public class EEPROM {
     private static final int MAX_ADDRESS = 0x3F;
     private static final int DEFAULT_VALUE = 0x3F;
     private Map<Integer, Integer> _registers = new HashMap<>();
+    private Notifier _notifier;
+
+    public EEPROM(Notifier notifier) {
+        _notifier = notifier;
+    }
+    
     
     private int shrinkAddress(int address) {
         return BinaryNumberHelper.truncateToNBit(address, 6);
@@ -27,6 +34,7 @@ public class EEPROM {
         address = shrinkAddress(address);
         value = BinaryNumberHelper.truncateToNBit(value, 8);
         _registers.put(address, value);
+        _notifier.changedEEPROM(address,value);
     };
     
     public int getRegsiter(int address) {

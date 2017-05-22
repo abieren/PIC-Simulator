@@ -1011,5 +1011,10 @@ public class MainWindowController
     public void displaySynchronizePortsWithRS232(boolean b) {
         cb_synchronizePorts.setSelected(b);
     }
+    @Override
+    public void displayEEPROM(int address, int value) {
+        Label update = (Label) _eepromLabels.get(address);
+        update.setText(BinaryNumberHelper.formatToDisplayableHex(value, 2, true));
+    }
     
 }

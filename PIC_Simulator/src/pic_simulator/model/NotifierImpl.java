@@ -119,5 +119,10 @@ public class NotifierImpl implements Notifier {
     public void changedRunningTime(double oldValue, double newValue) {
         _presenter.displayRunningTime(newValue);
     }
+
+    @Override
+    public void changedEEPROM(int address, int value) {
+        _presenter.displayEEPROM(address, value);
+    }
     
 }

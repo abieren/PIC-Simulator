@@ -60,5 +60,7 @@ public interface MainWindowView {
     public void displayPortEnvironmentBit(String port, int bit, boolean value);
 
     public void displaySynchronizePortsWithRS232(boolean b);
+
+    public void displayEEPROM(int address, int value);
     
 }
